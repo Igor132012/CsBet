@@ -28,6 +28,7 @@
     --gold2:   #ffd966;
     --ct:      #4a6b8a;
     --green:   #6fbf4a;
+    --danger:  #c44a3a;
 
     --r-consumer:   #b0c3d9;
     --r-industrial: #5e98d9;
@@ -73,13 +74,13 @@
   .ico img { width:100%; height:100%; object-fit:contain; display:block; }
 
   /* === МЕНЮ === */
-  #menu { align-items:center; justify-content:center; padding:40px 24px; text-align:center; position:relative; z-index:2; }
+  #menu { align-items:center; justify-content:center; padding:40px 24px; text-align:center; position:relative; z-index:2; overflow-y:auto; }
   .brand {
     font-size:12px; color:var(--text3); letter-spacing:8px; text-transform:uppercase;
-    margin-bottom:44px; font-weight:600;
+    margin-bottom:40px; font-weight:600;
   }
   .brand span { color:var(--accent); }
-  .balance-block { margin-bottom:48px; }
+  .balance-block { margin-bottom:40px; }
   .balance-label {
     font-size:10px; color:var(--text3); letter-spacing:4px; text-transform:uppercase;
     margin-bottom:12px;
@@ -143,14 +144,6 @@
     width:140px; height:100px; align-self:center;
   }
   .mode-card-icon svg { width:100%; height:100%; }
-
-  .menu-footer { margin-top:48px; display:flex; gap:10px; }
-  .mini-btn {
-    background:transparent; border:1px solid var(--border); color:var(--text3);
-    font-size:12px; letter-spacing:1.5px; cursor:pointer;
-    font-family:inherit; padding:14px 26px; border-radius:10px;
-  }
-  .mini-btn:active { border-color:var(--border2); color:var(--text2); }
 
   /* === ТОПБАР === */
   .topbar {
@@ -398,6 +391,13 @@
   .inv-item .inv-wear { font-size:10px; color:var(--text3); margin-top:3px; }
   .inv-item .inv-stattrak { font-size:10px; color:var(--r-stattrak); margin-top:3px; }
   .inv-item .inv-price { font-size:12px; color:var(--gold2); flex-shrink:0; }
+  .inv-item .sell-btn {
+    background:transparent; border:1px solid var(--accent);
+    border-radius:6px; color:var(--sand);
+    font-size:10px; padding:4px 10px;
+    font-family:inherit; cursor:pointer;
+  }
+  .inv-item .sell-btn:active { background:#4a2a1a; }
   .inv-empty { text-align:center; color:var(--text3); padding:60px 20px; font-size:13px; }
 
   /* === ПРОФИЛЬ === */
@@ -441,7 +441,7 @@
   }
   .modal-overlay.show { display:flex; }
   .modal-sheet {
-    width:100%; max-height:75vh; overflow-y:auto;
+    width:100%; max-height:80vh; overflow-y:auto;
     background:var(--bg2); border-top:1px solid var(--border2);
     border-radius:20px 20px 0 0; padding:24px;
   }
@@ -449,6 +449,24 @@
     font-size:14px; color:var(--sand); letter-spacing:2px;
     text-transform:uppercase; margin-bottom:18px; text-align:center;
   }
+  .modal-search {
+    width:100%; padding:12px; border:1px solid var(--border);
+    border-radius:8px; background:var(--bg); color:var(--sand);
+    font-size:13px; font-family:inherit; margin-bottom:10px; outline:none;
+  }
+  .modal-search::placeholder { color:var(--text3); }
+  .modal-filters {
+    display:flex; gap:8px; margin-bottom:12px;
+  }
+  .modal-filters select,
+  .modal-filters input {
+    padding:10px; border:1px solid var(--border);
+    border-radius:8px; background:var(--bg); color:var(--sand);
+    font-size:12px; font-family:inherit; outline:none;
+  }
+  .modal-filters select { flex:1; }
+  .modal-filters input { width:70px; }
+  .modal-filters input::placeholder { color:var(--text3); }
   .modal-item {
     display:flex; align-items:center; gap:14px;
     padding:14px 16px; border:1px solid var(--border);
@@ -466,6 +484,9 @@
   .modal-item .mi-name { font-size:12px; color:var(--sand); }
   .modal-item .mi-wear { font-size:10px; color:var(--text3); margin-top:3px; }
   .modal-item .mi-price { font-size:12px; color:var(--gold2); flex-shrink:0; }
+  .modal-empty {
+    text-align:center; color:var(--text3); padding:30px; font-size:13px;
+  }
 
   #toast {
     position:fixed; top:60px; left:50%;
@@ -476,8 +497,11 @@
     border:1px solid var(--accent);
     transition:transform .3s, opacity .3s;
     pointer-events:none; white-space:nowrap; opacity:0;
+    max-width:90vw; overflow:hidden; text-overflow:ellipsis;
   }
   #toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+  #toast.win { border-color:var(--green); color:#c8f0a8; }
+  #toast.lose { border-color:var(--danger); color:#f0a8a0; }
 </style>
 </head>
 <body>
@@ -541,10 +565,21 @@
         </div>
       </button>
     </div>
-  </div>
 
-  <div class="menu-footer">
-    <button class="mini-btn" onclick="openProfile()">Профиль</button>
+    <div class="mode-row">
+      <button class="mode-card" onclick="openProfile()" style="grid-column:1 / -1;min-height:100px;">
+        <div class="mode-card-content">
+          <div class="mode-card-title">Профиль</div>
+          <div class="mode-card-desc">Мой аккаунт</div>
+        </div>
+        <div class="mode-card-icon" style="width:60px;height:50px;">
+          <svg viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
+            <circle cx="50" cy="30" r="14"/>
+            <path d="M25 70 Q50 50 75 70"/>
+          </svg>
+        </div>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -663,6 +698,15 @@
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <h3 id="modalTitle">Выбор скина</h3>
+    <input type="text" id="modalSearch" class="modal-search" placeholder="Поиск..." oninput="filterModalList()">
+    <div class="modal-filters">
+      <select id="modalSort" onchange="filterModalList()">
+        <option value="asc">Сначала дешёвые</option>
+        <option value="desc">Сначала дорогие</option>
+      </select>
+      <input type="number" id="modalMinPrice" placeholder="От ₽" oninput="filterModalList()">
+      <input type="number" id="modalMaxPrice" placeholder="До ₽" oninput="filterModalList()">
+    </div>
     <div id="modalList"></div>
   </div>
 </div>
@@ -741,12 +785,12 @@ function updateBalance() {
   $('statSkins').textContent = fmt(state.inventory.reduce((s, sk) => s + sk.price, 0));
 }
 
-function toastText(msg) {
+function toastText(msg, kind) {
   const t = $('toast');
   t.textContent = msg;
-  t.className = 'show';
+  t.className = 'show' + (kind ? ' ' + kind : '');
   clearTimeout(t._t);
-  t._t = setTimeout(() => t.className = '', 1800);
+  t._t = setTimeout(() => t.className = '', 2200);
 }
 
 function showScreen(id) {
@@ -801,11 +845,11 @@ const ALL_SKINS = [
 
 /* ==================== ИЗНОС ==================== */
 const WEARS = [
-  { key:'FN', name:'Прямо с завода',        range:[0.00, 0.07], mult:1.00 },
-  { key:'MW', name:'Немного поношенное',     range:[0.07, 0.15], mult:0.65 },
-  { key:'FT', name:'После полевых испытаний', range:[0.15, 0.38], mult:0.40 },
-  { key:'WW', name:'Поношенное',             range:[0.38, 0.45], mult:0.30 },
-  { key:'BS', name:'Закалённое в боях',      range:[0.45, 1.00], mult:0.22 },
+  { key:'FN', name:'Прямо с завода',        mult:1.00 },
+  { key:'MW', name:'Немного поношенное',     mult:0.65 },
+  { key:'FT', name:'После полевых испытаний', mult:0.40 },
+  { key:'WW', name:'Поношенное',             mult:0.30 },
+  { key:'BS', name:'Закалённое в боях',      mult:0.22 },
 ];
 
 function randomWear() {
@@ -835,16 +879,16 @@ function createSkinInstance(skinDef) {
   };
 }
 
-/* ==================== РЕДКОСТИ ==================== */
+/* ==================== РЕДКОСТИ (низкие шансы) ==================== */
 const RARITY_WEIGHTS = {
-  consumer:   50,
+  consumer:   60,
   industrial: 25,
-  milspec:    15,
-  restricted: 7,
-  classified: 2,
-  covert:     0.8,
-  rare:       0.15,
-  contraband: 0.02,
+  milspec:    11,
+  restricted: 3,
+  classified: 0.7,
+  covert:     0.25,
+  rare:       0.05,
+  contraband: 0.005,
 };
 
 function pickSkinFromPool(pool) {
@@ -939,8 +983,8 @@ function openMode(mode) {
   else if (mode === 'inventory') { showScreen('inventory'); renderInventory(); }
   updateBalance();
 }
-function backToMenu() { showScreen('menu'); updateBalance(); }
-function closeCase() { showScreen('cases'); updateBalance(); }
+function backToMenu() { stopIdleSpin(); showScreen('menu'); updateBalance(); }
+function closeCase() { stopIdleSpin(); showScreen('cases'); updateBalance(); }
 function openProfile() {
   const user = tg?.initDataUnsafe?.user;
   const av = $('avatar');
@@ -955,7 +999,36 @@ function openProfile() {
   showScreen('profile');
 }
 
-/* ==================== КЕЙСЫ ==================== */
+/* ==================== КЕЙСЫ: idle-вращение ==================== */
+let idleRaf = null;
+
+function stopIdleSpin() {
+  if (idleRaf) {
+    cancelAnimationFrame(idleRaf);
+    idleRaf = null;
+  }
+}
+
+function startIdleSpin() {
+  stopIdleSpin();
+  const track = $('track');
+  track.style.transition = 'none';
+
+  // Начинаем с нулевого положения, но если трек уже прокручен — считаем от текущего
+  let pos = 0;
+  let last = performance.now();
+
+  function frame(now) {
+    const dt = now - last;
+    last = now;
+    pos -= dt * 0.03;  // 30px/сек — медленно
+    if (pos < -60 * 110) pos += 60 * 110;
+    track.style.transform = `translateX(${pos}px)`;
+    idleRaf = requestAnimationFrame(frame);
+  }
+  idleRaf = requestAnimationFrame(frame);
+}
+
 function openCaseScreen(caseKey) {
   state.currentCase = caseKey;
   showScreen('caseOpen');
@@ -968,6 +1041,7 @@ function openCaseScreen(caseKey) {
 }
 
 function fillTrack() {
+  stopIdleSpin();
   const track = $('track');
   track.innerHTML = '';
   track.style.transition = 'none';
@@ -977,6 +1051,7 @@ function fillTrack() {
     const skinDef = pool[Math.floor(Math.random() * pool.length)];
     track.appendChild(makeSlot(skinDef));
   }
+  startIdleSpin();
 }
 
 function getPoolForCurrentCase() {
@@ -1007,6 +1082,8 @@ function mainCaseAction() {
   btn.classList.add('disabled');
   btn.textContent = 'Крутим...';
   $('spinResult').className = 'spin-result';
+
+  stopIdleSpin();
 
   const track = $('track');
   const pool = getPoolForCurrentCase();
@@ -1049,7 +1126,7 @@ function mainCaseAction() {
     $('spinResult').className = 'spin-result show';
 
     state.inventory.push(winSkin);
-    toastText(`${winSkin.name} (${winSkin.wear}${winSkin.statTrak ? ' ST' : ''})`);
+    toastText(`Получено: ${winSkin.name}`, 'win');
     updateBalance();
   }, duration + 100);
 }
@@ -1063,6 +1140,10 @@ function pickFromInventory() {
   const list = $('modalList');
   list.innerHTML = '';
   $('modalTitle').textContent = 'Выбери свой скин';
+
+  // Скрываем поиск/фильтры для выбора своего скина
+  $('modalSearch').style.display = 'none';
+  document.querySelector('.modal-filters').style.display = 'none';
 
   state.inventory.forEach((skin) => {
     const item = document.createElement('div');
@@ -1097,49 +1178,115 @@ function pickFromInventory() {
   $('modalOverlay').classList.add('show');
 }
 
+let modalCandidates = [];
+
 function pickToTarget() {
   const from = state.upgrade.fromSkin;
-  if (!from) {
-    toastText('Сначала выбери свой скин');
-    return;
-  }
+  if (!from) { toastText('Сначала выбери свой скин'); return; }
 
-  const candidates = ALL_SKINS.filter(s => s.basePrice > from.price);
+  // Формируем список ВСЕХ вариаций скинов (basePrice > from.price)
+  // каждая вариация = отдельный экземпляр со своим wear/StatTrak
+  modalCandidates = [];
+  ALL_SKINS.forEach(def => {
+    if (def.basePrice <= from.price) return;
+    // Для каждого скина делаем несколько вариаций — по одному разу на каждое качество
+    // (чтобы в списке были и FT, и FN, и ST-варианты как разные пункты)
+    WEARS.forEach(wear => {
+      // Обычная версия
+      const instance = {
+        id: def.id + '_' + wear.key,
+        skinId: def.id,
+        name: def.name,
+        weapon: def.weapon,
+        rarity: def.rarity,
+        wear: wear.key,
+        wearName: wear.name,
+        statTrak: false,
+        price: Math.round(def.basePrice * wear.mult),
+      };
+      if (instance.price > from.price) {
+        modalCandidates.push({ def, instance });
+      }
+      // StatTrak версия (если доступна)
+      if (def.hasStatTrak) {
+        const stPrice = Math.round(def.basePrice * wear.mult * 1.35);
+        const stInstance = {
+          id: def.id + '_' + wear.key + '_st',
+          skinId: def.id,
+          name: def.name,
+          weapon: def.weapon,
+          rarity: def.rarity,
+          wear: wear.key,
+          wearName: wear.name,
+          statTrak: true,
+          price: stPrice,
+        };
+        if (stInstance.price > from.price) {
+          modalCandidates.push({ def, instance: stInstance });
+        }
+      }
+    });
+  });
 
-  if (!candidates.length) {
-    toastText('Нет скинов дороже твоего');
-    return;
-  }
+  // Сортируем от дешёвого к дорогому
+  modalCandidates.sort((a, b) => a.instance.price - b.instance.price);
 
-  const list = $('modalList');
-  list.innerHTML = '';
   $('modalTitle').textContent = 'Выбери целевой скин';
+  $('modalSearch').style.display = 'block';
+  $('modalSearch').value = '';
+  document.querySelector('.modal-filters').style.display = 'flex';
+  $('modalMinPrice').value = '';
+  $('modalMaxPrice').value = '';
+  $('modalSort').value = 'asc';
 
-  candidates.slice(0, 100).forEach(skinDef => {
+  filterModalList();
+  $('modalOverlay').classList.add('show');
+}
+
+function filterModalList() {
+  const q = ($('modalSearch').value || '').toLowerCase().trim();
+  const min = parseInt($('modalMinPrice').value) || 0;
+  const max = parseInt($('modalMaxPrice').value) || Infinity;
+  const sort = $('modalSort').value;
+
+  let list = modalCandidates.filter(c => {
+    const nameOk = !q || c.def.name.toLowerCase().includes(q);
+    const priceOk = c.instance.price >= min && c.instance.price <= max;
+    return nameOk && priceOk;
+  });
+
+  list.sort((a, b) => sort === 'asc' ? a.instance.price - b.instance.price : b.instance.price - a.instance.price);
+
+  const box = $('modalList');
+  box.innerHTML = '';
+
+  if (!list.length) {
+    box.innerHTML = '<div class="modal-empty">Ничего не найдено</div>';
+    return;
+  }
+
+  list.slice(0, 100).forEach(c => {
     const item = document.createElement('div');
     item.className = 'modal-item';
     item.innerHTML = `
-      <div class="mi-img">${weaponImg(skinDef.weapon)}</div>
+      <div class="mi-img">${weaponImg(c.def.weapon)}</div>
       <div class="mi-info">
-        <div class="mi-name">${skinDef.name}</div>
-        <div class="mi-wear">от ${fmt(skinDef.basePrice)} ₽</div>
+        <div class="mi-name">${c.def.name}${c.instance.statTrak ? ' · StatTrak™' : ''}</div>
+        <div class="mi-wear">${c.instance.wearName}</div>
       </div>
-      <div class="mi-price">${skinDef.rarity}</div>
+      <div class="mi-price">${fmt(c.instance.price)} ₽</div>
     `;
     item.onclick = () => {
-      const instance = createSkinInstance(skinDef);
-      state.upgrade.toSkin = instance;
-      $('upToPreview').innerHTML = weaponImg(instance.weapon);
-      $('upToName').textContent = instance.name;
-      $('upToWear').textContent = instance.wearName;
-      $('upToPrice').textContent = instance.price + ' ₽';
+      state.upgrade.toSkin = c.instance;
+      $('upToPreview').innerHTML = weaponImg(c.instance.weapon);
+      $('upToName').textContent = c.instance.name;
+      $('upToWear').textContent = c.instance.wearName + (c.instance.statTrak ? ' · ST' : '');
+      $('upToPrice').textContent = c.instance.price + ' ₽';
       updateUpgradeChance();
       closeModal();
     };
-    list.appendChild(item);
+    box.appendChild(item);
   });
-
-  $('modalOverlay').classList.add('show');
 }
 
 function closeModal(e) {
@@ -1221,9 +1368,9 @@ function doUpgrade() {
 
     if (success) {
       state.inventory.push(state.upgrade.toSkin);
-      toastText('Успех! Получен: ' + state.upgrade.toSkin.name);
+      toastText(`Успешно! Получено: ${state.upgrade.toSkin.name}`, 'win');
     } else {
-      toastText('Провал... Скин потерян');
+      toastText('Провал... Скин потерян', 'lose');
     }
 
     // Сброс выбора
@@ -1251,20 +1398,33 @@ function renderInventory() {
     return;
   }
   list.innerHTML = '';
-  state.inventory.forEach(skin => {
+  state.inventory.forEach((skin, idx) => {
     const el = document.createElement('div');
     el.className = 'inv-item';
     el.innerHTML = `
       <div class="inv-img">${weaponImg(skin.weapon)}</div>
       <div class="inv-info">
         <div class="inv-name">${skin.name}</div>
-        <div class="inv-wear">${skin.wearName}</div>
-        ${skin.statTrak ? '<div class="inv-stattrak">StatTrak™</div>' : ''}
+        <div class="inv-wear">${skin.wearName}${skin.statTrak ? ' · StatTrak™' : ''}</div>
       </div>
-      <div class="inv-price">${fmt(skin.price)} ₽</div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+        <div class="inv-price">${fmt(skin.price)} ₽</div>
+        <button class="sell-btn" onclick="sellSkin(${idx})">Продать</button>
+      </div>
     `;
     list.appendChild(el);
   });
+}
+
+function sellSkin(idx) {
+  const skin = state.inventory[idx];
+  if (!skin) return;
+  const price = Math.round(skin.price * 0.9);  // комиссия 10%
+  state.balance += price;
+  state.inventory.splice(idx, 1);
+  toastText(`+${fmt(price)} ₽`, 'win');
+  renderInventory();
+  updateBalance();
 }
 
 /* ==================== INIT ==================== */
