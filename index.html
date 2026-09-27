@@ -26,7 +26,6 @@
     --accent:  #d46b4a;
     --gold:    #e0b84a;
     --gold2:   #ffd966;
-    --ct:      #4a6b8a;
     --green:   #6fbf4a;
     --danger:  #c44a3a;
 
@@ -49,22 +48,10 @@
       linear-gradient(180deg, #2a231b 0%, #352c22 100%);
   }
 
-  .sand-dot {
-    position:absolute; width:1px; height:1px; background:var(--sand); border-radius:50%;
-    opacity:.2; animation:sandFloat 20s infinite linear;
-  }
-  @keyframes sandFloat {
-    0%   { transform:translate(0, 0); opacity:0; }
-    10%  { opacity:.3; }
-    90%  { opacity:.3; }
-    100% { transform:translate(30px, -40px); opacity:0; }
-  }
-
   .screen {
     position:fixed; inset:0; display:flex; flex-direction:column;
     z-index:1; transition:opacity .25s; background:transparent;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
   }
   .screen.hidden { opacity:0; pointer-events:none; }
 
@@ -95,16 +82,13 @@
   .balance-value {
     font-size:52px; font-weight:200; letter-spacing:-2px;
     color:var(--gold2); font-variant-numeric:tabular-nums;
-    display:flex; align-items:center; justify-content:center; gap:10px;
   }
 
   .modes {
     display:flex; flex-direction:column; gap:12px;
     width:100%; max-width:360px;
   }
-  .mode-row {
-    display:grid; grid-template-columns:1fr 1fr; gap:12px;
-  }
+  .mode-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   .mode-card {
     border:1px solid var(--border2);
     background:linear-gradient(135deg, rgba(66,56,42,0.9), rgba(53,44,34,0.7));
@@ -163,7 +147,7 @@
   .close-btn .ico { font-size:20px; }
   .topbar-balance {
     color:var(--gold2); font-size:15px; font-variant-numeric:tabular-nums;
-    display:flex; align-items:center; gap:6px; font-weight:300;
+    font-weight:300;
   }
 
   /* === КЕЙСЫ === */
@@ -224,7 +208,6 @@
   }
   .slot .slot-img {
     width:80px; height:50px; display:flex; align-items:center; justify-content:center;
-    color:var(--text3);
   }
   .slot .slot-img svg,
   .slot .slot-img img { width:100%; height:100%; object-fit:contain; }
@@ -235,28 +218,26 @@
   }
   .slot .slot-wear { font-size:7px; opacity:.6; }
   .slot .slot-st {
-    position:absolute;
-    right:4px; bottom:4px;
+    position:absolute; right:4px; bottom:4px;
     font-size:8px; font-weight:700;
-    color:var(--r-stattrak);
-    letter-spacing:0.5px;
+    color:var(--r-stattrak); letter-spacing:0.5px;
   }
 
   .slot.consumer   { border-color:var(--r-consumer); color:var(--r-consumer); }
-  .slot.consumer .slot-img { color:var(--r-consumer); }
   .slot.industrial { border-color:var(--r-industrial); color:var(--r-industrial); }
-  .slot.industrial .slot-img { color:var(--r-industrial); }
   .slot.milspec    { border-color:var(--r-milspec); color:var(--r-milspec); }
-  .slot.milspec .slot-img { color:var(--r-milspec); }
   .slot.restricted { border-color:var(--r-restricted); color:var(--r-restricted); }
-  .slot.restricted .slot-img { color:var(--r-restricted); }
   .slot.classified { border-color:var(--r-classified); color:var(--r-classified); }
-  .slot.classified .slot-img { color:var(--r-classified); }
   .slot.covert     { border-color:var(--r-covert); color:var(--r-covert); }
-  .slot.covert .slot-img { color:var(--r-covert); }
   .slot.rare       { border-color:var(--r-rare); color:var(--r-rare); }
-  .slot.rare .slot-img { color:var(--r-rare); }
   .slot.contraband { border-color:var(--r-contraband); color:var(--r-contraband); }
+  .slot.consumer .slot-img { color:var(--r-consumer); }
+  .slot.industrial .slot-img { color:var(--r-industrial); }
+  .slot.milspec .slot-img { color:var(--r-milspec); }
+  .slot.restricted .slot-img { color:var(--r-restricted); }
+  .slot.classified .slot-img { color:var(--r-classified); }
+  .slot.covert .slot-img { color:var(--r-covert); }
+  .slot.rare .slot-img { color:var(--r-rare); }
   .slot.contraband .slot-img { color:var(--r-contraband); }
 
   .pointer {
@@ -279,7 +260,6 @@
   .spin-result .val {
     font-size:36px; font-weight:200;
     color:var(--gold2); font-variant-numeric:tabular-nums;
-    display:flex; align-items:center; justify-content:center; gap:8px;
   }
 
   /* === СПИСОК ДРОПОВ === */
@@ -309,16 +289,10 @@
     border: 1px solid var(--border);
     border-radius: 10px;
     background: linear-gradient(160deg, rgba(66,56,42,0.85), rgba(40,32,22,0.9));
-    display: flex; flex-direction: column;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
-    aspect-ratio: 1 / 1;
-  }
-  .drop-item::before {
-    content: ""; position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 50% 45%, var(--drop-color, transparent) 0%, transparent 55%);
-    opacity: 0.15;
-    pointer-events: none;
+    min-height: 180px;
   }
   .drop-item::after {
     content: ""; position: absolute;
@@ -330,57 +304,69 @@
     position: absolute; top: 8px; left: 8px;
     color: var(--gold2);
     font-size: 11px; font-weight: 700;
-    letter-spacing: 0.3px;
-    z-index: 2;
+    z-index: 3;
     text-shadow: 0 1px 3px rgba(0,0,0,0.9);
   }
   .drop-st {
     position: absolute; top: 8px; right: 8px;
     color: var(--r-stattrak);
     font-size: 10px; font-weight: 700;
-    letter-spacing: 0.5px;
-    z-index: 2;
+    z-index: 3;
     text-shadow: 0 1px 3px rgba(0,0,0,0.9);
   }
   .drop-wear-badge {
-    position: absolute; bottom: 8px; right: 8px;
+    position: absolute; top: 24px; right: 8px;
     color: var(--sand);
-    font-size: 10px;
-    letter-spacing: 0.5px;
-    z-index: 2;
-    font-weight: 600;
+    font-size: 10px; font-weight: 600;
+    z-index: 3;
     text-shadow: 0 1px 3px rgba(0,0,0,0.9);
   }
   .drop-item .drop-img {
     flex: 1;
-    display: flex; align-items: center; justify-content: center;
-    padding: 20px 4px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 4px 8px;
+    min-height: 90px;
   }
   .drop-item .drop-img svg,
   .drop-item .drop-img img {
-    width: 100%; height: 100%; object-fit: contain;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
     filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
   }
-  .drop-item .drop-weapon {
-    font-size: 10px; color: var(--text3);
-    line-height: 1.2;
-    text-align: left;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  .drop-name-block {
+    position: relative;
+    padding: 6px 2px 4px;
+    border-top: 1px solid rgba(122,104,80,0.3);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .drop-weapon {
+    font-size: 10px;
+    color: var(--text3);
+    line-height: 1.15;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-weight: 500;
   }
-  .drop-item .drop-skin {
-    font-size: 11px; color: var(--sand);
-    line-height: 1.2;
-    text-align: left;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    font-weight: 600;
-    padding-right: 26px;
+  .drop-skin {
+    font-size: 11px;
+    color: var(--sand);
+    line-height: 1.15;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 700;
   }
 
   .spin-controls {
     padding: 16px 24px 20px;
-    position: relative;
-    z-index: 2;
+    position: relative; z-index: 2;
     flex-shrink: 0;
     border-top: 1px solid var(--border);
     background: var(--bg);
@@ -407,31 +393,23 @@
   /* === АПГРЕЙДЕР === */
   .upgrade-stage {
     flex:1; display:flex; flex-direction:column;
-    padding:24px;
-    gap:20px; position:relative; z-index:2;
+    padding:24px; gap:20px; position:relative; z-index:2;
     overflow-y:auto;
   }
-
   .upgrade-pair { display:flex; flex-direction:column; gap:14px; }
-
   .upgrade-side {
     border:1px solid var(--border2); border-radius:12px;
     background:linear-gradient(180deg, var(--bg3), var(--bg2));
-    padding:16px 18px;
-    cursor:pointer;
+    padding:16px 18px; cursor:pointer;
     display:flex; align-items:center; gap:14px;
-    transition:border-color .2s;
   }
   .upgrade-side:active { border-color:var(--accent); }
-
   .upgrade-side .thumb {
     width:80px; height:50px; flex-shrink:0;
     display:flex; align-items:center; justify-content:center;
-    color:var(--text3);
   }
   .upgrade-side .thumb svg,
   .upgrade-side .thumb img { width:100%; height:100%; object-fit:contain; }
-
   .upgrade-side .info { flex:1; min-width:0; }
   .upgrade-side .info .label {
     font-size:9px; color:var(--text3); letter-spacing:2px; text-transform:uppercase;
@@ -486,7 +464,6 @@
     letter-spacing:2px; margin:12px 0;
   }
   .upgrade-chance span { color:var(--accent); font-weight:600; }
-
   .upgrade-controls { margin-top:auto; padding-top:12px; }
 
   /* === ИНВЕНТАРЬ === */
@@ -504,9 +481,7 @@
   .inv-item .inv-img img { width:100%; height:100%; object-fit:contain; }
   .inv-item .inv-info { flex:1; min-width:0; }
   .inv-item .inv-price {
-    font-size:14px; color:var(--gold2);
-    font-weight: 700;
-    margin-bottom: 4px;
+    font-size:14px; color:var(--gold2); font-weight: 700; margin-bottom: 4px;
   }
   .inv-item .inv-name { font-size:13px; color:var(--sand); font-weight: 500; }
   .inv-item .inv-wear { font-size:10px; color:var(--text3); margin-top:3px; }
@@ -514,8 +489,7 @@
     background:transparent; border:1px solid var(--accent);
     border-radius:6px; color:var(--sand);
     font-size:10px; padding:6px 12px;
-    font-family:inherit; cursor:pointer;
-    white-space: nowrap;
+    font-family:inherit; cursor:pointer; white-space: nowrap;
   }
   .inv-item .sell-btn:active { background:#4a2a1a; }
   .inv-empty { text-align:center; color:var(--text3); padding:60px 20px; font-size:13px; }
@@ -532,8 +506,7 @@
     width:60px; height:60px; border-radius:50%;
     border:1px solid var(--border2); flex-shrink:0;
     display:flex; align-items:center; justify-content:center;
-    color:var(--sand); background:var(--bg);
-    overflow:hidden;
+    color:var(--sand); background:var(--bg); overflow:hidden;
   }
   .profile-avatar img { width:100%; height:100%; object-fit:cover; }
   .profile-avatar .ico { font-size:28px; }
@@ -542,8 +515,7 @@
 
   .stat-card {
     border:1px solid var(--border); background:linear-gradient(180deg, var(--bg3), var(--bg2));
-    border-radius:12px; padding:20px 14px; text-align:center;
-    margin-bottom:20px;
+    border-radius:12px; padding:20px 14px; text-align:center; margin-bottom:20px;
   }
   .stat-card .stat-label {
     font-size:9px; color:var(--text3); letter-spacing:2px; text-transform:uppercase;
@@ -553,7 +525,6 @@
     font-size:24px; font-weight:300; color:var(--sand);
     font-variant-numeric:tabular-nums;
   }
-
   .section-label {
     font-size: 9px; color: var(--text3);
     letter-spacing: 3px; text-transform: uppercase;
@@ -562,20 +533,14 @@
   .best-win {
     border: 1px solid var(--border2);
     background: linear-gradient(180deg, var(--bg3), var(--bg2));
-    border-radius: 12px;
-    padding: 18px;
-    margin-bottom: 20px;
-    text-align: center;
+    border-radius: 12px; padding: 18px; margin-bottom: 20px; text-align: center;
   }
-  .best-win-empty {
-    color: var(--text3); font-size: 13px; padding: 20px 0;
-  }
+  .best-win-empty { color: var(--text3); font-size: 13px; padding: 20px 0; }
   .best-win-img {
     width: 100px; height: 70px; margin: 0 auto 10px;
     display: flex; align-items: center; justify-content: center;
   }
-  .best-win-img svg,
-  .best-win-img img { width: 100%; height: 100%; object-fit: contain; }
+  .best-win-img svg, .best-win-img img { width: 100%; height: 100%; object-fit: contain; }
   .best-win-name { font-size: 14px; color: var(--sand); margin-bottom: 4px; }
   .best-win-wear { font-size: 11px; color: var(--text3); margin-bottom: 6px; }
   .best-win-price { font-size: 16px; color: var(--gold2); font-weight: 600; }
@@ -622,11 +587,8 @@
     font-size:13px; font-family:inherit; margin-bottom:10px; outline:none;
   }
   .modal-search::placeholder { color:var(--text3); }
-  .modal-filters {
-    display:flex; gap:8px; margin-bottom:12px;
-  }
-  .modal-filters select,
-  .modal-filters input {
+  .modal-filters { display:flex; gap:8px; margin-bottom:12px; }
+  .modal-filters select, .modal-filters input {
     padding:10px; border:1px solid var(--border);
     border-radius:8px; background:var(--bg); color:var(--sand);
     font-size:12px; font-family:inherit; outline:none;
@@ -637,8 +599,7 @@
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1 L5 5 L9 1' stroke='%238a7754' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>");
     background-repeat: no-repeat;
     background-position: right 12px center;
-    appearance: none;
-    -webkit-appearance: none;
+    appearance: none; -webkit-appearance: none;
   }
   .modal-filters input { width:70px; }
   .modal-filters input::placeholder { color:var(--text3); }
@@ -653,46 +614,33 @@
     width:60px; height:40px; flex-shrink:0;
     display:flex; align-items:center; justify-content:center;
   }
-  .modal-item .mi-img svg,
-  .modal-item .mi-img img { width:100%; height:100%; object-fit:contain; }
+  .modal-item .mi-img svg, .modal-item .mi-img img { width:100%; height:100%; object-fit:contain; }
   .modal-item .mi-info { flex:1; min-width:0; }
   .modal-item .mi-name { font-size:12px; color:var(--sand); }
   .modal-item .mi-wear { font-size:10px; color:var(--text3); margin-top:3px; }
   .modal-item .mi-price { font-size:12px; color:var(--gold2); flex-shrink:0; }
-  .modal-empty {
-    text-align:center; color:var(--text3); padding:30px; font-size:13px;
-  }
+  .modal-empty { text-align:center; color:var(--text3); padding:30px; font-size:13px; }
 
   /* === УВЕДОМЛЕНИЯ === */
   #toast {
     position:fixed; top:60px; left:50%;
     transform:translateX(-50%) translateY(-30px);
-    background: #1a1410;
-    color: #fff;
-    padding:14px 26px;
-    border-radius:100px;
-    font-size:14px;
-    font-weight: 600;
-    z-index:100;
+    background: #1a1410; color: #fff;
+    padding:14px 26px; border-radius:100px;
+    font-size:14px; font-weight: 600; z-index:100;
     border:2px solid var(--accent);
     box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(212,107,74,0.3);
     transition:transform .3s, opacity .3s, border-color .3s, color .3s, box-shadow .3s;
     pointer-events:none; white-space:nowrap; opacity:0;
     max-width:90vw; overflow:hidden; text-overflow:ellipsis;
-    letter-spacing: 0.3px;
   }
-  #toast.show {
-    transform:translateX(-50%) translateY(0);
-    opacity:1;
-  }
+  #toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
   #toast.show.win {
-    border-color: #6fbf4a;
-    color: #d4ffb0;
+    border-color: #6fbf4a; color: #d4ffb0;
     box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 24px rgba(111,191,74,0.5);
   }
   #toast.show.lose {
-    border-color: #c44a3a;
-    color: #ffb8a8;
+    border-color: #c44a3a; color: #ffb8a8;
     box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 24px rgba(196,74,58,0.5);
   }
 </style>
@@ -707,9 +655,7 @@
 
   <div class="balance-block">
     <div class="balance-label">Баланс</div>
-    <div class="balance-value" id="menuBalance">
-      <span class="num">0 ₽</span>
-    </div>
+    <div class="balance-value" id="menuBalance"><span class="num">0 ₽</span></div>
   </div>
 
   <div class="modes">
@@ -717,9 +663,7 @@
       <div class="mode-card-content">
         <div class="mode-card-title">Кейсы</div>
       </div>
-      <div class="mode-card-icon">
-        <img src="case.png" alt="">
-      </div>
+      <div class="mode-card-icon"><img src="case.png" alt=""></div>
     </button>
 
     <div class="mode-row">
@@ -727,18 +671,14 @@
         <div class="mode-card-content">
           <div class="mode-card-title">Апгрейд</div>
         </div>
-        <div class="mode-card-icon">
-          <img src="upgrade.png" alt="">
-        </div>
+        <div class="mode-card-icon"><img src="upgrade.png" alt=""></div>
       </button>
 
       <button class="mode-card" onclick="openMode('inventory')">
         <div class="mode-card-content">
           <div class="mode-card-title">Инвентарь</div>
         </div>
-        <div class="mode-card-icon">
-          <img src="inventory.png" alt="">
-        </div>
+        <div class="mode-card-icon"><img src="inventory.png" alt=""></div>
       </button>
     </div>
 
@@ -747,9 +687,7 @@
         <div class="mode-card-content">
           <div class="mode-card-title">Профиль</div>
         </div>
-        <div class="mode-card-icon" style="width:60px;height:60px;align-self:center;">
-          <img src="profile.png" alt="">
-        </div>
+        <div class="mode-card-icon" style="width:60px;height:60px;align-self:center;"><img src="profile.png" alt=""></div>
       </button>
     </div>
   </div>
@@ -759,7 +697,7 @@
 <div class="screen hidden" id="cases">
   <div class="topbar">
     <button class="close-btn" onclick="backToMenu()"><span class="ico" data-icon="close"></span></button>
-    <div class="topbar-balance"><span id="casesBalance">0 ₽</span></div>
+    <div class="topbar-balance" id="casesBalance">0 ₽</div>
   </div>
   <div class="cases-list" id="casesList"></div>
 </div>
@@ -768,7 +706,7 @@
 <div class="screen hidden" id="caseOpen">
   <div class="topbar">
     <button class="close-btn" onclick="closeCase()"><span class="ico" data-icon="close"></span></button>
-    <div class="topbar-balance"><span id="openBalance">0 ₽</span></div>
+    <div class="topbar-balance" id="openBalance">0 ₽</div>
   </div>
 
   <div class="roulette-stage">
@@ -796,7 +734,7 @@
 <div class="screen hidden" id="upgrade">
   <div class="topbar">
     <button class="close-btn" onclick="backToMenu()"><span class="ico" data-icon="close"></span></button>
-    <div class="topbar-balance"><span id="upgradeBalance">0 ₽</span></div>
+    <div class="topbar-balance" id="upgradeBalance">0 ₽</div>
   </div>
   <div class="upgrade-stage">
     <div class="upgrade-pair">
@@ -840,7 +778,7 @@
 <div class="screen hidden" id="inventory">
   <div class="topbar">
     <button class="close-btn" onclick="backToMenu()"><span class="ico" data-icon="close"></span></button>
-    <div class="topbar-balance"><span id="inventoryBalance">0 ₽</span></div>
+    <div class="topbar-balance" id="inventoryBalance">0 ₽</div>
   </div>
   <div class="inv-list" id="invList"></div>
 </div>
@@ -849,7 +787,7 @@
 <div class="screen hidden" id="profile">
   <div class="topbar">
     <button class="close-btn" onclick="backToMenu()"><span class="ico" data-icon="close"></span></button>
-    <div class="topbar-balance"><span id="profileBalance">0 ₽</span></div>
+    <div class="topbar-balance" id="profileBalance">0 ₽</div>
   </div>
   <div class="profile-content">
     <div class="profile-card">
@@ -919,7 +857,6 @@ function weaponImg(weaponType) {
 
 /* ==================== SVG ИКОНКИ ==================== */
 const ICONS = {
-  gift: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="13" rx="1"/><path d="M3 12h18M12 8v13"/><path d="M12 8c-2 0-4-1-4-3s2-2 4 3c2-5 4-5 4-3s-2 3-4 3z"/></svg>`,
   user: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>`,
   close: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6 L18 18M18 6 L6 18"/></svg>`,
 };
@@ -937,7 +874,7 @@ const state = {
   inventory: [],
   currentCase: null,
   isSpinning: false,
-  bestDrop: null,  // лучший выигрыш за всё время (не сбрасывается при продаже)
+  bestDrop: null,
   upgrade: { fromSkin: null, toSkin: null, chance: 0 },
 };
 
@@ -972,7 +909,6 @@ function updateBalance() {
 }
 
 function registerDrop(skin) {
-  // Обновляем «лучший выигрыш» — он не сбрасывается
   if (!state.bestDrop || skin.price > state.bestDrop.price) {
     state.bestDrop = skin;
   }
@@ -1104,16 +1040,16 @@ function createSkinInstance(skinDef) {
   };
 }
 
-/* ==================== РЕДКОСТИ (ещё ниже шансы) ==================== */
+/* ==================== РЕДКОСТИ ==================== */
 const RARITY_WEIGHTS = {
-  consumer:   200,
-  industrial: 60,
-  milspec:    15,
-  restricted: 0.8,
-  classified: 0.06,
-  covert:     0.008,
-  rare:       0.0015,
-  contraband: 0.0002,
+  consumer:   1000,
+  industrial: 300,
+  milspec:    40,
+  restricted: 0.6,
+  classified: 0.02,
+  covert:     0.0015,
+  rare:       0.0002,
+  contraband: 0.00001,
 };
 
 const RARITY_COLORS = {
@@ -1233,7 +1169,6 @@ function openProfile() {
   showScreen('profile');
 }
 
-/* ==== Сброс стрелки апгрейда ==== */
 function resetUpgradeArrow() {
   const arrow = $('upgradeArrow');
   if (!arrow) return;
@@ -1331,8 +1266,6 @@ function renderCaseDrops() {
   list.innerHTML = '';
   const pool = getPoolForCurrentCase();
 
-  const totalWeight = pool.reduce((s, def) => s + (RARITY_WEIGHTS[def.rarity] || 1), 0);
-
   const drops = [];
   pool.forEach(def => {
     WEARS.forEach(wear => {
@@ -1351,10 +1284,9 @@ function renderCaseDrops() {
   drops.sort((a, b) => a.price - b.price);
 
   drops.forEach(d => {
-    // "AK-47 | Красная линия" → weaponName="AK-47", skinName="Красная линия"
     const parts = d.def.name.split('|');
-    const weaponName = parts[0].trim();
-    const skinName = parts[1] ? parts[1].trim() : '';
+    const weaponName = (parts[0] || '').trim();
+    const skinName = (parts[1] || '').trim();
 
     const el = document.createElement('div');
     el.className = 'drop-item';
@@ -1364,8 +1296,10 @@ function renderCaseDrops() {
       ${d.statTrak ? '<div class="drop-st">ST</div>' : ''}
       <div class="drop-wear-badge">${d.wear.key}</div>
       <div class="drop-img">${weaponImg(d.def.weapon)}</div>
-      <div class="drop-weapon">${weaponName}</div>
-      <div class="drop-skin">${skinName}${d.statTrak ? ' ST' : ''}</div>
+      <div class="drop-name-block">
+        <div class="drop-weapon">${weaponName}</div>
+        <div class="drop-skin">${skinName}${d.statTrak ? ' ST' : ''}</div>
+      </div>
     `;
     list.appendChild(el);
   });
@@ -1619,12 +1553,11 @@ function updateUpgradeChance() {
     return;
   }
 
-  // Шанс снижен: применяем квадратичную зависимость вместо линейной
   let chance = (from.price / to.price) * 100;
-  chance = Math.pow(chance / 100, 2) * 100;  // квадрат — резкое падение для дорогих целей
-  chance = Math.min(chance, 60);              // потолок 60%
-  chance = Math.max(chance, 0.5);
-  state.upgrade.chance = Math.round(chance * 10) / 10;  // 1 знак после запятой
+  chance = Math.pow(chance / 100, 3) * 100;
+  chance = Math.min(chance, 35);
+  chance = Math.max(chance, 0.1);
+  state.upgrade.chance = Math.round(chance * 10) / 10;
 
   $('upChance').textContent = state.upgrade.chance + '%';
   $('upgradePercent').innerHTML = state.upgrade.chance + '<span> %</span>';
@@ -1734,7 +1667,8 @@ function renderInventory() {
 function sellSkin(idx) {
   const skin = state.inventory[idx];
   if (!skin) return;
-  const price = Math.round(skin.price * 0.9);
+  // Без комиссии — продаётся за полную стоимость
+  const price = skin.price;
   earn(price);
   state.inventory.splice(idx, 1);
   toastText(`+${fmt(price)} ₽`, 'win');
