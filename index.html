@@ -462,14 +462,12 @@
 
 <div id="bg"></div>
 
-<!-- МЕНЮ -->
 <div class="screen" id="menu">
   <div class="brand">C<span>S</span>2 · DUST 2</div>
   <div class="balance-block">
     <div class="balance-label">Баланс</div>
     <div class="balance-value" id="menuBalance"><span class="num">0 ₽</span></div>
   </div>
-
   <div class="modes">
     <button class="mode-card mode-card-big" onclick="openMode('cases')">
       <div class="mode-card-content"><div class="mode-card-title">Кейсы</div></div>
@@ -494,7 +492,6 @@
   </div>
 </div>
 
-<!-- КЕЙСЫ -->
 <div class="screen hidden" id="cases">
   <div class="topbar">
     <button class="close-btn" onclick="backToMenu()"><span class="ico" data-icon="close"></span></button>
@@ -503,13 +500,11 @@
   <div class="cases-list" id="casesList"></div>
 </div>
 
-<!-- ОТКРЫТИЕ КЕЙСА -->
 <div class="screen hidden" id="caseOpen">
   <div class="topbar">
     <button class="close-btn" onclick="closeCase()"><span class="ico" data-icon="close"></span></button>
     <div class="topbar-balance" id="openBalance">0 ₽</div>
   </div>
-
   <div class="roulette-stage">
     <div class="roulette">
       <div class="track" id="track"></div>
@@ -520,18 +515,15 @@
       <div class="val" id="spinValue"></div>
     </div>
   </div>
-
   <div class="case-drops" id="caseDrops">
     <div class="case-drops-title">Возможный дроп</div>
     <div class="case-drops-list" id="caseDropsList"></div>
   </div>
-
   <div class="spin-controls">
     <button class="main-btn" id="spinBtn" onclick="mainCaseAction()">Открыть</button>
   </div>
 </div>
 
-<!-- АПГРЕЙДЕР -->
 <div class="screen hidden" id="upgrade">
   <div class="topbar">
     <button class="close-btn" onclick="backToMenu()"><span class="ico" data-icon="close"></span></button>
@@ -575,7 +567,6 @@
   </div>
 </div>
 
-<!-- ИНВЕНТАРЬ -->
 <div class="screen hidden" id="inventory">
   <div class="topbar">
     <button class="close-btn" onclick="backToMenu()"><span class="ico" data-icon="close"></span></button>
@@ -584,7 +575,6 @@
   <div class="inv-list" id="invList"></div>
 </div>
 
-<!-- ПРОФИЛЬ -->
 <div class="screen hidden" id="profile">
   <div class="topbar">
     <button class="close-btn" onclick="backToMenu()"><span class="ico" data-icon="close"></span></button>
@@ -598,17 +588,14 @@
         <div class="username" id="userUsername">@username</div>
       </div>
     </div>
-
     <div class="stat-card">
       <div class="stat-label">В скинах</div>
       <div class="stat-value" id="statSkins">0 ₽</div>
     </div>
-
     <div class="section-label">Лучший выигрыш</div>
     <div class="best-win" id="bestWin">
       <div class="best-win-empty">Пока нет выигрышей</div>
     </div>
-
     <div class="section-label">Промокод</div>
     <div class="promo-row">
       <input type="text" class="promo-input" id="promoInput" placeholder="ВВЕДИ КОД" maxlength="20">
@@ -617,7 +604,6 @@
   </div>
 </div>
 
-<!-- МОДАЛКА ВЫБОРА СКИНА -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <h3 id="modalTitle">Выбор скина</h3>
@@ -636,7 +622,6 @@
   </div>
 </div>
 
-<!-- МОДАЛКА ВЫВОДА -->
 <div class="modal-overlay" id="withdrawOverlay" onclick="closeWithdrawModal(event)">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <h3>Вывод скина</h3>
@@ -712,7 +697,7 @@ const state = {
   currentCase: null,
   isSpinning: false,
   bestDrop: null,
-  upgrade: { fromSkin: null, toSkin: null, chance: 0 },
+  upgrade: { fromSkin: null, toSkin: null, chance: 0, displayChance: 0 },
   upgradeStats: { win_count: 0, win_sum: 0, lose_sum: 0 },
   withdrawSkin: null,
 };
@@ -787,7 +772,7 @@ async function loadBestDrop() {
   }
 }
 
-/* ==================== ШТРАФ АПГРЕЙДА (СЕРВЕР) ==================== */
+/* ==================== ШТРАФ АПГРЕЙДА ==================== */
 async function loadUpgradeStats() {
   const res = await api("/api/upgrade_stats", { user_id: USER_ID });
   if (res && typeof res.win_count === "number") {
@@ -798,10 +783,7 @@ async function loadUpgradeStats() {
 
 async function updateUpgradeStats(result, fromPrice, toPrice) {
   const res = await api("/api/upgrade_stats/update", {
-    user_id: USER_ID,
-    result,
-    from_price: fromPrice,
-    to_price: toPrice,
+    user_id: USER_ID, result, from_price: fromPrice, to_price: toPrice,
   });
   if (res && typeof res.win_count === "number") {
     state.upgradeStats = res;
@@ -809,7 +791,6 @@ async function updateUpgradeStats(result, fromPrice, toPrice) {
   }
 }
 
-/* Считаем штраф: сколько процентов вычесть из реального шанса */
 function calcPenalty() {
   const wc = state.upgradeStats.win_count || 0;
   if (wc <= 0) return 0;
@@ -912,10 +893,13 @@ const RARITY_COLORS = {
   rare:'var(--r-rare)', contraband:'var(--r-contraband)',
 };
 
-function pickByRarity(pool) {
-  if (!pool.length) return null;
+function pickByRarity(list) {
+  if (!list.length) return null;
   const available = {};
-  pool.forEach(s => { available[s.rarity] = (available[s.rarity] || 0) + 1; });
+  list.forEach(item => {
+    const r = item.def.rarity;
+    available[r] = (available[r] || 0) + 1;
+  });
   let total = 0;
   const weighted = {};
   for (const r in RARITY_WEIGHTS) {
@@ -925,34 +909,18 @@ function pickByRarity(pool) {
   for (const r in weighted) {
     roll -= weighted[r];
     if (roll <= 0) {
-      const poolOfRarity = pool.filter(s => s.rarity === r);
+      const poolOfRarity = list.filter(item => item.def.rarity === r);
       return poolOfRarity[Math.floor(Math.random() * poolOfRarity.length)];
     }
   }
-  return pool[0];
+  return list[0];
 }
 
-function pickSkinFromPool(pool, casePrice) {
-  const unprofitable = pool.filter(s => s.basePrice < casePrice);
-  const profitable   = pool.filter(s => s.basePrice >= casePrice);
-  let group;
-  if (profitable.length === 0) group = unprofitable;
-  else if (unprofitable.length === 0) group = profitable;
-  else group = Math.random() < 0.30 ? profitable : unprofitable;
-  return pickByRarity(group) || pool[0];
-}
-
-/* Диапазоны basePrice по кейсам:
-   10   : 5–100
-   50   : 25–300
-   100  : 50–600
-   500  : 250–3000
-   1000 : 500–7000
-*/
+/* Диапазоны финальной цены скина в кейсе */
 const CASE_RANGES = {
   case10:   { min: 5,   max: 100 },
   case50:   { min: 25,  max: 300 },
-  case100:  { min: 50,  max: 600 },
+  case100:  { min: 50,  max: 1000 },
   case500:  { min: 250, max: 3000 },
   case1000: { min: 500, max: 7000 },
 };
@@ -964,6 +932,47 @@ const CASES = {
   case500:  { name: 'Кейс пустыни',          price: 500 },
   case1000: { name: 'Легендарный контейнер', price: 1000 },
 };
+
+/* Собираем все возможные инстансы скинов, чья итоговая цена попадает в диапазон */
+function buildInstancesForRange(min, max) {
+  const out = [];
+  ALL_SKINS.forEach(def => {
+    WEARS.forEach(wear => {
+      const pNoSt = calcPrice(def.basePrice, wear.mult, false);
+      if (pNoSt >= min && pNoSt <= max) {
+        out.push({ def, wear, price: pNoSt, statTrak: false });
+      }
+      if (def.hasStatTrak) {
+        const pSt = calcPrice(def.basePrice, wear.mult, true);
+        if (pSt >= min && pSt <= max) {
+          out.push({ def, wear, price: pSt, statTrak: true });
+        }
+      }
+    });
+  });
+  return out;
+}
+
+/* Пул инстансов для текущего кейса */
+function getInstancesForCurrentCase() {
+  if (state.currentCase === 'subcase') {
+    return buildInstancesForRange(1, 20);
+  }
+  const r = CASE_RANGES[state.currentCase];
+  if (!r) return buildInstancesForRange(1, 1e9);
+  return buildInstancesForRange(r.min, r.max);
+}
+
+/* Пул уникальных скинов (для ленты) */
+function getPoolForCurrentCase() {
+  const instances = getInstancesForCurrentCase();
+  const seen = new Set();
+  const pool = [];
+  instances.forEach(ins => {
+    if (!seen.has(ins.def.id)) { seen.add(ins.def.id); pool.push(ins.def); }
+  });
+  return pool;
+}
 
 function renderCasesList() {
   const list = $('casesList');
@@ -1064,15 +1073,6 @@ function openCaseScreen(caseKey) {
   }
 }
 
-function getPoolForCurrentCase() {
-  if (state.currentCase === 'subcase') {
-    return ALL_SKINS.filter(s => s.basePrice <= 20);
-  }
-  const r = CASE_RANGES[state.currentCase];
-  if (!r) return ALL_SKINS;
-  return ALL_SKINS.filter(s => s.basePrice >= r.min && s.basePrice <= r.max);
-}
-
 function fillTrack() {
   stopIdleSpin();
   const track = $('track');
@@ -1103,20 +1103,11 @@ function renderCaseDrops() {
   const list = $('caseDropsList');
   if (!list) return;
   list.innerHTML = '';
-  const pool = getPoolForCurrentCase();
 
-  const drops = [];
-  pool.forEach(def => {
-    WEARS.forEach(wear => {
-      drops.push({ def, wear, price: calcPrice(def.basePrice, wear.mult, false), statTrak: false });
-      if (def.hasStatTrak) {
-        drops.push({ def, wear, price: calcPrice(def.basePrice, wear.mult, true), statTrak: true });
-      }
-    });
-  });
-  drops.sort((a, b) => a.price - b.price);
+  const instances = getInstancesForCurrentCase().slice();
+  instances.sort((a, b) => a.price - b.price);
 
-  drops.forEach(d => {
+  instances.forEach(d => {
     const parts = d.def.name.split('|');
     const weaponName = (parts[0] || '').trim();
     const skinName = (parts[1] || '').trim();
@@ -1171,18 +1162,32 @@ async function mainCaseAction() {
   stopIdleSpin();
 
   const track = $('track');
-  const pool = getPoolForCurrentCase();
-  const winSkinDef = pickSkinFromPool(pool, casePrice);
-  const winSkin = createSkinInstance(winSkinDef);
 
-  const winWear = WEARS.find(w => w.key === winSkin.wear);
-  winSkin.price = calcPrice(winSkinDef.basePrice, winWear.mult, winSkin.statTrak);
+  // Выбираем ИНСТАНС (скин + wear + ST), чья финальная цена попадает в диапазон кейса
+  const instances = getInstancesForCurrentCase();
+  const winInstance = pickByRarity(instances);
+  const winSkinDef = winInstance.def;
+  const winWear = winInstance.wear;
+  const winStatTrak = winInstance.statTrak;
+
+  const winSkin = {
+    skinId: winSkinDef.id,
+    name: winSkinDef.name,
+    weapon: winSkinDef.weapon,
+    rarity: winSkinDef.rarity,
+    wear: winWear.key,
+    wearName: winWear.name,
+    statTrak: winStatTrak,
+    price: winInstance.price,
+  };
+
+  const pool = getPoolForCurrentCase();
 
   track.innerHTML = '';
   const STOP_INDEX = 50;
   for (let i = 0; i < 60; i++) {
     let skinDef, isST = false;
-    if (i === STOP_INDEX) { skinDef = winSkinDef; isST = winSkin.statTrak; }
+    if (i === STOP_INDEX) { skinDef = winSkinDef; isST = winStatTrak; }
     else { skinDef = pool[Math.floor(Math.random() * pool.length)]; }
     track.appendChild(makeSlot(skinDef, isST));
   }
@@ -1374,13 +1379,13 @@ function closeModal(e) {
   $('modalOverlay').classList.remove('show');
 }
 
-/* Обновление отображаемого и реального шанса */
 function updateUpgradeChance() {
   const from = state.upgrade.fromSkin;
   const to = state.upgrade.toSkin;
 
   if (!from || !to) {
     state.upgrade.chance = 0;
+    state.upgrade.displayChance = 0;
     $('upChance').textContent = '0%';
     $('upgradePercent').innerHTML = '0<span> %</span>';
     $('upgradeCircle').style.setProperty('--p', '0%');
@@ -1589,7 +1594,6 @@ async function submitWithdraw() {
   setBtnReady(btn, 'Отправить заявку');
 
   if (res && res.ok) {
-    // Убираем скин из локального инвентаря — он уже удалён на сервере
     const idx = state.inventory.findIndex(s => s.id === skin.id);
     if (idx >= 0) state.inventory.splice(idx, 1);
     renderInventory();
