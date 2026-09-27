@@ -143,13 +143,14 @@
     letter-spacing:0.5px;
   }
   .mode-card-icon {
-    width:64px; height:52px; color:var(--gold2); opacity:0.85;
+    width:64px; height:52px; color:var(--gold2); opacity:0.9;
     position:relative; z-index:1; align-self:flex-end;
   }
   .mode-card-big .mode-card-icon {
     width:110px; height:80px; align-self:center;
   }
-  .mode-card-icon svg { width:100%; height:100%; }
+  .mode-card-icon svg,
+  .mode-card-icon img { width:100%; height:100%; object-fit:contain; }
 
   /* === ТОПБАР === */
   .topbar {
@@ -288,7 +289,7 @@
     display:flex; align-items:center; justify-content:center; gap:8px;
   }
 
-  /* === СПИСОК ДРОПОВ — СЕТКА КАК НА СКРИНЕ === */
+  /* === СПИСОК ДРОПОВ === */
   .case-drops {
     flex: 1;
     overflow-y: auto;
@@ -334,59 +335,53 @@
   }
   .drop-price-badge {
     position: absolute; top: 8px; left: 8px;
-    background: #000;
     color: var(--gold2);
     font-size: 11px; font-weight: 700;
-    padding: 3px 7px;
-    border-radius: 4px;
     letter-spacing: 0.3px;
     z-index: 2;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9);
   }
   .drop-st {
     position: absolute; top: 8px; right: 8px;
-    background: var(--r-stattrak);
-    color: #000;
-    font-size: 9px; font-weight: 700;
-    padding: 2px 6px;
-    border-radius: 4px;
+    color: var(--r-stattrak);
+    font-size: 10px; font-weight: 700;
     letter-spacing: 0.5px;
     z-index: 2;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9);
   }
   .drop-wear-badge {
     position: absolute; bottom: 8px; right: 8px;
-    background: rgba(0,0,0,0.7);
     color: var(--sand);
-    font-size: 9px;
-    padding: 2px 6px;
-    border-radius: 4px;
+    font-size: 10px;
     letter-spacing: 0.5px;
     z-index: 2;
     font-weight: 600;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9);
   }
   .drop-item .drop-img {
     flex: 1;
     display: flex; align-items: center; justify-content: center;
-    padding: 24px 4px 22px;
+    padding: 20px 4px 20px;
   }
   .drop-item .drop-img svg,
   .drop-item .drop-img img {
     width: 100%; height: 100%; object-fit: contain;
     filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
   }
-  .drop-item .drop-name {
-    font-size: 10px; color: var(--sand);
-    line-height: 1.2;
-    text-align: left;
-    width: 100%;
-    padding-right: 26px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    font-weight: 500;
-  }
-  .drop-item .drop-skin {
+  .drop-item .drop-weapon {
     font-size: 10px; color: var(--text3);
     line-height: 1.2;
     text-align: left;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-weight: 500;
+  }
+  .drop-item .drop-skin {
+    font-size: 11px; color: var(--sand);
+    line-height: 1.2;
+    text-align: left;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-weight: 600;
+    padding-right: 26px;
   }
 
   .spin-controls {
@@ -732,7 +727,6 @@
         <div class="mode-card-desc">Открой контейнер</div>
       </div>
       <div class="mode-card-icon">
-        <!-- Стилизованный ящик-кейс -->
         <svg viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
           <rect x="10" y="25" width="80" height="50" rx="4"/>
           <path d="M10 40 H90"/>
@@ -749,20 +743,8 @@
           <div class="mode-card-title">Апгрейд</div>
           <div class="mode-card-desc">Обменяй скины</div>
         </div>
-        <div class="mode-card-icon">
-          <!-- Пистолет → стрелка → автомат -->
-          <svg viewBox="0 0 100 60" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round">
-            <!-- Пистолет слева -->
-            <path d="M6 28 L24 28 L26 34 L22 42 L14 42 L14 34 L6 34 Z"/>
-            <path d="M6 30 L4 30 M4 30 L4 32"/>
-            <!-- Стрелка вправо -->
-            <path d="M34 30 L46 30 M42 26 L46 30 L42 34" stroke-width="2"/>
-            <!-- Автомат справа -->
-            <path d="M54 30 L80 30 L80 26 L86 26 L86 34 L80 34 L80 30"/>
-            <path d="M62 30 L60 40 L66 40 L68 30"/>
-            <path d="M56 30 L56 34"/>
-            <path d="M58 26 L74 26"/>
-          </svg>
+        <div class="mode-card-icon" id="upgradeIcon">
+          <!-- Пистолет → стрелка → автомат: заполнится через JS картинками gun.png и rifle.png -->
         </div>
       </button>
 
@@ -773,12 +755,13 @@
         </div>
         <div class="mode-card-icon">
           <!-- Рюкзак -->
-          <svg viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round">
-            <path d="M30 28 V20 Q30 12 38 12 H62 Q70 12 70 20 V28"/>
-            <rect x="22" y="28" width="56" height="42" rx="6"/>
-            <rect x="38" y="46" width="24" height="12" rx="3"/>
-            <path d="M50 46 V40"/>
-            <circle cx="50" cy="52" r="1.5" fill="currentColor"/>
+          <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M28 35 V22 Q28 12 38 12 H62 Q72 12 72 22 V35"/>
+            <rect x="18" y="35" width="64" height="55" rx="8"/>
+            <rect x="38" y="58" width="24" height="14" rx="3"/>
+            <path d="M50 58 V48"/>
+            <circle cx="50" cy="65" r="2" fill="currentColor"/>
+            <path d="M18 45 H82"/>
           </svg>
         </div>
       </button>
@@ -791,7 +774,6 @@
           <div class="mode-card-desc">Мой аккаунт</div>
         </div>
         <div class="mode-card-icon" style="width:60px;height:60px;align-self:center;">
-          <!-- Силуэт человека -->
           <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">
             <circle cx="50" cy="35" r="16"/>
             <path d="M20 88 Q20 60 50 60 Q80 60 80 88"/>
@@ -979,6 +961,21 @@ function renderIcons(root = document) {
   });
 }
 
+/* ==================== ИКОНКА АПГРЕЙДА (gun + rifle) ==================== */
+(function renderUpgradeIcon() {
+  const box = document.getElementById('upgradeIcon');
+  if (!box) return;
+  box.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;width:100%;height:100%;gap:2px;">
+      <img src="${IMG_GUN}" alt="" style="height:70%;width:42%;object-fit:contain;">
+      <svg viewBox="0 0 20 20" style="width:16%;height:30%;color:var(--gold2);" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 10 H16 M12 6 L16 10 L12 14"/>
+      </svg>
+      <img src="${IMG_RIFLE}" alt="" style="height:70%;width:42%;object-fit:contain;">
+    </div>
+  `;
+})();
+
 /* ==================== СОСТОЯНИЕ ==================== */
 const state = {
   balance: 1000,
@@ -1051,17 +1048,13 @@ function showScreen(id) {
 }
 
 /* ==================== БАЛАНС ==================== */
-function canAfford(amount) {
-  return state.balance >= amount;
-}
-
+function canAfford(amount) { return state.balance >= amount; }
 function spend(amount) {
   if (!canAfford(amount)) return false;
   state.balance -= amount;
   updateBalance();
   return true;
 }
-
 function earn(amount) {
   state.balance += amount;
   updateBalance();
@@ -1148,16 +1141,16 @@ function createSkinInstance(skinDef) {
   };
 }
 
-/* ==================== РЕДКОСТИ ==================== */
+/* ==================== РЕДКОСТИ (очень низкие шансы) ==================== */
 const RARITY_WEIGHTS = {
-  consumer:   60,
-  industrial: 25,
-  milspec:    11,
-  restricted: 3,
-  classified: 0.7,
-  covert:     0.25,
-  rare:       0.05,
-  contraband: 0.005,
+  consumer:   120,
+  industrial: 40,
+  milspec:    12,
+  restricted: 1.2,
+  classified: 0.15,
+  covert:     0.03,
+  rare:       0.008,
+  contraband: 0.001,
 };
 
 const RARITY_COLORS = {
@@ -1310,12 +1303,6 @@ function startIdleSpin() {
 }
 
 function openCaseScreen(caseKey) {
-  const caseDef = CASES[caseKey];
-  if (caseDef && !canAfford(caseDef.price)) {
-    toastText('Недостаточно средств', 'lose');
-    return;
-  }
-
   state.currentCase = caseKey;
   showScreen('caseOpen');
   updateBalance();
@@ -1325,6 +1312,14 @@ function openCaseScreen(caseKey) {
   $('spinResult').className = 'spin-result';
   fillTrack();
   renderCaseDrops();
+
+  // Проверяем, хватает ли денег на кейс — если нет, блокируем кнопку
+  const caseDef = CASES[caseKey];
+  if (caseDef && !canAfford(caseDef.price)) {
+    $('spinBtn').disabled = true;
+    $('spinBtn').classList.add('disabled');
+    $('spinBtn').textContent = 'Не хватает средств';
+  }
 }
 
 function fillTrack() {
@@ -1390,7 +1385,6 @@ function renderCaseDrops() {
   drops.sort((a, b) => a.price - b.price);
 
   drops.forEach(d => {
-    // Разбираем название: "AK-47 | Красная линия" → оружие и скин
     const parts = d.def.name.split('|');
     const weaponName = parts[0].trim();
     const skinName = parts[1] ? parts[1].trim() : '';
@@ -1403,7 +1397,7 @@ function renderCaseDrops() {
       ${d.statTrak ? '<div class="drop-st">ST</div>' : ''}
       <div class="drop-wear-badge">${d.wear.key}</div>
       <div class="drop-img">${weaponImg(d.def.weapon)}</div>
-      <div class="drop-name">${weaponName}</div>
+      <div class="drop-weapon">${weaponName}</div>
       <div class="drop-skin">${skinName}${d.statTrak ? ' ST' : ''}</div>
     `;
     list.appendChild(el);
