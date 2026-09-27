@@ -370,6 +370,7 @@
     letter-spacing:1.5px; flex-shrink:0;
   }
   .promo-btn:active { background:#4a2a1a; }
+  .promo-btn:disabled { opacity:.5; pointer-events:none; }
 
   .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:200; display:none; align-items:flex-end; }
   .modal-overlay.show { display:flex; }
@@ -385,41 +386,70 @@
     font-size:13px; font-family:inherit; margin-bottom:10px; outline:none;
   }
   .modal-search::placeholder { color:var(--text3); }
-  .modal-filters { display:flex; gap:8px; margin-bottom:12px; }
-  .modal-filters select, .modal-filters input {
+  .modal-filters { display:flex; gap:8px; margin-bottom:12px; align-items:center; }
+  .modal-filters input {
     padding:10px; border:1px solid var(--border);
     border-radius:8px; background:var(--bg); color:var(--sand);
-    font-size:12px; font-family:inherit; outline:none;
+    font-size:12px; font-family:inherit; outline:none; width:70px;
   }
-  .modal-filters select {
-    flex:1; padding:10px 30px 10px 10px;
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1 L5 5 L9 1' stroke='%238a7754' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>");
-    background-repeat:no-repeat; background-position:right 12px center;
-    appearance:none; -webkit-appearance:none;
-  }
-  .modal-filters input { width:70px; }
   .modal-filters input::placeholder { color:var(--text3); }
-  .modal-item {
-    display:flex; align-items:center; gap:14px;
-    padding:14px 16px; border:1px solid var(--border);
-    border-radius:10px; margin-bottom:10px; cursor:pointer;
-    background:var(--bg);
+
+  /* ==== КАСТОМНЫЙ ВЫПАДАЮЩИЙ СПИСОК ==== */
+  .cs-select {
+    position:relative; flex:1; min-width:0;
   }
-  .modal-item:active { border-color:var(--accent); }
-  .modal-item .mi-img { width:60px; height:40px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
-  .modal-item .mi-img svg, .modal-item .mi-img img { width:100%; height:100%; object-fit:contain; }
-  .modal-item .mi-info { flex:1; min-width:0; }
-  .modal-item .mi-name { font-size:12px; color:var(--sand); }
-  .modal-item .mi-wear { font-size:10px; color:var(--text3); margin-top:3px; }
-  .modal-item .mi-price { font-size:12px; color:var(--gold2); flex-shrink:0; }
-  .modal-empty { text-align:center; color:var(--text3); padding:30px; font-size:13px; }
+  .cs-select-head {
+    padding:10px 30px 10px 12px;
+    border:1px solid var(--border); border-radius:8px;
+    background:var(--bg); color:var(--sand);
+    font-size:12px; font-family:inherit;
+    cursor:pointer; user-select:none;
+    position:relative; white-space:nowrap;
+    overflow:hidden; text-overflow:ellipsis;
+  }
+  .cs-select-head::after {
+    content:""; position:absolute; right:12px; top:50%;
+    width:8px; height:8px;
+    border-right:1.5px solid var(--text3);
+    border-bottom:1.5px solid var(--text3);
+    transform:translateY(-70%) rotate(45deg);
+    transition:transform .2s;
+  }
+  .cs-select.open .cs-select-head::after {
+    transform:translateY(-30%) rotate(-135deg);
+  }
+  .cs-select-list {
+    position:absolute; left:0; right:0; top:calc(100% + 4px);
+    background:var(--bg2); border:1px solid var(--border2);
+    border-radius:8px; overflow:hidden;
+    z-index:50; display:none;
+    box-shadow:0 8px 20px rgba(0,0,0,0.5);
+  }
+  .cs-select.open .cs-select-list { display:block; }
+  .cs-select-option {
+    padding:12px 14px; font-size:12px; color:var(--sand);
+    cursor:pointer; transition:background .15s;
+  }
+  .cs-select-option:hover, .cs-select-option:active { background:var(--bg3); }
+  .cs-select-option.selected { background:var(--bg3); color:var(--gold2); }
+
+  .wd-field {
+    width:100%; padding:14px; margin-bottom:10px;
+    background:var(--bg); border:1px solid var(--border);
+    border-radius:10px; color:var(--sand);
+    font-size:13px; font-family:inherit; outline:none;
+  }
+  .wd-field::placeholder { color:var(--text3); }
+  .wd-field:focus { border-color:var(--accent); }
+  .wd-hint { font-size:11px; color:var(--text3); margin-bottom:14px; line-height:1.4; }
+  .wd-warn { font-size:11px; color:var(--gold2); margin-top:8px; line-height:1.4; }
 
   #toast {
     position:fixed; top:60px; left:50%;
     transform:translateX(-50%) translateY(-30px);
     background:#1a1410; color:#fff;
     padding:14px 26px; border-radius:100px;
-    font-size:14px; font-weight:600; z-index:100;
+    font-size:14px; font-weight:600; z-index:1000;
     border:2px solid var(--accent);
     box-shadow:0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(212,107,74,0.3);
     transition:transform .3s, opacity .3s, border-color .3s, color .3s, box-shadow .3s;
@@ -585,10 +615,8 @@
     <div class="section-label">Промокод</div>
     <div class="promo-row">
       <input type="text" class="promo-input" id="promoInput" placeholder="ВВЕДИ КОД" maxlength="20">
-      <button class="promo-btn" onclick="applyPromo()">ОК</button>
+      <button class="promo-btn" id="promoBtn" onclick="applyPromo()">ОК</button>
     </div>
-
-    <button class="main-btn" style="margin-top:20px;" onclick="withdrawOpen()">Вывод</button>
   </div>
 </div>
 
@@ -598,14 +626,31 @@
     <h3 id="modalTitle">Выбор скина</h3>
     <input type="text" id="modalSearch" class="modal-search" placeholder="Поиск..." oninput="filterModalList()">
     <div class="modal-filters">
-      <select id="modalSort" onchange="filterModalList()">
-        <option value="asc">Сначала дешёвые</option>
-        <option value="desc">Сначала дорогие</option>
-      </select>
+      <div class="cs-select" id="sortSelect">
+        <div class="cs-select-head" id="sortSelectHead">Сначала дешёвые</div>
+        <div class="cs-select-list" id="sortSelectList">
+          <div class="cs-select-option selected" data-value="asc">Сначала дешёвые</div>
+          <div class="cs-select-option" data-value="desc">Сначала дорогие</div>
+        </div>
+      </div>
       <input type="number" id="modalMinPrice" placeholder="От ₽" oninput="filterModalList()">
       <input type="number" id="modalMaxPrice" placeholder="До ₽" oninput="filterModalList()">
     </div>
     <div id="modalList"></div>
+  </div>
+</div>
+
+<!-- МОДАЛКА ВЫВОДА -->
+<div class="modal-overlay" id="withdrawOverlay" onclick="closeWithdrawModal(event)">
+  <div class="modal-sheet" onclick="event.stopPropagation()">
+    <h3>Вывод скина</h3>
+    <div class="wd-hint">
+      Укажи ссылку на свой Steam-профиль и trade-ссылку. Админ вручную отправит скин на указанный аккаунт после проверки заявки.
+    </div>
+    <input type="text" class="wd-field" id="wdSteam" placeholder="Ссылка на Steam-профиль">
+    <input type="text" class="wd-field" id="wdTrade" placeholder="Trade-ссылка">
+    <div class="wd-warn">⚠️ Убедись, что trade-ссылка публичная и открыта для обменов.</div>
+    <button class="main-btn" style="margin-top:16px;" id="wdSubmitBtn" onclick="submitWithdraw()">Отправить заявку</button>
   </div>
 </div>
 
@@ -670,6 +715,7 @@ const state = {
   isSpinning: false,
   bestDrop: null,
   upgrade: { fromSkin: null, toSkin: null, chance: 0 },
+  withdrawSkin: null,
 };
 
 const $ = id => document.getElementById(id);
@@ -715,7 +761,7 @@ function showScreen(id) {
   $(id).classList.remove('hidden');
 }
 
-/* ==================== БАЛАНС (СЕРВЕР) ==================== */
+/* ==================== БАЛАНС ==================== */
 async function loadBalance() {
   const res = await api("/api/balance", { user_id: USER_ID });
   if (res && typeof res.balance === "number") {
@@ -734,7 +780,6 @@ async function changeBalance(amount) {
   return false;
 }
 
-/* ==================== ЛУЧШИЙ ДРОП (СЕРВЕР) ==================== */
 async function loadBestDrop() {
   const res = await api("/api/best_drop", { user_id: USER_ID });
   if (res && res.best) {
@@ -743,75 +788,58 @@ async function loadBestDrop() {
   }
 }
 
-/* ==================== КАТАЛОГ (ЦЕНЫ CS2, курс 84.34 ₽/$) ==================== */
+/* ==================== КАТАЛОГ ==================== */
 const ALL_SKINS = [
-  // === AK-47 ===
-  { id:'ak_redline',    name:'AK-47 | Красная линия',    weapon:'rifle',  rarity:'classified', basePrice: 840,  hasStatTrak:true },
-  { id:'ak_vulcan',     name:'AK-47 | Вулкан',           weapon:'rifle',  rarity:'covert',     basePrice: 8300, hasStatTrak:true },
-  { id:'ak_asiimov',    name:'AK-47 | Азимов',           weapon:'rifle',  rarity:'covert',     basePrice: 2900, hasStatTrak:true },
-  { id:'ak_nightwish',  name:'AK-47 | Пожелание на ночь',weapon:'rifle',  rarity:'covert',     basePrice: 4500, hasStatTrak:true },
-  { id:'ak_fire_serp',  name:'AK-47 | Огненный змей',    weapon:'rifle',  rarity:'covert',     basePrice: 40000, hasStatTrak:true },
-  { id:'ak_bloodsport', name:'AK-47 | Кровавый спорт',   weapon:'rifle',  rarity:'covert',     basePrice: 9000, hasStatTrak:true },
-  { id:'ak_fuel',       name:'AK-47 | Топливный инжектор',weapon:'rifle', rarity:'covert',     basePrice: 7200, hasStatTrak:true },
-  { id:'ak_empress',    name:'AK-47 | Императрица',      weapon:'rifle',  rarity:'covert',     basePrice: 7300, hasStatTrak:true },
-  { id:'ak_oligarch',   name:'AK-47 | Олигарх',          weapon:'rifle',  rarity:'covert',     basePrice: 2000, hasStatTrak:true },
-  { id:'ak_inheritance',name:'AK-47 | Наследство',       weapon:'rifle',  rarity:'covert',     basePrice: 2200, hasStatTrak:true },
-
-  // === M4A4 / M4A1-S ===
-  { id:'m4a4_howl',     name:'M4A4 | Вой',               weapon:'rifle',  rarity:'contraband', basePrice: 295000, hasStatTrak:false },
-  { id:'m4a4_asiimov',  name:'M4A4 | Азимов',            weapon:'rifle',  rarity:'covert',     basePrice: 4200, hasStatTrak:true },
-  { id:'m4a4_temukau',  name:'M4A4 | Темукау',           weapon:'rifle',  rarity:'covert',     basePrice: 1800, hasStatTrak:true },
-  { id:'m4a4_emperor',  name:'M4A4 | Император',         weapon:'rifle',  rarity:'covert',     basePrice: 4200, hasStatTrak:true },
-  { id:'m4a4_the_emperor', name:'M4A4 | The Emperor',    weapon:'rifle',  rarity:'covert',     basePrice: 4200, hasStatTrak:true },
-  { id:'m4a1s_print',   name:'M4A1-S | Поток информации', weapon:'rifle',  rarity:'covert',     basePrice: 11000, hasStatTrak:true },
-  { id:'m4a1s_fade',    name:'M4A1-S | Градиент',        weapon:'rifle',  rarity:'covert',     basePrice: 15500, hasStatTrak:true },
-  { id:'m4a1s_solitude',name:'M4A1-S | Одиночество',     weapon:'rifle',  rarity:'classified', basePrice: 1600, hasStatTrak:true },
-  { id:'m4a1s_player2', name:'M4A1-S | Player Two',      weapon:'rifle',  rarity:'covert',     basePrice: 4200, hasStatTrak:true },
-  { id:'m4a1s_hotrod',  name:'M4A1-S | Хот-род',         weapon:'rifle',  rarity:'covert',     basePrice: 101000, hasStatTrak:true },
-
-  // === AWP ===
-  { id:'awp_dragon',    name:'AWP | Драконий огонь',     weapon:'sniper', rarity:'covert',     basePrice: 371000, hasStatTrak:true },
-  { id:'awp_asiimov',   name:'AWP | Азимов',             weapon:'sniper', rarity:'covert',     basePrice: 5900, hasStatTrak:true },
-  { id:'awp_medusa',    name:'AWP | Медуза',             weapon:'sniper', rarity:'covert',     basePrice: 121000, hasStatTrak:true },
-  { id:'awp_wildfire',  name:'AWP | Дикий огонь',        weapon:'sniper', rarity:'covert',     basePrice: 8500, hasStatTrak:true },
-  { id:'awp_neo',       name:'AWP | Нео-нуар',           weapon:'sniper', rarity:'covert',     basePrice: 4200, hasStatTrak:true },
-  { id:'awp_lightning', name:'AWP | Удар молнии',        weapon:'sniper', rarity:'classified', basePrice: 34000, hasStatTrak:true },
-  { id:'awp_queens',    name:'AWP | Гамбит королевы',    weapon:'sniper', rarity:'covert',     basePrice: 2900, hasStatTrak:true },
-  { id:'awp_snake',     name:'AWP | Змеиная кожа',       weapon:'sniper', rarity:'restricted', basePrice: 240,  hasStatTrak:true },
-  { id:'ssg_blood',     name:'SSG 08 | Кровавая паутина',weapon:'sniper', rarity:'restricted', basePrice: 180,  hasStatTrak:true },
-
-  // === Desert Eagle ===
-  { id:'deagle_print',  name:'Desert Eagle | Поток информации', weapon:'pistol', rarity:'covert', basePrice: 2450, hasStatTrak:true },
-  { id:'deagle_blaze',  name:'Desert Eagle | Пламя',     weapon:'pistol', rarity:'restricted', basePrice: 7800, hasStatTrak:true },
-  { id:'deagle_codex',  name:'Desert Eagle | Кодекс',    weapon:'pistol', rarity:'classified', basePrice: 450,  hasStatTrak:true },
-  { id:'deagle_fire',   name:'Desert Eagle | Огнедышащий', weapon:'pistol', rarity:'restricted', basePrice: 220, hasStatTrak:true },
-
-  // === USP-S / Glock / P250 ===
-  { id:'usp_print',     name:'USP-S | Поток информации', weapon:'pistol', rarity:'covert',     basePrice: 2450, hasStatTrak:true },
-  { id:'usp_kill',      name:'USP-S | Подтверждённое убийство', weapon:'pistol', rarity:'covert', basePrice: 4200, hasStatTrak:true },
-  { id:'usp_cyrex',     name:'USP-S | Cyrex',            weapon:'pistol', rarity:'restricted', basePrice: 550,  hasStatTrak:true },
-  { id:'usp_neo',       name:'USP-S | Нео-нуар',         weapon:'pistol', rarity:'covert',     basePrice: 1200, hasStatTrak:true },
-  { id:'glock_fade',    name:'Glock-18 | Градиент',      weapon:'pistol', rarity:'restricted', basePrice: 19000, hasStatTrak:true },
-  { id:'glock_water',   name:'Glock-18 | Элементаль',    weapon:'pistol', rarity:'restricted', basePrice: 600,  hasStatTrak:true },
-  { id:'glock_nuclear', name:'Glock-18 | Ядерный сад',   weapon:'pistol', rarity:'restricted', basePrice: 220,  hasStatTrak:true },
-  { id:'p250_asiimov',  name:'P250 | Азимов',            weapon:'pistol', rarity:'classified', basePrice: 1300, hasStatTrak:true },
-  { id:'fiveseven_monkey', name:'Five-SeveN | Бешеный клоун', weapon:'pistol', rarity:'classified', basePrice: 350, hasStatTrak:true },
-
-  // === Ножи ===
-  { id:'karambit_fade', name:'Karambit | Градиент',      weapon:'knife',  rarity:'rare',       basePrice: 145000, hasStatTrak:true },
-  { id:'karambit_doppler', name:'Karambit | Доплер',     weapon:'knife',  rarity:'rare',       basePrice: 88000,  hasStatTrak:true },
-  { id:'karambit_slaughter', name:'Karambit | Бойня',    weapon:'knife',  rarity:'rare',       basePrice: 68000,  hasStatTrak:true },
-  { id:'karambit_case', name:'Karambit | Поверхностная закалка', weapon:'knife', rarity:'rare', basePrice: 52000, hasStatTrak:true },
-  { id:'butterfly_doppler', name:'Butterfly | Доплер',   weapon:'knife',  rarity:'rare',       basePrice: 125000, hasStatTrak:true },
-  { id:'butterfly_fade', name:'Butterfly | Градиент',    weapon:'knife',  rarity:'rare',       basePrice: 165000, hasStatTrak:true },
-  { id:'butterfly_slaughter', name:'Butterfly | Бойня',  weapon:'knife',  rarity:'rare',       basePrice: 80000,  hasStatTrak:true },
-  { id:'m9_doppler',    name:'M9 Bayonet | Доплер',      weapon:'knife',  rarity:'rare',       basePrice: 82000,  hasStatTrak:true },
-  { id:'m9_fade',       name:'M9 Bayonet | Градиент',    weapon:'knife',  rarity:'rare',       basePrice: 75000,  hasStatTrak:true },
-  { id:'bowie_slaughter', name:'Bowie | Бойня',          weapon:'knife',  rarity:'rare',       basePrice: 34000,  hasStatTrak:true },
-  { id:'flip_doppler',  name:'Flip | Доплер',            weapon:'knife',  rarity:'rare',       basePrice: 56000,  hasStatTrak:true },
+  { id:'p250_sand',      name:'P250 | Песчаная буря',      weapon:'pistol', rarity:'consumer',   basePrice: 3,  hasStatTrak:false },
+  { id:'glock_sand',     name:'Glock-18 | Песочный дюн',   weapon:'pistol', rarity:'consumer',   basePrice: 4,  hasStatTrak:false },
+  { id:'fiveseven_forest',name:'Five-SeveN | Лесной DDPAT',weapon:'pistol', rarity:'consumer',   basePrice: 4,  hasStatTrak:false },
+  { id:'ssg_blue',       name:'SSG 08 | Синий лёд',        weapon:'sniper', rarity:'consumer',   basePrice: 5,  hasStatTrak:false },
+  { id:'mp9_dust',       name:'MP9 | Пыльный',             weapon:'rifle',  rarity:'consumer',   basePrice: 5,  hasStatTrak:false },
+  { id:'galil_dust',     name:'Galil AR | Пустынный',      weapon:'rifle',  rarity:'industrial', basePrice: 6,  hasStatTrak:true  },
+  { id:'mac10_dust',     name:'MAC-10 | Пыльный',          weapon:'rifle',  rarity:'industrial', basePrice: 7,  hasStatTrak:true  },
+  { id:'usp_forest',     name:'USP-S | Лесной',            weapon:'pistol', rarity:'industrial', basePrice: 8,  hasStatTrak:true  },
+  { id:'ak_safari',      name:'AK-47 | Сафари',            weapon:'rifle',  rarity:'industrial', basePrice: 9,  hasStatTrak:true  },
+  { id:'glock_nuclear',  name:'Glock-18 | Ядерный сад',    weapon:'pistol', rarity:'milspec',    basePrice: 15, hasStatTrak:true  },
+  { id:'deagle_fire',    name:'Desert Eagle | Огнедышащий',weapon:'pistol', rarity:'milspec',    basePrice: 22, hasStatTrak:true  },
+  { id:'fiveseven_monkey',name:'Five-SeveN | Бешеный клоун',weapon:'pistol',rarity:'milspec',    basePrice: 35, hasStatTrak:true  },
+  { id:'ssg_blood',      name:'SSG 08 | Кровавая паутина', weapon:'sniper', rarity:'restricted', basePrice: 45, hasStatTrak:true  },
+  { id:'awp_snake',      name:'AWP | Змеиная кожа',        weapon:'sniper', rarity:'restricted', basePrice: 60, hasStatTrak:true  },
+  { id:'usp_cyrex',      name:'USP-S | Cyrex',             weapon:'pistol', rarity:'restricted', basePrice: 80, hasStatTrak:true  },
+  { id:'glock_water',    name:'Glock-18 | Элементаль',     weapon:'pistol', rarity:'restricted', basePrice: 95, hasStatTrak:true  },
+  { id:'deagle_codex',   name:'Desert Eagle | Кодекс',     weapon:'pistol', rarity:'classified', basePrice: 120, hasStatTrak:true },
+  { id:'awp_queens',     name:'AWP | Гамбит королевы',     weapon:'sniper', rarity:'classified', basePrice: 180, hasStatTrak:true },
+  { id:'m4a1s_solitude', name:'M4A1-S | Одиночество',      weapon:'rifle',  rarity:'classified', basePrice: 250, hasStatTrak:true },
+  { id:'ak_slate',       name:'AK-47 | Шифер',             weapon:'rifle',  rarity:'classified', basePrice: 320, hasStatTrak:true },
+  { id:'usp_neo',        name:'USP-S | Нео-нуар',          weapon:'pistol', rarity:'classified', basePrice: 400, hasStatTrak:true },
+  { id:'p250_asiimov',   name:'P250 | Азимов',             weapon:'pistol', rarity:'classified', basePrice: 480, hasStatTrak:true },
+  { id:'ak_redline',     name:'AK-47 | Красная линия',     weapon:'rifle',  rarity:'covert',     basePrice: 850,  hasStatTrak:true },
+  { id:'m4a4_desolate',  name:'M4A4 | Пустынное пространство',weapon:'rifle',rarity:'covert',    basePrice: 1100, hasStatTrak:true },
+  { id:'ak_asiimov',     name:'AK-47 | Азимов',            weapon:'rifle',  rarity:'covert',     basePrice: 1500, hasStatTrak:true },
+  { id:'m4a1s_print',    name:'M4A1-S | Поток информации', weapon:'rifle',  rarity:'covert',     basePrice: 2200, hasStatTrak:true },
+  { id:'ak_empress',     name:'AK-47 | Императрица',       weapon:'rifle',  rarity:'covert',     basePrice: 2800, hasStatTrak:true },
+  { id:'m4a4_asiimov',   name:'M4A4 | Азимов',             weapon:'rifle',  rarity:'covert',     basePrice: 3500, hasStatTrak:true },
+  { id:'ak_nightwish',   name:'AK-47 | Пожелание на ночь', weapon:'rifle',  rarity:'covert',     basePrice: 4200, hasStatTrak:true },
+  { id:'m4a1s_fade',     name:'M4A1-S | Градиент',         weapon:'rifle',  rarity:'covert',     basePrice: 5500, hasStatTrak:true },
+  { id:'awp_asiimov',    name:'AWP | Азимов',              weapon:'sniper', rarity:'covert',     basePrice: 6800, hasStatTrak:true },
+  { id:'ak_bloodsport',  name:'AK-47 | Кровавый спорт',    weapon:'rifle',  rarity:'covert',     basePrice: 8500, hasStatTrak:true },
+  { id:'m4a4_the_emperor',name:'M4A4 | The Emperor',       weapon:'rifle',  rarity:'covert',     basePrice: 9000, hasStatTrak:true },
+  { id:'awp_wildfire',   name:'AWP | Дикий огонь',         weapon:'sniper', rarity:'covert',     basePrice: 11000, hasStatTrak:true },
+  { id:'ak_fire_serp',   name:'AK-47 | Огненный змей',     weapon:'rifle',  rarity:'covert',     basePrice: 15000, hasStatTrak:true },
+  { id:'awp_medusa',     name:'AWP | Медуза',              weapon:'sniper', rarity:'covert',     basePrice: 28000, hasStatTrak:true },
+  { id:'awp_dragon',     name:'AWP | Драконий огонь',      weapon:'sniper', rarity:'covert',     basePrice: 75000, hasStatTrak:true },
+  { id:'karambit_case',  name:'Karambit | Поверхностная закалка', weapon:'knife', rarity:'rare', basePrice: 22000, hasStatTrak:true },
+  { id:'bowie_slaughter',name:'Bowie | Бойня',             weapon:'knife',  rarity:'rare',       basePrice: 34000, hasStatTrak:true },
+  { id:'flip_doppler',   name:'Flip | Доплер',             weapon:'knife',  rarity:'rare',       basePrice: 56000, hasStatTrak:true },
+  { id:'karambit_slaughter',name:'Karambit | Бойня',       weapon:'knife',  rarity:'rare',       basePrice: 68000, hasStatTrak:true },
+  { id:'m9_fade',        name:'M9 Bayonet | Градиент',     weapon:'knife',  rarity:'rare',       basePrice: 75000, hasStatTrak:true },
+  { id:'butterfly_slaughter',name:'Butterfly | Бойня',     weapon:'knife',  rarity:'rare',       basePrice: 80000, hasStatTrak:true },
+  { id:'karambit_doppler',name:'Karambit | Доплер',        weapon:'knife',  rarity:'rare',       basePrice: 88000, hasStatTrak:true },
+  { id:'butterfly_doppler',name:'Butterfly | Доплер',      weapon:'knife',  rarity:'rare',       basePrice: 125000, hasStatTrak:true },
+  { id:'karambit_fade',  name:'Karambit | Градиент',       weapon:'knife',  rarity:'rare',       basePrice: 145000, hasStatTrak:true },
+  { id:'butterfly_fade', name:'Butterfly | Градиент',      weapon:'knife',  rarity:'rare',       basePrice: 165000, hasStatTrak:true },
+  { id:'m4a4_howl',      name:'M4A4 | Вой',                weapon:'rifle',  rarity:'contraband', basePrice: 295000, hasStatTrak:false },
 ];
 
-/* ==================== ИЗНОС ==================== */
 const WEARS = [
   { key:'FN', name:'Прямо с завода',        mult:1.00 },
   { key:'MW', name:'Немного поношенное',     mult:0.65 },
@@ -819,6 +847,11 @@ const WEARS = [
   { key:'WW', name:'Поношенное',             mult:0.30 },
   { key:'BS', name:'Закалённое в боях',      mult:0.22 },
 ];
+
+function calcPrice(basePrice, wearMult, statTrak) {
+  const p = Math.round(basePrice * wearMult);
+  return statTrak ? Math.round(p * 1.35) : p;
+}
 
 function randomWear() {
   const r = Math.random();
@@ -829,24 +862,16 @@ function randomWear() {
   return WEARS[4];
 }
 
-function createSkinInstance(skinDef) {
-  const wear = randomWear();
+function createSkinInstance(skinDef, fixedWear) {
+  const wear = fixedWear || randomWear();
   const statTrak = skinDef.hasStatTrak && Math.random() < 0.10;
-  let price = Math.round(skinDef.basePrice * wear.mult);
-  if (statTrak) price = Math.round(price * 1.35);
+  const price = calcPrice(skinDef.basePrice, wear.mult, statTrak);
   return {
-    skinId: skinDef.id,
-    name: skinDef.name,
-    weapon: skinDef.weapon,
-    rarity: skinDef.rarity,
-    wear: wear.key,
-    wearName: wear.name,
-    statTrak: statTrak,
-    price: price,
+    skinId: skinDef.id, name: skinDef.name, weapon: skinDef.weapon, rarity: skinDef.rarity,
+    wear: wear.key, wearName: wear.name, statTrak: statTrak, price: price,
   };
 }
 
-/* ==================== РЕДКОСТИ ==================== */
 const RARITY_WEIGHTS = {
   consumer:   1000,
   industrial: 300,
@@ -892,51 +917,38 @@ function pickByRarity(pool) {
 function pickSkinFromPool(pool, casePrice) {
   const unprofitable = pool.filter(s => s.basePrice < casePrice);
   const profitable   = pool.filter(s => s.basePrice >= casePrice);
-
   let group;
   if (profitable.length === 0) group = unprofitable;
   else if (unprofitable.length === 0) group = profitable;
   else group = Math.random() < 0.2 ? profitable : unprofitable;
-
-  return pickByRarity(group);
+  return pickByRarity(group) || pool[0];
 }
 
-/* ==================== КЕЙСЫ ==================== */
 const CASES = {
   case10: {
     name: 'Пыльный контейнер',
     price: 10,
-    pool: ['glock_nuclear', 'awp_snake', 'ssg_blood', 'usp_cyrex', 'deagle_fire', 'fiveseven_monkey'],
+    pool: ['p250_sand', 'glock_sand', 'fiveseven_forest', 'ssg_blue', 'mp9_dust', 'galil_dust', 'mac10_dust', 'usp_forest', 'ak_safari'],
   },
   case50: {
     name: 'Выжженный контейнер',
     price: 50,
-    pool: ['glock_nuclear', 'awp_snake', 'ssg_blood', 'usp_cyrex', 'deagle_fire', 'fiveseven_monkey', 'deagle_codex', 'glock_water'],
+    pool: ['glock_nuclear', 'deagle_fire', 'fiveseven_monkey', 'ssg_blood', 'awp_snake'],
   },
   case100: {
     name: 'Золотой контейнер',
     price: 100,
-    pool: ['glock_nuclear', 'awp_snake', 'ssg_blood', 'usp_cyrex', 'fiveseven_monkey', 'deagle_codex', 'glock_water', 'p250_asiimov', 'm4a1s_solitude', 'usp_neo', 'awp_queens'],
+    pool: ['glock_nuclear', 'deagle_fire', 'fiveseven_monkey', 'ssg_blood', 'awp_snake', 'usp_cyrex', 'glock_water', 'deagle_codex'],
   },
   case500: {
     name: 'Кейс пустыни',
     price: 500,
-    pool: ['usp_cyrex', 'glock_water', 'p250_asiimov', 'm4a1s_solitude', 'usp_neo', 'ak_redline', 'ak_asiimov', 'm4a4_asiimov', 'awp_neo', 'awp_queens', 'deagle_blaze'],
+    pool: ['usp_cyrex', 'glock_water', 'deagle_codex', 'awp_queens', 'm4a1s_solitude', 'ak_slate', 'usp_neo', 'p250_asiimov', 'ak_redline'],
   },
   case1000: {
     name: 'Легендарный контейнер',
     price: 1000,
-    pool: ['ak_redline', 'ak_asiimov', 'ak_vulcan', 'ak_nightwish', 'ak_bloodsport', 'ak_fuel', 'ak_empress', 'm4a4_asiimov', 'm4a4_temukau', 'm4a1s_print', 'awp_asiimov', 'awp_wildfire', 'deagle_print', 'usp_print'],
-  },
-  case5000: {
-    name: 'Элитный контейнер',
-    price: 5000,
-    pool: ['ak_bloodsport', 'ak_fuel', 'ak_empress', 'ak_fire_serp', 'm4a4_the_emperor', 'm4a1s_print', 'm4a1s_player2', 'awp_asiimov', 'awp_wildfire', 'awp_medusa', 'deagle_print', 'usp_kill'],
-  },
-  case20000: {
-    name: 'Контейнер пустыни',
-    price: 20000,
-    pool: ['awp_medusa', 'awp_dragon', 'm4a4_howl', 'ak_fire_serp', 'm4a1s_hotrod', 'm4a1s_fade', 'karambit_case', 'karambit_doppler', 'karambit_slaughter', 'butterfly_slaughter', 'm9_doppler', 'm9_fade', 'bowie_slaughter', 'flip_doppler'],
+    pool: ['ak_redline', 'm4a4_desolate', 'ak_asiimov', 'm4a1s_print', 'ak_empress', 'm4a4_asiimov', 'ak_nightwish', 'm4a1s_fade', 'awp_asiimov'],
   },
 };
 
@@ -961,7 +973,6 @@ function renderCasesList() {
   renderIcons(list);
 }
 
-/* ==================== НАВИГАЦИЯ ==================== */
 function openMode(mode) {
   if (mode === 'cases') { showScreen('cases'); renderCasesList(); }
   else if (mode === 'upgrade') { showScreen('upgrade'); resetUpgradeArrow(); updateUpgradeChance(); }
@@ -993,7 +1004,6 @@ function resetUpgradeArrow() {
   void arrow.offsetWidth;
 }
 
-/* ==================== КЕЙСЫ: idle ==================== */
 let idleRaf = null;
 function stopIdleSpin() { if (idleRaf) { cancelAnimationFrame(idleRaf); idleRaf = null; } }
 
@@ -1035,7 +1045,6 @@ function openCaseScreen(caseKey) {
   $('spinResult').className = 'spin-result';
   fillTrack();
   renderCaseDrops();
-
   const caseDef = CASES[caseKey];
   if (caseDef && state.balance < caseDef.price) {
     setBtnBusy($('spinBtn'), 'Не хватает средств');
@@ -1058,7 +1067,7 @@ function fillTrack() {
 
 function getPoolForCurrentCase() {
   if (state.currentCase === 'subcase') {
-    return ALL_SKINS.filter(s => ['consumer', 'industrial', 'milspec'].includes(s.rarity));
+    return ALL_SKINS.filter(s => s.basePrice <= 20);
   }
   const caseDef = CASES[state.currentCase];
   return ALL_SKINS.filter(s => caseDef.pool.includes(s.id));
@@ -1076,7 +1085,6 @@ function makeSlot(skinDef, statTrak) {
   return el;
 }
 
-/* ==================== СПИСОК ДРОПОВ ==================== */
 function renderCaseDrops() {
   const list = $('caseDropsList');
   if (!list) return;
@@ -1086,14 +1094,12 @@ function renderCaseDrops() {
   const drops = [];
   pool.forEach(def => {
     WEARS.forEach(wear => {
-      const price = Math.round(def.basePrice * wear.mult);
-      drops.push({ def, wear, price, statTrak: false });
+      drops.push({ def, wear, price: calcPrice(def.basePrice, wear.mult, false), statTrak: false });
       if (def.hasStatTrak) {
-        drops.push({ def, wear, price: Math.round(price * 1.35), statTrak: true });
+        drops.push({ def, wear, price: calcPrice(def.basePrice, wear.mult, true), statTrak: true });
       }
     });
   });
-
   drops.sort((a, b) => a.price - b.price);
 
   drops.forEach(d => {
@@ -1155,6 +1161,9 @@ async function mainCaseAction() {
   const winSkinDef = pickSkinFromPool(pool, casePrice);
   const winSkin = createSkinInstance(winSkinDef);
 
+  const winWear = WEARS.find(w => w.key === winSkin.wear);
+  winSkin.price = calcPrice(winSkinDef.basePrice, winWear.mult, winSkin.statTrak);
+
   track.innerHTML = '';
   const STOP_INDEX = 50;
   for (let i = 0; i < 60; i++) {
@@ -1183,15 +1192,9 @@ async function mainCaseAction() {
   track.style.transform = `translateX(${targetX}px)`;
 
   const addPromise = api("/api/inventory/add", {
-    user_id: USER_ID,
-    skinId: winSkin.skinId,
-    name: winSkin.name,
-    weapon: winSkin.weapon,
-    rarity: winSkin.rarity,
-    wear: winSkin.wear,
-    wearName: winSkin.wearName,
-    statTrak: winSkin.statTrak,
-    price: winSkin.price,
+    user_id: USER_ID, skinId: winSkin.skinId, name: winSkin.name, weapon: winSkin.weapon,
+    rarity: winSkin.rarity, wear: winSkin.wear, wearName: winSkin.wearName,
+    statTrak: winSkin.statTrak, price: winSkin.price,
   });
 
   setTimeout(async () => {
@@ -1279,17 +1282,17 @@ function pickToTarget() {
   ALL_SKINS.forEach(def => {
     if (def.basePrice <= from.price) return;
     WEARS.forEach(wear => {
+      const price = calcPrice(def.basePrice, wear.mult, false);
       const instance = {
         skinId: def.id, name: def.name, weapon: def.weapon, rarity: def.rarity,
-        wear: wear.key, wearName: wear.name, statTrak: false,
-        price: Math.round(def.basePrice * wear.mult),
+        wear: wear.key, wearName: wear.name, statTrak: false, price: price,
       };
       if (instance.price > from.price) modalCandidates.push({ def, instance });
       if (def.hasStatTrak) {
+        const stPrice = calcPrice(def.basePrice, wear.mult, true);
         const stInstance = {
           skinId: def.id, name: def.name, weapon: def.weapon, rarity: def.rarity,
-          wear: wear.key, wearName: wear.name, statTrak: true,
-          price: Math.round(def.basePrice * wear.mult * 1.35),
+          wear: wear.key, wearName: wear.name, statTrak: true, price: stPrice,
         };
         if (stInstance.price > from.price) modalCandidates.push({ def, instance: stInstance });
       }
@@ -1304,7 +1307,6 @@ function pickToTarget() {
   document.querySelector('.modal-filters').style.display = 'flex';
   $('modalMinPrice').value = '';
   $('modalMaxPrice').value = '';
-  $('modalSort').value = 'asc';
 
   filterModalList();
   $('modalOverlay').classList.add('show');
@@ -1314,7 +1316,7 @@ function filterModalList() {
   const q = ($('modalSearch').value || '').toLowerCase().trim();
   const min = parseInt($('modalMinPrice').value) || 0;
   const max = parseInt($('modalMaxPrice').value) || Infinity;
-  const sort = $('modalSort').value;
+  const sort = state.sortOrder || 'asc';
 
   let list = modalCandidates.filter(c => {
     const nameOk = !q || c.def.name.toLowerCase().includes(q);
@@ -1374,7 +1376,8 @@ function updateUpgradeChance() {
   displayChance = Math.max(displayChance, 1);
   displayChance = Math.round(displayChance);
 
-  state.upgrade.chance = displayChance * 0.8;
+  // Реальный шанс на 10% ниже показанного: 50% → 45%
+  state.upgrade.chance = displayChance * 0.9;
 
   $('upChance').textContent = displayChance + '%';
   $('upgradePercent').innerHTML = displayChance + '<span> %</span>';
@@ -1384,7 +1387,6 @@ function updateUpgradeChance() {
 async function doUpgrade() {
   if (!state.upgrade.fromSkin || !state.upgrade.toSkin) { toastText('Выбери оба скина', 'lose'); return; }
   if (state.isSpinning) return;
-
   const btn = $('upgradeBtn');
   if (btn.disabled) return;
 
@@ -1393,7 +1395,7 @@ async function doUpgrade() {
 
   const arrow = $('upgradeArrow');
   const success = Math.random() * 100 < state.upgrade.chance;
-  const displayChance = Math.round(state.upgrade.chance / 0.8);
+  const displayChance = Math.round(state.upgrade.chance / 0.9);
 
   let finalAngle;
   const extraSpins = 3;
@@ -1414,7 +1416,6 @@ async function doUpgrade() {
   arrow.style.transition = 'none';
   arrow.style.transform = `translateX(-50%) rotate(0deg)`;
   void arrow.offsetWidth;
-
   arrow.style.transition = `transform 2.8s cubic-bezier(0.15, 0.7, 0.15, 1)`;
   arrow.style.transform = `translateX(-50%) rotate(${finalAngle}deg)`;
 
@@ -1427,15 +1428,9 @@ async function doUpgrade() {
 
   const addPromise = success
     ? api("/api/inventory/add", {
-        user_id: USER_ID,
-        skinId: toSkin.skinId,
-        name: toSkin.name,
-        weapon: toSkin.weapon,
-        rarity: toSkin.rarity,
-        wear: toSkin.wear,
-        wearName: toSkin.wearName,
-        statTrak: toSkin.statTrak,
-        price: toSkin.price,
+        user_id: USER_ID, skinId: toSkin.skinId, name: toSkin.name, weapon: toSkin.weapon,
+        rarity: toSkin.rarity, wear: toSkin.wear, wearName: toSkin.wearName,
+        statTrak: toSkin.statTrak, price: toSkin.price,
       })
     : Promise.resolve(null);
 
@@ -1476,7 +1471,6 @@ async function doUpgrade() {
     $('upToWear').textContent = '—';
     $('upToPrice').textContent = '0 ₽';
     updateUpgradeChance();
-
     updateBalance();
     setBtnReady(btn, 'Прокачать');
   }, 2900);
@@ -1519,7 +1513,6 @@ function renderInventory() {
 async function sellSkin(idx) {
   const skin = state.inventory[idx];
   if (!skin) return;
-
   if (skin.id) {
     const res = await api("/api/inventory/sell", { user_id: USER_ID, id: skin.id });
     if (!res || !res.ok) { toastText('Ошибка сервера', 'lose'); return; }
@@ -1533,32 +1526,14 @@ async function sellSkin(idx) {
     updateBalance();
     toastText(`+${fmt(skin.price)} ₽`, 'win');
   }
-
   state.inventory.splice(idx, 1);
   renderInventory();
   updateBalance();
 }
 
-function withdrawSkin(idx) { toastText('Заявка отправлена', 'win'); }
-
-/* ==================== ПРОМОКОД / ВЫВОД ==================== */
-function applyPromo() {
-  const code = $('promoInput').value.trim();
-  if (!code) { toastText('Введи код', 'lose'); return; }
-  toastText('Промокод скоро будет доступен', 'lose');
-}
-
-function withdrawOpen() { toastText('Вывод скоро будет доступен', 'lose'); }
-
-/* ==================== INIT ==================== */
-(async function init() {
-  renderIcons();
-  updateBalance();
-
-  await Promise.all([loadBalance(), loadInventory(), loadBestDrop()]);
-  updateBalance();
-  renderInventory();
-})();
-</script>
-</body>
-</html>
+/* ==================== ВЫВОД СКИНА ==================== */
+function withdrawSkin(idx) {
+  const skin = state.inventory[idx];
+  if (!skin) return;
+  state.withdrawSkin = skin;
+  $('wdSteam').value = "";
