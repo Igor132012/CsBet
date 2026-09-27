@@ -143,8 +143,9 @@
     letter-spacing:0.5px;
   }
   .mode-card-icon {
-    width:64px; height:52px; color:var(--gold2); opacity:0.9;
+    width:64px; height:52px; color:var(--gold2); opacity:0.95;
     position:relative; z-index:1; align-self:flex-end;
+    display:flex; align-items:center; justify-content:center;
   }
   .mode-card-big .mode-card-icon {
     width:110px; height:80px; align-self:center;
@@ -727,13 +728,7 @@
         <div class="mode-card-desc">Открой контейнер</div>
       </div>
       <div class="mode-card-icon">
-        <svg viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">
-          <rect x="10" y="25" width="80" height="50" rx="4"/>
-          <path d="M10 40 H90"/>
-          <rect x="42" y="33" width="16" height="14" rx="2" fill="rgba(255,217,102,0.15)"/>
-          <circle cx="50" cy="40" r="2.5" fill="currentColor"/>
-          <path d="M25 25 V18 H75 V25"/>
-        </svg>
+        <img src="case.png" alt="">
       </div>
     </button>
 
@@ -743,8 +738,8 @@
           <div class="mode-card-title">Апгрейд</div>
           <div class="mode-card-desc">Обменяй скины</div>
         </div>
-        <div class="mode-card-icon" id="upgradeIcon">
-          <!-- Пистолет → стрелка → автомат: заполнится через JS картинками gun.png и rifle.png -->
+        <div class="mode-card-icon">
+          <img src="upgrade.png" alt="">
         </div>
       </button>
 
@@ -754,15 +749,7 @@
           <div class="mode-card-desc">Мои скины</div>
         </div>
         <div class="mode-card-icon">
-          <!-- Рюкзак -->
-          <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">
-            <path d="M28 35 V22 Q28 12 38 12 H62 Q72 12 72 22 V35"/>
-            <rect x="18" y="35" width="64" height="55" rx="8"/>
-            <rect x="38" y="58" width="24" height="14" rx="3"/>
-            <path d="M50 58 V48"/>
-            <circle cx="50" cy="65" r="2" fill="currentColor"/>
-            <path d="M18 45 H82"/>
-          </svg>
+          <img src="inventory.png" alt="">
         </div>
       </button>
     </div>
@@ -774,10 +761,7 @@
           <div class="mode-card-desc">Мой аккаунт</div>
         </div>
         <div class="mode-card-icon" style="width:60px;height:60px;align-self:center;">
-          <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round">
-            <circle cx="50" cy="35" r="16"/>
-            <path d="M20 88 Q20 60 50 60 Q80 60 80 88"/>
-          </svg>
+          <img src="profile.png" alt="">
         </div>
       </button>
     </div>
@@ -961,21 +945,6 @@ function renderIcons(root = document) {
   });
 }
 
-/* ==================== ИКОНКА АПГРЕЙДА (gun + rifle) ==================== */
-(function renderUpgradeIcon() {
-  const box = document.getElementById('upgradeIcon');
-  if (!box) return;
-  box.innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;width:100%;height:100%;gap:2px;">
-      <img src="${IMG_GUN}" alt="" style="height:70%;width:42%;object-fit:contain;">
-      <svg viewBox="0 0 20 20" style="width:16%;height:30%;color:var(--gold2);" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 10 H16 M12 6 L16 10 L12 14"/>
-      </svg>
-      <img src="${IMG_RIFLE}" alt="" style="height:70%;width:42%;object-fit:contain;">
-    </div>
-  `;
-})();
-
 /* ==================== СОСТОЯНИЕ ==================== */
 const state = {
   balance: 1000,
@@ -1141,7 +1110,7 @@ function createSkinInstance(skinDef) {
   };
 }
 
-/* ==================== РЕДКОСТИ (очень низкие шансы) ==================== */
+/* ==================== РЕДКОСТИ ==================== */
 const RARITY_WEIGHTS = {
   consumer:   120,
   industrial: 40,
@@ -1313,7 +1282,6 @@ function openCaseScreen(caseKey) {
   fillTrack();
   renderCaseDrops();
 
-  // Проверяем, хватает ли денег на кейс — если нет, блокируем кнопку
   const caseDef = CASES[caseKey];
   if (caseDef && !canAfford(caseDef.price)) {
     $('spinBtn').disabled = true;
@@ -1476,6 +1444,13 @@ function mainCaseAction() {
     state.inventory.push(winSkin);
     toastText(`Получено: ${winSkin.name}`, 'win');
     updateBalance();
+
+    // Если денег на повторный кейс не хватает — блокируем кнопку
+    if (!isFree && caseDef && !canAfford(caseDef.price)) {
+      btn.disabled = true;
+      btn.classList.add('disabled');
+      btn.textContent = 'Не хватает средств';
+    }
   }, duration + 100);
 }
 
