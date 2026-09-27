@@ -689,10 +689,6 @@ function updateBalance() {
   updateBestWin();
 }
 
-function registerDrop(skin) {
-  if (!state.bestDrop || skin.price > state.bestDrop.price) state.bestDrop = skin;
-}
-
 function updateBestWin() {
   const box = $('bestWin');
   if (!box) return;
@@ -736,6 +732,15 @@ async function changeBalance(amount) {
     return true;
   }
   return false;
+}
+
+/* ==================== ЛУЧШИЙ ДРОП (СЕРВЕР) ==================== */
+async function loadBestDrop() {
+  const res = await api("/api/best_drop", { user_id: USER_ID });
+  if (res && res.best) {
+    state.bestDrop = res.best;
+    updateBestWin();
+  }
 }
 
 /* ==================== КАТАЛОГ ==================== */
@@ -976,22 +981,31 @@ function startIdleSpin() {
   idleRaf = requestAnimationFrame(frame);
 }
 
+function setBtnBusy(btn, text) {
+  if (!btn) return;
+  btn.disabled = true;
+  btn.classList.add('disabled');
+  if (text) btn.textContent = text;
+}
+function setBtnReady(btn, text) {
+  if (!btn) return;
+  btn.disabled = false;
+  btn.classList.remove('disabled');
+  if (text) btn.textContent = text;
+}
+
 function openCaseScreen(caseKey) {
   state.currentCase = caseKey;
   showScreen('caseOpen');
   updateBalance();
-  $('spinBtn').textContent = 'Открыть';
-  $('spinBtn').disabled = false;
-  $('spinBtn').classList.remove('disabled');
+  setBtnReady($('spinBtn'), 'Открыть');
   $('spinResult').className = 'spin-result';
   fillTrack();
   renderCaseDrops();
 
   const caseDef = CASES[caseKey];
   if (caseDef && state.balance < caseDef.price) {
-    $('spinBtn').disabled = true;
-    $('spinBtn').classList.add('disabled');
-    $('spinBtn').textContent = 'Не хватает средств';
+    setBtnBusy($('spinBtn'), 'Не хватает средств');
   }
 }
 
@@ -1073,25 +1087,36 @@ function renderCaseDrops() {
 
 async function mainCaseAction() {
   if (state.isSpinning) return;
+  const btn = $('spinBtn');
+  if (btn.disabled) return;
 
   const caseDef = CASES[state.currentCase];
   const isFree = state.currentCase === 'subcase';
   const casePrice = caseDef ? caseDef.price : 0;
 
+  // Блокируем кнопку сразу
+  setBtnBusy(btn, 'Крутим...');
+  state.isSpinning = true;
+
+  // Списываем баланс
   if (!isFree && caseDef) {
-    if (state.balance < caseDef.price) { toastText('Недостаточно средств', 'lose'); return; }
+    if (state.balance < caseDef.price) {
+      setBtnBusy(btn, 'Не хватает средств');
+      state.isSpinning = false;
+      toastText('Недостаточно средств', 'lose');
+      return;
+    }
     const ok = await changeBalance(-caseDef.price);
-    if (!ok) { toastText('Ошибка сервера', 'lose'); return; }
+    if (!ok) {
+      setBtnReady(btn, 'Открыть');
+      state.isSpinning = false;
+      toastText('Ошибка сервера', 'lose');
+      return;
+    }
     toastText(`−${fmt(caseDef.price)} ₽`, 'lose');
   }
 
-  state.isSpinning = true;
-  const btn = $('spinBtn');
-  btn.disabled = true;
-  btn.classList.add('disabled');
-  btn.textContent = 'Крутим...';
   $('spinResult').className = 'spin-result';
-
   stopIdleSpin();
 
   const track = $('track');
@@ -1126,37 +1151,52 @@ async function mainCaseAction() {
   track.style.transition = `transform ${duration}ms cubic-bezier(0.12, 0.85, 0.18, 1)`;
   track.style.transform = `translateX(${targetX}px)`;
 
-  setTimeout(async () => {
-    state.isSpinning = false;
-    btn.disabled = false;
-    btn.classList.remove('disabled');
-    btn.textContent = 'Открыть';
-    $('spinValue').textContent = `${winSkin.price} ₽`;
-    $('spinResult').className = 'spin-result show';
+  // Записываем на сервер СРАЗУ после старта анимации, чтобы к моменту
+  // её окончания данные уже были в БД
+  const addPromise = api("/api/inventory/add", {
+    user_id: USER_ID,
+    skinId: winSkin.skinId,
+    name: winSkin.name,
+    weapon: winSkin.weapon,
+    rarity: winSkin.rarity,
+    wear: winSkin.wear,
+    wearName: winSkin.wearName,
+    statTrak: winSkin.statTrak,
+    price: winSkin.price,
+  });
 
-    // Сохраняем на сервере
-    const addRes = await api("/api/inventory/add", {
-      user_id: USER_ID,
-      skinId: winSkin.skinId,
-      name: winSkin.name,
-      weapon: winSkin.weapon,
-      rarity: winSkin.rarity,
-      wear: winSkin.wear,
-      wearName: winSkin.wearName,
-      statTrak: winSkin.statTrak,
-      price: winSkin.price,
-    });
-    if (addRes && addRes.id) winSkin.id = addRes.id;
+  setTimeout(async () => {
+    const addRes = await addPromise;
+    state.isSpinning = false;
+
+    if (!addRes || !addRes.id) {
+      // Не смогли записать — не показываем дроп как выигранный
+      $('spinValue').textContent = '—';
+      $('spinResult').className = 'spin-result show';
+      toastText('Ошибка сохранения', 'lose');
+      setBtnReady(btn, 'Открыть');
+      return;
+    }
+
+    winSkin.id = addRes.id;
     state.inventory.unshift(winSkin);
 
-    registerDrop(winSkin);
+    // Обновляем лучший дроп локально + грузим с сервера на всякий случай
+    if (!state.bestDrop || winSkin.price > state.bestDrop.price) {
+      state.bestDrop = { ...winSkin };
+      updateBestWin();
+    }
+    loadBestDrop();
+
+    $('spinValue').textContent = `${winSkin.price} ₽`;
+    $('spinResult').className = 'spin-result show';
     toastText(`Получено: ${winSkin.name}`, 'win');
     updateBalance();
 
     if (!isFree && caseDef && state.balance < caseDef.price) {
-      btn.disabled = true;
-      btn.classList.add('disabled');
-      btn.textContent = 'Не хватает средств';
+      setBtnBusy(btn, 'Не хватает средств');
+    } else {
+      setBtnReady(btn, 'Открыть');
     }
   }, duration + 100);
 }
@@ -1314,15 +1354,15 @@ function updateUpgradeChance() {
   $('upgradeCircle').style.setProperty('--p', displayChance + '%');
 }
 
-function doUpgrade() {
+async function doUpgrade() {
   if (!state.upgrade.fromSkin || !state.upgrade.toSkin) { toastText('Выбери оба скина', 'lose'); return; }
   if (state.isSpinning) return;
-  state.isSpinning = true;
 
   const btn = $('upgradeBtn');
-  btn.disabled = true;
-  btn.classList.add('disabled');
-  btn.textContent = 'Крутим...';
+  if (btn.disabled) return;
+
+  state.isSpinning = true;
+  setBtnBusy(btn, 'Крутим...');
 
   const arrow = $('upgradeArrow');
   const success = Math.random() * 100 < state.upgrade.chance;
@@ -1351,24 +1391,16 @@ function doUpgrade() {
   arrow.style.transition = `transform 2.8s cubic-bezier(0.15, 0.7, 0.15, 1)`;
   arrow.style.transform = `translateX(-50%) rotate(${finalAngle}deg)`;
 
-  setTimeout(async () => {
-    state.isSpinning = false;
-    btn.disabled = false;
-    btn.classList.remove('disabled');
-    btn.textContent = 'Прокачать';
+  const fromSkin = state.upgrade.fromSkin;
+  const toSkin   = state.upgrade.toSkin;
 
-    const fromSkin = state.upgrade.fromSkin;
-    const toSkin   = state.upgrade.toSkin;
+  // Параллельно анимации — удаляем исходник, добавляем целевой (если успех)
+  const removePromise = fromSkin.id
+    ? api("/api/inventory/remove", { user_id: USER_ID, id: fromSkin.id })
+    : Promise.resolve({ ok: true });
 
-    // Убираем исходный скин с сервера
-    if (fromSkin.id) {
-      await api("/api/inventory/remove", { user_id: USER_ID, id: fromSkin.id });
-    }
-    const idx = state.inventory.findIndex(s => s.id === fromSkin.id);
-    if (idx >= 0) state.inventory.splice(idx, 1);
-
-    if (success) {
-      const addRes = await api("/api/inventory/add", {
+  const addPromise = success
+    ? api("/api/inventory/add", {
         user_id: USER_ID,
         skinId: toSkin.skinId,
         name: toSkin.name,
@@ -1378,10 +1410,31 @@ function doUpgrade() {
         wearName: toSkin.wearName,
         statTrak: toSkin.statTrak,
         price: toSkin.price,
-      });
-      if (addRes && addRes.id) toSkin.id = addRes.id;
+      })
+    : Promise.resolve(null);
+
+  setTimeout(async () => {
+    await removePromise;
+    const addRes = await addPromise;
+    state.isSpinning = false;
+
+    // локально
+    const idx = state.inventory.findIndex(s => s.id === fromSkin.id);
+    if (idx >= 0) state.inventory.splice(idx, 1);
+
+    if (success) {
+      if (!addRes || !addRes.id) {
+        toastText('Ошибка сохранения', 'lose');
+        setBtnReady(btn, 'Прокачать');
+        return;
+      }
+      toSkin.id = addRes.id;
       state.inventory.unshift(toSkin);
-      registerDrop(toSkin);
+      if (!state.bestDrop || toSkin.price > state.bestDrop.price) {
+        state.bestDrop = { ...toSkin };
+        updateBestWin();
+      }
+      loadBestDrop();
       toastText(`Успешно: ${toSkin.name}`, 'win');
     } else {
       toastText('Провал', 'lose');
@@ -1400,6 +1453,7 @@ function doUpgrade() {
     updateUpgradeChance();
 
     updateBalance();
+    setBtnReady(btn, 'Прокачать');
   }, 2900);
 }
 
@@ -1476,8 +1530,7 @@ function withdrawOpen() { toastText('Вывод скоро будет досту
   renderIcons();
   updateBalance();
 
-  await loadBalance();
-  await loadInventory();
+  await Promise.all([loadBalance(), loadInventory(), loadBestDrop()]);
   updateBalance();
   renderInventory();
 })();
