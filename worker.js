@@ -7,7 +7,7 @@ const CORS = {
 };
 const json = (d, s = 200) => new Response(JSON.stringify(d), { status: s, headers: CORS });
 
-const ADMIN_TOKEN = "cs2_secret_change_me"; // ← поменяй на свой секрет
+const ADMIN_TOKEN = "cs2_secret_change_me";
 
 export default {
   async fetch(request, env) {
@@ -182,7 +182,6 @@ export default {
           loseSum += Number(from_price) || 0;
         }
 
-        // Сброс, если проиграл больше, чем выиграл
         if (loseSum > winSum) {
           winCount = 0;
           winSum = 0;
@@ -194,6 +193,48 @@ export default {
         ).bind(winCount, winSum, loseSum, String(user_id)).run();
 
         return json({ win_count: winCount, win_sum: winSum, lose_sum: loseSum });
+      }
+
+      // ============ CASE STATS ============
+      if (path === "/api/case_stats" && request.method === "POST") {
+        const { user_id } = await request.json();
+        if (!user_id) return json({ error: "bad payload" }, 400);
+        let row = await env.DB.prepare("SELECT * FROM case_stats WHERE user_id=?").bind(String(user_id)).first();
+        if (!row) {
+          await env.DB.prepare("INSERT INTO case_stats (user_id,total_opens,opens_since_win) VALUES (?,0,0)").bind(String(user_id)).run();
+          row = { total_opens: 0, opens_since_win: 0 };
+        }
+        return json({
+          total_opens: Number(row.total_opens) || 0,
+          opens_since_win: Number(row.opens_since_win) || 0,
+        });
+      }
+
+      if (path === "/api/case_stats/update" && request.method === "POST") {
+        const { user_id, is_win } = await request.json();
+        if (!user_id) return json({ error: "bad payload" }, 400);
+
+        let row = await env.DB.prepare("SELECT * FROM case_stats WHERE user_id=?").bind(String(user_id)).first();
+        if (!row) {
+          await env.DB.prepare("INSERT INTO case_stats (user_id,total_opens,opens_since_win) VALUES (?,0,0)").bind(String(user_id)).run();
+          row = { total_opens: 0, opens_since_win: 0 };
+        }
+
+        let totalOpens = (Number(row.total_opens) || 0) + 1;
+        let opensSinceWin = is_win ? 0 : (Number(row.opens_since_win) || 0) + 1;
+
+        await env.DB.prepare(
+          "UPDATE case_stats SET total_opens=?, opens_since_win=? WHERE user_id=?"
+        ).bind(totalOpens, opensSinceWin, String(user_id)).run();
+
+        return json({ total_opens: totalOpens, opens_since_win: opensSinceWin });
+      }
+
+      if (path === "/api/case_stats/reset" && request.method === "POST") {
+        const { user_id } = await request.json();
+        if (!user_id) return json({ error: "bad payload" }, 400);
+        await env.DB.prepare("UPDATE case_stats SET total_opens=0, opens_since_win=0 WHERE user_id=?").bind(String(user_id)).run();
+        return json({ ok: true });
       }
 
       // ============ PROMOS ============
@@ -262,9 +303,7 @@ export default {
           String(steam_profile), String(trade_link)
         ).run();
 
-        // Сразу удаляем из инвентаря
         await env.DB.prepare("DELETE FROM inventory WHERE id=? AND user_id=?").bind(Number(inventory_id), String(user_id)).run();
-
         return json({ ok: true, id: r.meta.last_row_id });
       }
 
