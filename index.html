@@ -14,30 +14,15 @@
   }
 
   :root {
-    --bg:      #2a231b;
-    --bg2:     #352c22;
-    --bg3:     #42382a;
-    --border:  #5c4d38;
-    --border2: #7a6850;
-    --sand:    #d9c49a;
-    --text:    #f0e6d2;
-    --text2:   #b8a888;
-    --text3:   #8a7754;
-    --accent:  #d46b4a;
-    --gold:    #e0b84a;
-    --gold2:   #ffd966;
-    --green:   #6fbf4a;
-    --danger:  #c44a3a;
+    --bg:#2a231b; --bg2:#352c22; --bg3:#42382a;
+    --border:#5c4d38; --border2:#7a6850;
+    --sand:#d9c49a; --text:#f0e6d2; --text2:#b8a888; --text3:#8a7754;
+    --accent:#d46b4a; --gold:#e0b84a; --gold2:#ffd966;
+    --green:#6fbf4a; --danger:#c44a3a;
 
-    --r-consumer:   #b0c3d9;
-    --r-industrial: #5e98d9;
-    --r-milspec:    #4b69ff;
-    --r-restricted: #8847ff;
-    --r-classified: #d32ce6;
-    --r-covert:     #eb4b4b;
-    --r-rare:       #ffd700;
-    --r-contraband: #e4ae39;
-    --r-stattrak:   #cf6a32;
+    --r-consumer:#b0c3d9; --r-industrial:#5e98d9; --r-milspec:#4b69ff;
+    --r-restricted:#8847ff; --r-classified:#d32ce6; --r-covert:#eb4b4b;
+    --r-rare:#ffd700; --r-contraband:#e4ae39; --r-stattrak:#cf6a32;
   }
 
   #bg {
@@ -51,57 +36,37 @@
   .screen {
     position:fixed; inset:0; display:flex; flex-direction:column;
     z-index:1; transition:opacity .25s; background:transparent;
-    overflow-y: auto; -webkit-overflow-scrolling: touch;
+    overflow-y:auto; -webkit-overflow-scrolling:touch;
   }
   .screen.hidden { opacity:0; pointer-events:none; }
 
-  .ico {
-    display:inline-block; width:1em; height:1em; vertical-align:-0.12em;
-    flex-shrink:0; line-height:1;
-  }
+  .ico { display:inline-block; width:1em; height:1em; vertical-align:-0.12em; flex-shrink:0; line-height:1; }
   .ico svg { width:100%; height:100%; display:block; }
   .ico img { width:100%; height:100%; object-fit:contain; display:block; }
 
   #menu {
-    padding:32px 20px 48px;
-    text-align:center;
-    position:relative; z-index:2;
+    padding:32px 20px 48px; text-align:center; position:relative; z-index:2;
     display:flex; flex-direction:column; align-items:center;
   }
-  .brand {
-    font-size:12px; color:var(--text3); letter-spacing:8px; text-transform:uppercase;
-    margin-bottom:28px; font-weight:600;
-  }
+  .brand { font-size:12px; color:var(--text3); letter-spacing:8px; text-transform:uppercase; margin-bottom:28px; font-weight:600; }
   .brand span { color:var(--accent); }
   .balance-block { margin-bottom:28px; }
-  .balance-label {
-    font-size:10px; color:var(--text3); letter-spacing:4px; text-transform:uppercase;
-    margin-bottom:10px;
-  }
-  .balance-value {
-    font-size:52px; font-weight:200; letter-spacing:-2px;
-    color:var(--gold2); font-variant-numeric:tabular-nums;
-  }
+  .balance-label { font-size:10px; color:var(--text3); letter-spacing:4px; text-transform:uppercase; margin-bottom:10px; }
+  .balance-value { font-size:52px; font-weight:200; letter-spacing:-2px; color:var(--gold2); font-variant-numeric:tabular-nums; }
 
   .modes { display:flex; flex-direction:column; gap:12px; width:100%; max-width:360px; }
   .mode-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   .mode-card {
     border:1px solid var(--border2);
     background:linear-gradient(135deg, rgba(66,56,42,0.9), rgba(53,44,34,0.7));
-    border-radius:16px;
-    padding:18px;
-    color:var(--text); cursor:pointer;
+    border-radius:16px; padding:18px; color:var(--text); cursor:pointer;
     display:flex; flex-direction:column; justify-content:space-between;
     text-align:left; font-family:inherit;
     transition:border-color .2s, transform .15s, box-shadow .2s;
-    position:relative; overflow:hidden;
-    min-height:130px;
+    position:relative; overflow:hidden; min-height:130px;
   }
   .mode-card-big { min-height:160px; flex-direction:row; align-items:center; gap:14px; }
-  .mode-card:active {
-    border-color:var(--accent); transform:scale(0.98);
-    box-shadow:0 0 24px rgba(212,107,74,0.25);
-  }
+  .mode-card:active { border-color:var(--accent); transform:scale(0.98); box-shadow:0 0 24px rgba(212,107,74,0.25); }
   .mode-card::before {
     content:""; position:absolute; inset:0;
     background:radial-gradient(circle at 70% 30%, rgba(212,107,74,0.12), transparent 60%);
@@ -120,60 +85,35 @@
 
   .topbar {
     padding:18px 22px; display:flex; justify-content:space-between; align-items:center;
-    border-bottom:1px solid var(--border); position:relative; z-index:2;
-    flex-shrink: 0;
+    border-bottom:1px solid var(--border); position:relative; z-index:2; flex-shrink:0;
   }
-  .close-btn {
-    background:transparent; border:none; color:var(--text3);
-    cursor:pointer; padding:8px; line-height:1;
-    display:flex; align-items:center; justify-content:center;
-  }
+  .close-btn { background:transparent; border:none; color:var(--text3); cursor:pointer; padding:8px; line-height:1; display:flex; align-items:center; justify-content:center; }
   .close-btn:active { color:var(--accent); }
   .close-btn .ico { font-size:20px; }
   .topbar-balance { color:var(--gold2); font-size:15px; font-variant-numeric:tabular-nums; font-weight:300; }
 
-  /* === КЕЙСЫ === */
-  .cases-list {
-    flex:1; padding:24px; display:flex; flex-direction:column;
-    gap:14px; overflow-y:auto; position:relative; z-index:2;
-  }
+  .cases-list { flex:1; padding:24px; display:flex; flex-direction:column; gap:14px; overflow-y:auto; position:relative; z-index:2; }
   .case-item {
     border:1px solid var(--border2); background:linear-gradient(180deg, var(--bg3), var(--bg2));
-    border-radius:12px;
-    padding:22px 24px; color:var(--text); cursor:pointer;
+    border-radius:12px; padding:22px 24px; color:var(--text); cursor:pointer;
     display:flex; justify-content:space-between; align-items:center;
     transition:border-color .2s; font-family:inherit; text-align:left;
     position:relative; overflow:hidden;
   }
-  .case-item::before {
-    content:""; position:absolute; left:0; top:0; bottom:0; width:3px;
-    background:linear-gradient(180deg, var(--sand), var(--accent));
-    opacity:0.7;
-  }
+  .case-item::before { content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:linear-gradient(180deg, var(--sand), var(--accent)); opacity:0.7; }
   .case-item:active { border-color:var(--accent); }
   .case-item .info .name { font-size:15px; letter-spacing:1px; font-weight:600; color:var(--sand); }
   .case-item .price { font-size:15px; color:var(--gold2); font-variant-numeric:tabular-nums; flex-shrink:0; }
   .case-item.case-sub { border-color:var(--green); }
 
-  /* === ОТКРЫТИЕ КЕЙСА === */
-  #caseOpen { overflow: hidden; }
-  .roulette-stage {
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    position:relative; overflow:hidden; z-index:2;
-    padding:16px 0; flex-shrink:0;
-  }
+  #caseOpen { overflow:hidden; }
+  .roulette-stage { display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative; overflow:hidden; z-index:2; padding:16px 0; flex-shrink:0; }
   .roulette { position:relative; width:100%; height:120px; overflow:hidden; }
-  .roulette::before, .roulette::after {
-    content:""; position:absolute; top:0; bottom:0; width:70px; z-index:4;
-    pointer-events:none;
-  }
+  .roulette::before, .roulette::after { content:""; position:absolute; top:0; bottom:0; width:70px; z-index:4; pointer-events:none; }
   .roulette::before { left:0; background:linear-gradient(to right, var(--bg) 20%, transparent); }
   .roulette::after { right:0; background:linear-gradient(to left, var(--bg) 20%, transparent); }
 
-  .track {
-    position:absolute; top:0; left:0; height:100%;
-    display:flex; align-items:center; will-change:transform;
-  }
+  .track { position:absolute; top:0; left:0; height:100%; display:flex; align-items:center; will-change:transform; }
   .slot {
     width:100px; height:110px; margin:0 5px; flex-shrink:0;
     border:1px solid var(--border); border-radius:8px;
@@ -201,14 +141,6 @@
   .slot.covert     { border-color:var(--r-covert); color:var(--r-covert); }
   .slot.rare       { border-color:var(--r-rare); color:var(--r-rare); }
   .slot.contraband { border-color:var(--r-contraband); color:var(--r-contraband); }
-  .slot.consumer .slot-img { color:var(--r-consumer); }
-  .slot.industrial .slot-img { color:var(--r-industrial); }
-  .slot.milspec .slot-img { color:var(--r-milspec); }
-  .slot.restricted .slot-img { color:var(--r-restricted); }
-  .slot.classified .slot-img { color:var(--r-classified); }
-  .slot.covert .slot-img { color:var(--r-covert); }
-  .slot.rare .slot-img { color:var(--r-rare); }
-  .slot.contraband .slot-img { color:var(--r-contraband); }
 
   .pointer {
     position:absolute; top:50%; left:50%;
@@ -216,89 +148,87 @@
     width:2px; height:130px; background:var(--accent); z-index:5; border-radius:1px;
   }
 
-  .spin-result { text-align:center; margin-top:20px; opacity:0; transition:opacity .3s; min-height: 40px; }
+  .spin-result { text-align:center; margin-top:20px; opacity:0; transition:opacity .3s; min-height:40px; }
   .spin-result.show { opacity:1; }
   .spin-result .label { font-size:9px; color:var(--text3); letter-spacing:4px; text-transform:uppercase; margin-bottom:10px; }
   .spin-result .val { font-size:36px; font-weight:200; color:var(--gold2); font-variant-numeric:tabular-nums; }
 
-  /* === СПИСОК ДРОПОВ === */
   .case-drops {
-    flex: 1; overflow-y: auto;
-    padding: 16px 14px 20px;
-    border-top: 1px solid var(--border);
-    background: rgba(0,0,0,0.25);
-    position: relative; z-index: 2;
-    -webkit-overflow-scrolling: touch;
+    flex:1; overflow-y:auto;
+    padding:16px 14px 20px;
+    border-top:1px solid var(--border);
+    background:rgba(0,0,0,0.25);
+    position:relative; z-index:2;
+    -webkit-overflow-scrolling:touch;
   }
   .case-drops-title {
-    font-size: 9px; color: var(--text3);
-    letter-spacing: 4px; text-transform: uppercase;
-    margin-bottom: 12px; padding-left: 4px;
+    font-size:9px; color:var(--text3);
+    letter-spacing:4px; text-transform:uppercase;
+    margin-bottom:12px; padding-left:4px;
   }
-  .case-drops-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .case-drops-list { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   .drop-item {
-    position: relative;
-    padding: 8px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    background: linear-gradient(160deg, rgba(66,56,42,0.85), rgba(40,32,22,0.9));
-    display: flex; flex-direction: column;
-    overflow: hidden;
-    min-height: 180px;
+    position:relative;
+    padding:8px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:linear-gradient(160deg, rgba(66,56,42,0.85), rgba(40,32,22,0.9));
+    display:flex; flex-direction:column;
+    overflow:hidden;
+    min-height:180px;
   }
   .drop-item::after {
-    content: ""; position: absolute;
-    left: 0; right: 0; bottom: 0;
-    height: 3px;
-    background: var(--drop-color, var(--border2));
+    content:""; position:absolute;
+    left:0; right:0; bottom:0;
+    height:3px;
+    background:var(--drop-color, var(--border2));
   }
   .drop-price-badge {
-    position: absolute; top: 8px; left: 8px;
-    color: var(--gold2); font-size: 11px; font-weight: 700;
-    z-index: 3; text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    position:absolute; top:8px; left:8px;
+    color:var(--gold2); font-size:11px; font-weight:700;
+    z-index:3; text-shadow:0 1px 3px rgba(0,0,0,0.9);
   }
-  /* WEAR выше, ST ниже — как просил */
   .drop-wear-badge {
-    position: absolute; top: 8px; right: 8px;
-    color: var(--sand); font-size: 10px; font-weight: 600;
-    z-index: 3; text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    position:absolute; top:8px; right:8px;
+    color:var(--sand); font-size:10px; font-weight:600;
+    z-index:3; text-shadow:0 1px 3px rgba(0,0,0,0.9);
   }
   .drop-st {
-    position: absolute; top: 24px; right: 8px;
-    color: var(--r-stattrak); font-size: 10px; font-weight: 700;
-    z-index: 3; text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    position:absolute; top:24px; right:8px;
+    color:var(--r-stattrak); font-size:10px; font-weight:700;
+    z-index:3; text-shadow:0 1px 3px rgba(0,0,0,0.9);
   }
   .drop-item .drop-img {
-    flex: 1;
-    display: flex; align-items: center; justify-content: center;
-    padding: 24px 4px 8px;
-    min-height: 90px;
+    flex:1;
+    display:flex; align-items:center; justify-content:center;
+    padding:24px 4px 8px;
+    min-height:90px;
   }
   .drop-item .drop-img svg, .drop-item .drop-img img {
-    max-width: 100%; max-height: 100%; object-fit: contain;
-    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+    max-width:100%; max-height:100%; object-fit:contain;
+    filter:drop-shadow(0 2px 6px rgba(0,0,0,0.5));
   }
   .drop-name-block {
-    position: relative;
-    padding: 6px 2px 4px;
-    border-top: 1px solid rgba(122,104,80,0.3);
-    z-index: 3;
-    display: flex; flex-direction: column; gap: 2px;
+    position:relative;
+    padding:6px 2px 4px;
+    border-top:1px solid rgba(122,104,80,0.3);
+    z-index:3;
+    display:flex; flex-direction:column; gap:2px;
   }
   .drop-weapon {
-    font-size: 10px; color: var(--text3); line-height: 1.15;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;
+    font-size:10px; color:var(--text3); line-height:1.15;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:500;
   }
   .drop-skin {
-    font-size: 11px; color: var(--sand); line-height: 1.15;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 700;
+    font-size:11px; color:var(--sand); line-height:1.15;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:700;
   }
 
   .spin-controls {
-    padding: 16px 24px 20px;
-    position: relative; z-index: 2; flex-shrink: 0;
-    border-top: 1px solid var(--border);
-    background: var(--bg);
+    padding:16px 24px 20px;
+    position:relative; z-index:2; flex-shrink:0;
+    border-top:1px solid var(--border);
+    background:var(--bg);
   }
 
   .main-btn {
@@ -317,7 +247,6 @@
     pointer-events:none;
   }
 
-  /* === АПГРЕЙДЕР === */
   .upgrade-stage { flex:1; display:flex; flex-direction:column; padding:24px; gap:20px; position:relative; z-index:2; overflow-y:auto; }
   .upgrade-pair { display:flex; flex-direction:column; gap:14px; }
   .upgrade-side {
@@ -348,7 +277,7 @@
     background:var(--bg2); z-index:1;
   }
   .upgrade-percent { position:relative; z-index:2; font-size:34px; font-weight:200; color:var(--gold2); font-variant-numeric:tabular-nums; }
-  .upgrade-percent span { font-size:20px; margin-left: 2px; }
+  .upgrade-percent span { font-size:20px; margin-left:2px; }
 
   .upgrade-arrow-indicator {
     position:absolute; top:-8px; left:50%;
@@ -364,7 +293,6 @@
   .upgrade-chance span { color:var(--accent); font-weight:600; }
   .upgrade-controls { margin-top:auto; padding-top:12px; }
 
-  /* === ИНВЕНТАРЬ === */
   .inv-list { flex:1; padding:24px; overflow-y:auto; position:relative; z-index:2; }
   .inv-item {
     display:flex; align-items:center; gap:14px;
@@ -374,19 +302,18 @@
   .inv-item .inv-img { width:70px; height:44px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
   .inv-item .inv-img svg, .inv-item .inv-img img { width:100%; height:100%; object-fit:contain; }
   .inv-item .inv-info { flex:1; min-width:0; }
-  .inv-item .inv-price { font-size:14px; color:var(--gold2); font-weight: 700; margin-bottom: 4px; }
-  .inv-item .inv-name { font-size:13px; color:var(--sand); font-weight: 500; }
+  .inv-item .inv-price { font-size:14px; color:var(--gold2); font-weight:700; margin-bottom:4px; }
+  .inv-item .inv-name { font-size:13px; color:var(--sand); font-weight:500; }
   .inv-item .inv-wear { font-size:10px; color:var(--text3); margin-top:3px; }
   .inv-item .sell-btn {
     background:transparent; border:1px solid var(--accent);
     border-radius:6px; color:var(--sand);
     font-size:10px; padding:6px 12px;
-    font-family:inherit; cursor:pointer; white-space: nowrap;
+    font-family:inherit; cursor:pointer; white-space:nowrap;
   }
   .inv-item .sell-btn:active { background:#4a2a1a; }
   .inv-empty { text-align:center; color:var(--text3); padding:60px 20px; font-size:13px; }
 
-  /* === ПРОФИЛЬ === */
   .profile-content { flex:1; padding:24px; overflow-y:auto; position:relative; z-index:2; }
   .profile-card {
     border:1px solid var(--border2);
@@ -411,40 +338,39 @@
   }
   .stat-card .stat-label { font-size:9px; color:var(--text3); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
   .stat-card .stat-value { font-size:24px; font-weight:300; color:var(--sand); font-variant-numeric:tabular-nums; }
-  .section-label { font-size: 9px; color: var(--text3); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; margin-top: 4px; }
+  .section-label { font-size:9px; color:var(--text3); letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; margin-top:4px; }
   .best-win {
-    border: 1px solid var(--border2);
-    background: linear-gradient(180deg, var(--bg3), var(--bg2));
-    border-radius: 12px; padding: 18px; margin-bottom: 20px; text-align: center;
+    border:1px solid var(--border2);
+    background:linear-gradient(180deg, var(--bg3), var(--bg2));
+    border-radius:12px; padding:18px; margin-bottom:20px; text-align:center;
   }
-  .best-win-empty { color: var(--text3); font-size: 13px; padding: 20px 0; }
-  .best-win-img { width: 100px; height: 70px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; }
-  .best-win-img svg, .best-win-img img { width: 100%; height: 100%; object-fit: contain; }
-  .best-win-name { font-size: 14px; color: var(--sand); margin-bottom: 4px; }
-  .best-win-wear { font-size: 11px; color: var(--text3); margin-bottom: 6px; }
-  .best-win-price { font-size: 16px; color: var(--gold2); font-weight: 600; }
+  .best-win-empty { color:var(--text3); font-size:13px; padding:20px 0; }
+  .best-win-img { width:100px; height:70px; margin:0 auto 10px; display:flex; align-items:center; justify-content:center; }
+  .best-win-img svg, .best-win-img img { width:100%; height:100%; object-fit:contain; }
+  .best-win-name { font-size:14px; color:var(--sand); margin-bottom:4px; }
+  .best-win-wear { font-size:11px; color:var(--text3); margin-bottom:6px; }
+  .best-win-price { font-size:16px; color:var(--gold2); font-weight:600; }
 
-  .promo-row { display: flex; gap: 10px; margin-bottom: 20px; }
+  .promo-row { display:flex; gap:10px; margin-bottom:20px; }
   .promo-input {
-    flex: 1; min-width: 0;
-    background: var(--bg); border: 1px solid var(--border);
-    border-radius: 10px; padding: 16px;
-    color: var(--sand); font-size: 14px;
-    outline: none; font-family: inherit; letter-spacing: 1px;
+    flex:1; min-width:0;
+    background:var(--bg); border:1px solid var(--border);
+    border-radius:10px; padding:16px;
+    color:var(--sand); font-size:14px;
+    outline:none; font-family:inherit; letter-spacing:1px;
   }
-  .promo-input::placeholder { color: var(--text3); }
-  .promo-input:focus { border-color: var(--accent); }
+  .promo-input::placeholder { color:var(--text3); }
+  .promo-input:focus { border-color:var(--accent); }
   .promo-btn {
-    background: linear-gradient(180deg, var(--bg3), var(--bg2));
-    border: 1px solid var(--accent);
-    border-radius: 10px; padding: 0 24px;
-    color: var(--sand); font-size: 13px;
-    cursor: pointer; font-family: inherit;
-    letter-spacing: 1.5px; flex-shrink: 0;
+    background:linear-gradient(180deg, var(--bg3), var(--bg2));
+    border:1px solid var(--accent);
+    border-radius:10px; padding:0 24px;
+    color:var(--sand); font-size:13px;
+    cursor:pointer; font-family:inherit;
+    letter-spacing:1.5px; flex-shrink:0;
   }
-  .promo-btn:active { background: #4a2a1a; }
+  .promo-btn:active { background:#4a2a1a; }
 
-  /* === МОДАЛКА === */
   .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:200; display:none; align-items:flex-end; }
   .modal-overlay.show { display:flex; }
   .modal-sheet {
@@ -466,10 +392,10 @@
     font-size:12px; font-family:inherit; outline:none;
   }
   .modal-filters select {
-    flex: 1; padding: 10px 30px 10px 10px;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1 L5 5 L9 1' stroke='%238a7754' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>");
-    background-repeat: no-repeat; background-position: right 12px center;
-    appearance: none; -webkit-appearance: none;
+    flex:1; padding:10px 30px 10px 10px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1 L5 5 L9 1' stroke='%238a7754' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>");
+    background-repeat:no-repeat; background-position:right 12px center;
+    appearance:none; -webkit-appearance:none;
   }
   .modal-filters input { width:70px; }
   .modal-filters input::placeholder { color:var(--text3); }
@@ -488,22 +414,21 @@
   .modal-item .mi-price { font-size:12px; color:var(--gold2); flex-shrink:0; }
   .modal-empty { text-align:center; color:var(--text3); padding:30px; font-size:13px; }
 
-  /* === УВЕДОМЛЕНИЯ === */
   #toast {
     position:fixed; top:60px; left:50%;
     transform:translateX(-50%) translateY(-30px);
-    background: #1a1410; color: #fff;
+    background:#1a1410; color:#fff;
     padding:14px 26px; border-radius:100px;
-    font-size:14px; font-weight: 600; z-index:100;
+    font-size:14px; font-weight:600; z-index:100;
     border:2px solid var(--accent);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(212,107,74,0.3);
+    box-shadow:0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(212,107,74,0.3);
     transition:transform .3s, opacity .3s, border-color .3s, color .3s, box-shadow .3s;
     pointer-events:none; white-space:nowrap; opacity:0;
     max-width:90vw; overflow:hidden; text-overflow:ellipsis;
   }
   #toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
-  #toast.show.win { border-color: #6fbf4a; color: #d4ffb0; box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 24px rgba(111,191,74,0.5); }
-  #toast.show.lose { border-color: #c44a3a; color: #ffb8a8; box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 24px rgba(196,74,58,0.5); }
+  #toast.show.win { border-color:#6fbf4a; color:#d4ffb0; box-shadow:0 8px 32px rgba(0,0,0,0.6), 0 0 24px rgba(111,191,74,0.5); }
+  #toast.show.lose { border-color:#c44a3a; color:#ffb8a8; box-shadow:0 8px 32px rgba(0,0,0,0.6), 0 0 24px rgba(196,74,58,0.5); }
 </style>
 </head>
 <body>
@@ -687,9 +612,29 @@
 <div id="toast"></div>
 
 <script>
+/* ==================== API ==================== */
+const API_URL = "https://cs2bet.i-makarov2012.workers.dev";
+
+async function api(path, body) {
+  try {
+    const r = await fetch(API_URL + path, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body || {})
+    });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return await r.json();
+  } catch (e) {
+    console.warn("API error", path, e);
+    return null;
+  }
+}
+
 /* ==================== TELEGRAM ==================== */
 const tg = window.Telegram?.WebApp;
 if (tg) { tg.ready(); tg.expand(); }
+
+const USER_ID = String(tg?.initDataUnsafe?.user?.id || "guest_dev");
 
 /* ==================== КАРТИНКИ ==================== */
 const IMG_RIFLE = "rifle.png";
@@ -728,18 +673,6 @@ const state = {
 };
 
 const $ = id => document.getElementById(id);
-
-(function makeSand(){
-  const box = $('bg');
-  for (let i = 0; i < 25; i++) {
-    const d = document.createElement('div');
-    d.className = 'sand-dot';
-    d.style.left = Math.random() * 100 + '%';
-    d.style.top = Math.random() * 100 + '%';
-    d.style.animationDelay = (Math.random() * 20) + 's';
-    box.appendChild(d);
-  }
-})();
 
 /* ==================== UI ==================== */
 function fmt(n) { return Math.floor(n).toLocaleString('ru-RU'); }
@@ -786,15 +719,24 @@ function showScreen(id) {
   $(id).classList.remove('hidden');
 }
 
-/* ==================== БАЛАНС ==================== */
-function canAfford(amount) { return state.balance >= amount; }
-function spend(amount) {
-  if (!canAfford(amount)) return false;
-  state.balance -= amount;
-  updateBalance();
-  return true;
+/* ==================== БАЛАНС (СЕРВЕР) ==================== */
+async function loadBalance() {
+  const res = await api("/api/balance", { user_id: USER_ID });
+  if (res && typeof res.balance === "number") {
+    state.balance = res.balance;
+    updateBalance();
+  }
 }
-function earn(amount) { state.balance += amount; updateBalance(); }
+
+async function changeBalance(amount) {
+  const res = await api("/api/balance/change", { user_id: USER_ID, amount });
+  if (res && typeof res.balance === "number") {
+    state.balance = res.balance;
+    updateBalance();
+    return true;
+  }
+  return false;
+}
 
 /* ==================== КАТАЛОГ ==================== */
 const ALL_SKINS = [
@@ -865,7 +807,6 @@ function createSkinInstance(skinDef) {
   let price = Math.round(skinDef.basePrice * wear.mult);
   if (statTrak) price = Math.round(price * 1.35);
   return {
-    id: skinDef.id + '_' + wear.key + (statTrak ? '_st' : '') + '_' + Date.now() + '_' + Math.random(),
     skinId: skinDef.id,
     name: skinDef.name,
     weapon: skinDef.weapon,
@@ -877,7 +818,7 @@ function createSkinInstance(skinDef) {
   };
 }
 
-/* ==================== РЕДКОСТИ (внутри группы) ==================== */
+/* ==================== РЕДКОСТИ ==================== */
 const RARITY_WEIGHTS = {
   consumer:   1000,
   industrial: 300,
@@ -900,7 +841,6 @@ const RARITY_COLORS = {
   contraband: 'var(--r-contraband)',
 };
 
-/* Внутри группы — по редкостям */
 function pickByRarity(pool) {
   if (!pool.length) return null;
   const available = {};
@@ -921,7 +861,6 @@ function pickByRarity(pool) {
   return pool[0];
 }
 
-/* ==================== ВЫБОР СКИНА ИЗ ПУЛА: 80% дешёвые, 20% окупаемые ==================== */
 function pickSkinFromPool(pool, casePrice) {
   const unprofitable = pool.filter(s => s.basePrice < casePrice);
   const profitable   = pool.filter(s => s.basePrice >= casePrice);
@@ -1049,7 +988,7 @@ function openCaseScreen(caseKey) {
   renderCaseDrops();
 
   const caseDef = CASES[caseKey];
-  if (caseDef && !canAfford(caseDef.price)) {
+  if (caseDef && state.balance < caseDef.price) {
     $('spinBtn').disabled = true;
     $('spinBtn').classList.add('disabled');
     $('spinBtn').textContent = 'Не хватает средств';
@@ -1103,11 +1042,7 @@ function renderCaseDrops() {
       const price = Math.round(def.basePrice * wear.mult);
       drops.push({ def, wear, price, statTrak: false });
       if (def.hasStatTrak) {
-        drops.push({
-          def, wear,
-          price: Math.round(price * 1.35),
-          statTrak: true
-        });
+        drops.push({ def, wear, price: Math.round(price * 1.35), statTrak: true });
       }
     });
   });
@@ -1122,7 +1057,6 @@ function renderCaseDrops() {
     const el = document.createElement('div');
     el.className = 'drop-item';
     el.style.setProperty('--drop-color', RARITY_COLORS[d.def.rarity] || 'var(--border2)');
-    // WEAR сначала, ST ниже
     el.innerHTML = `
       <div class="drop-price-badge">${fmt(d.price)} ₽</div>
       <div class="drop-wear-badge">${d.wear.key}</div>
@@ -1137,7 +1071,7 @@ function renderCaseDrops() {
   });
 }
 
-function mainCaseAction() {
+async function mainCaseAction() {
   if (state.isSpinning) return;
 
   const caseDef = CASES[state.currentCase];
@@ -1145,8 +1079,9 @@ function mainCaseAction() {
   const casePrice = caseDef ? caseDef.price : 0;
 
   if (!isFree && caseDef) {
-    if (!canAfford(caseDef.price)) { toastText('Недостаточно средств', 'lose'); return; }
-    if (!spend(caseDef.price)) return;
+    if (state.balance < caseDef.price) { toastText('Недостаточно средств', 'lose'); return; }
+    const ok = await changeBalance(-caseDef.price);
+    if (!ok) { toastText('Ошибка сервера', 'lose'); return; }
     toastText(`−${fmt(caseDef.price)} ₽`, 'lose');
   }
 
@@ -1191,7 +1126,7 @@ function mainCaseAction() {
   track.style.transition = `transform ${duration}ms cubic-bezier(0.12, 0.85, 0.18, 1)`;
   track.style.transform = `translateX(${targetX}px)`;
 
-  setTimeout(() => {
+  setTimeout(async () => {
     state.isSpinning = false;
     btn.disabled = false;
     btn.classList.remove('disabled');
@@ -1199,12 +1134,26 @@ function mainCaseAction() {
     $('spinValue').textContent = `${winSkin.price} ₽`;
     $('spinResult').className = 'spin-result show';
 
-    state.inventory.push(winSkin);
+    // Сохраняем на сервере
+    const addRes = await api("/api/inventory/add", {
+      user_id: USER_ID,
+      skinId: winSkin.skinId,
+      name: winSkin.name,
+      weapon: winSkin.weapon,
+      rarity: winSkin.rarity,
+      wear: winSkin.wear,
+      wearName: winSkin.wearName,
+      statTrak: winSkin.statTrak,
+      price: winSkin.price,
+    });
+    if (addRes && addRes.id) winSkin.id = addRes.id;
+    state.inventory.unshift(winSkin);
+
     registerDrop(winSkin);
     toastText(`Получено: ${winSkin.name}`, 'win');
     updateBalance();
 
-    if (!isFree && caseDef && !canAfford(caseDef.price)) {
+    if (!isFree && caseDef && state.balance < caseDef.price) {
       btn.disabled = true;
       btn.classList.add('disabled');
       btn.textContent = 'Не хватает средств';
@@ -1264,7 +1213,6 @@ function pickToTarget() {
     if (def.basePrice <= from.price) return;
     WEARS.forEach(wear => {
       const instance = {
-        id: def.id + '_' + wear.key,
         skinId: def.id, name: def.name, weapon: def.weapon, rarity: def.rarity,
         wear: wear.key, wearName: wear.name, statTrak: false,
         price: Math.round(def.basePrice * wear.mult),
@@ -1272,7 +1220,6 @@ function pickToTarget() {
       if (instance.price > from.price) modalCandidates.push({ def, instance });
       if (def.hasStatTrak) {
         const stInstance = {
-          id: def.id + '_' + wear.key + '_st',
           skinId: def.id, name: def.name, weapon: def.weapon, rarity: def.rarity,
           wear: wear.key, wearName: wear.name, statTrak: true,
           price: Math.round(def.basePrice * wear.mult * 1.35),
@@ -1343,7 +1290,6 @@ function closeModal(e) {
   $('modalOverlay').classList.remove('show');
 }
 
-/* ==================== ШАНС АПГРЕЙДА: показываем 50%, реально 40% ==================== */
 function updateUpgradeChance() {
   const from = state.upgrade.fromSkin;
   const to = state.upgrade.toSkin;
@@ -1356,13 +1302,11 @@ function updateUpgradeChance() {
     return;
   }
 
-  // Что показываем пользователю — честная пропорция
   let displayChance = (from.price / to.price) * 100;
   displayChance = Math.min(displayChance, 90);
   displayChance = Math.max(displayChance, 1);
   displayChance = Math.round(displayChance);
 
-  // Реальный шанс — на 20% ниже
   state.upgrade.chance = displayChance * 0.8;
 
   $('upChance').textContent = displayChance + '%';
@@ -1407,19 +1351,38 @@ function doUpgrade() {
   arrow.style.transition = `transform 2.8s cubic-bezier(0.15, 0.7, 0.15, 1)`;
   arrow.style.transform = `translateX(-50%) rotate(${finalAngle}deg)`;
 
-  setTimeout(() => {
+  setTimeout(async () => {
     state.isSpinning = false;
     btn.disabled = false;
     btn.classList.remove('disabled');
     btn.textContent = 'Прокачать';
 
-    const idx = state.inventory.findIndex(s => s.id === state.upgrade.fromSkin.id);
+    const fromSkin = state.upgrade.fromSkin;
+    const toSkin   = state.upgrade.toSkin;
+
+    // Убираем исходный скин с сервера
+    if (fromSkin.id) {
+      await api("/api/inventory/remove", { user_id: USER_ID, id: fromSkin.id });
+    }
+    const idx = state.inventory.findIndex(s => s.id === fromSkin.id);
     if (idx >= 0) state.inventory.splice(idx, 1);
 
     if (success) {
-      state.inventory.push(state.upgrade.toSkin);
-      registerDrop(state.upgrade.toSkin);
-      toastText(`Успешно: ${state.upgrade.toSkin.name}`, 'win');
+      const addRes = await api("/api/inventory/add", {
+        user_id: USER_ID,
+        skinId: toSkin.skinId,
+        name: toSkin.name,
+        weapon: toSkin.weapon,
+        rarity: toSkin.rarity,
+        wear: toSkin.wear,
+        wearName: toSkin.wearName,
+        statTrak: toSkin.statTrak,
+        price: toSkin.price,
+      });
+      if (addRes && addRes.id) toSkin.id = addRes.id;
+      state.inventory.unshift(toSkin);
+      registerDrop(toSkin);
+      toastText(`Успешно: ${toSkin.name}`, 'win');
     } else {
       toastText('Провал', 'lose');
     }
@@ -1441,6 +1404,13 @@ function doUpgrade() {
 }
 
 /* ==================== ИНВЕНТАРЬ ==================== */
+async function loadInventory() {
+  const res = await api("/api/inventory", { user_id: USER_ID });
+  if (res && Array.isArray(res.items)) {
+    state.inventory = res.items;
+  }
+}
+
 function renderInventory() {
   const list = $('invList');
   if (!state.inventory.length) {
@@ -1467,13 +1437,25 @@ function renderInventory() {
   });
 }
 
-function sellSkin(idx) {
+async function sellSkin(idx) {
   const skin = state.inventory[idx];
   if (!skin) return;
-  const price = skin.price;
-  earn(price);
+
+  if (skin.id) {
+    const res = await api("/api/inventory/sell", { user_id: USER_ID, id: skin.id });
+    if (!res || !res.ok) { toastText('Ошибка сервера', 'lose'); return; }
+    if (typeof res.balance === "number") {
+      state.balance = res.balance;
+      updateBalance();
+    }
+    toastText(`+${fmt(res.sold)} ₽`, 'win');
+  } else {
+    state.balance += skin.price;
+    updateBalance();
+    toastText(`+${fmt(skin.price)} ₽`, 'win');
+  }
+
   state.inventory.splice(idx, 1);
-  toastText(`+${fmt(price)} ₽`, 'win');
   renderInventory();
   updateBalance();
 }
@@ -1490,8 +1472,15 @@ function applyPromo() {
 function withdrawOpen() { toastText('Вывод скоро будет доступен', 'lose'); }
 
 /* ==================== INIT ==================== */
-renderIcons();
-updateBalance();
+(async function init() {
+  renderIcons();
+  updateBalance();
+
+  await loadBalance();
+  await loadInventory();
+  updateBalance();
+  renderInventory();
+})();
 </script>
 </body>
 </html>
