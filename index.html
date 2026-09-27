@@ -394,10 +394,8 @@
   }
   .modal-filters input::placeholder { color:var(--text3); }
 
-  /* ==== КАСТОМНЫЙ ВЫПАДАЮЩИЙ СПИСОК ==== */
-  .cs-select {
-    position:relative; flex:1; min-width:0;
-  }
+  /* ==== КАСТОМНЫЙ ДРОПДАУН ==== */
+  .cs-select { position:relative; flex:1; min-width:0; }
   .cs-select-head {
     padding:10px 30px 10px 12px;
     border:1px solid var(--border); border-radius:8px;
@@ -441,7 +439,7 @@
   }
   .wd-field::placeholder { color:var(--text3); }
   .wd-field:focus { border-color:var(--accent); }
-  .wd-hint { font-size:11px; color:var(--text3); margin-bottom:14px; line-height:1.4; }
+  .wd-hint { font-size:11px; color:var(--text3); margin-bottom:14px; line-height:1.45; }
   .wd-warn { font-size:11px; color:var(--gold2); margin-top:8px; line-height:1.4; }
 
   #toast {
@@ -620,7 +618,7 @@
   </div>
 </div>
 
-<!-- МОДАЛКА -->
+<!-- МОДАЛКА ВЫБОРА СКИНА -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <h3 id="modalTitle">Выбор скина</h3>
@@ -645,7 +643,8 @@
   <div class="modal-sheet" onclick="event.stopPropagation()">
     <h3>Вывод скина</h3>
     <div class="wd-hint">
-      Укажи ссылку на свой Steam-профиль и trade-ссылку. Админ вручную отправит скин на указанный аккаунт после проверки заявки.
+      Укажи ссылку на свой Steam-профиль и trade-ссылку.
+      Админ вручную отправит скин на указанный аккаунт после проверки заявки.
     </div>
     <input type="text" class="wd-field" id="wdSteam" placeholder="Ссылка на Steam-профиль">
     <input type="text" class="wd-field" id="wdTrade" placeholder="Trade-ссылка">
@@ -716,6 +715,7 @@ const state = {
   bestDrop: null,
   upgrade: { fromSkin: null, toSkin: null, chance: 0 },
   withdrawSkin: null,
+  sortOrder: 'asc',
 };
 
 const $ = id => document.getElementById(id);
@@ -873,25 +873,14 @@ function createSkinInstance(skinDef, fixedWear) {
 }
 
 const RARITY_WEIGHTS = {
-  consumer:   1000,
-  industrial: 300,
-  milspec:    40,
-  restricted: 5,
-  classified: 1,
-  covert:     0.2,
-  rare:       0.02,
-  contraband: 0.002,
+  consumer: 1000, industrial: 300, milspec: 40, restricted: 5,
+  classified: 1, covert: 0.2, rare: 0.02, contraband: 0.002,
 };
 
 const RARITY_COLORS = {
-  consumer:   'var(--r-consumer)',
-  industrial: 'var(--r-industrial)',
-  milspec:    'var(--r-milspec)',
-  restricted: 'var(--r-restricted)',
-  classified: 'var(--r-classified)',
-  covert:     'var(--r-covert)',
-  rare:       'var(--r-rare)',
-  contraband: 'var(--r-contraband)',
+  consumer:'var(--r-consumer)', industrial:'var(--r-industrial)', milspec:'var(--r-milspec)',
+  restricted:'var(--r-restricted)', classified:'var(--r-classified)', covert:'var(--r-covert)',
+  rare:'var(--r-rare)', contraband:'var(--r-contraband)',
 };
 
 function pickByRarity(pool) {
@@ -925,31 +914,16 @@ function pickSkinFromPool(pool, casePrice) {
 }
 
 const CASES = {
-  case10: {
-    name: 'Пыльный контейнер',
-    price: 10,
-    pool: ['p250_sand', 'glock_sand', 'fiveseven_forest', 'ssg_blue', 'mp9_dust', 'galil_dust', 'mac10_dust', 'usp_forest', 'ak_safari'],
-  },
-  case50: {
-    name: 'Выжженный контейнер',
-    price: 50,
-    pool: ['glock_nuclear', 'deagle_fire', 'fiveseven_monkey', 'ssg_blood', 'awp_snake'],
-  },
-  case100: {
-    name: 'Золотой контейнер',
-    price: 100,
-    pool: ['glock_nuclear', 'deagle_fire', 'fiveseven_monkey', 'ssg_blood', 'awp_snake', 'usp_cyrex', 'glock_water', 'deagle_codex'],
-  },
-  case500: {
-    name: 'Кейс пустыни',
-    price: 500,
-    pool: ['usp_cyrex', 'glock_water', 'deagle_codex', 'awp_queens', 'm4a1s_solitude', 'ak_slate', 'usp_neo', 'p250_asiimov', 'ak_redline'],
-  },
-  case1000: {
-    name: 'Легендарный контейнер',
-    price: 1000,
-    pool: ['ak_redline', 'm4a4_desolate', 'ak_asiimov', 'm4a1s_print', 'ak_empress', 'm4a4_asiimov', 'ak_nightwish', 'm4a1s_fade', 'awp_asiimov'],
-  },
+  case10: { name: 'Пыльный контейнер', price: 10,
+    pool: ['p250_sand','glock_sand','fiveseven_forest','ssg_blue','mp9_dust','galil_dust','mac10_dust','usp_forest','ak_safari'] },
+  case50: { name: 'Выжженный контейнер', price: 50,
+    pool: ['glock_nuclear','deagle_fire','fiveseven_monkey','ssg_blood','awp_snake'] },
+  case100: { name: 'Золотой контейнер', price: 100,
+    pool: ['glock_nuclear','deagle_fire','fiveseven_monkey','ssg_blood','awp_snake','usp_cyrex','glock_water','deagle_codex'] },
+  case500: { name: 'Кейс пустыни', price: 500,
+    pool: ['usp_cyrex','glock_water','deagle_codex','awp_queens','m4a1s_solitude','ak_slate','usp_neo','p250_asiimov','ak_redline'] },
+  case1000: { name: 'Легендарный контейнер', price: 1000,
+    pool: ['ak_redline','m4a4_desolate','ak_asiimov','m4a1s_print','ak_empress','m4a4_asiimov','ak_nightwish','m4a1s_fade','awp_asiimov'] },
 };
 
 function renderCasesList() {
@@ -1359,6 +1333,32 @@ function closeModal(e) {
   $('modalOverlay').classList.remove('show');
 }
 
+/* ==== КАСТОМНЫЙ ДРОПДАУН ==== */
+function initSortSelect() {
+  const wrap = $('sortSelect');
+  const head = $('sortSelectHead');
+  const list = $('sortSelectList');
+  if (!wrap || !head || !list) return;
+
+  head.onclick = (e) => {
+    e.stopPropagation();
+    wrap.classList.toggle('open');
+  };
+  list.querySelectorAll('.cs-select-option').forEach(opt => {
+    opt.onclick = (e) => {
+      e.stopPropagation();
+      const val = opt.dataset.value;
+      state.sortOrder = val;
+      head.textContent = opt.textContent;
+      list.querySelectorAll('.cs-select-option').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      wrap.classList.remove('open');
+      filterModalList();
+    };
+  });
+  document.addEventListener('click', () => wrap.classList.remove('open'));
+}
+
 function updateUpgradeChance() {
   const from = state.upgrade.fromSkin;
   const to = state.upgrade.toSkin;
@@ -1537,3 +1537,81 @@ function withdrawSkin(idx) {
   if (!skin) return;
   state.withdrawSkin = skin;
   $('wdSteam').value = "";
+  $('wdTrade').value = "";
+  $('withdrawOverlay').classList.add('show');
+}
+
+function closeWithdrawModal(e) {
+  if (e && e.target !== $('withdrawOverlay')) return;
+  $('withdrawOverlay').classList.remove('show');
+  state.withdrawSkin = null;
+}
+
+async function submitWithdraw() {
+  const skin = state.withdrawSkin;
+  if (!skin) return;
+  const steam = $('wdSteam').value.trim();
+  const trade = $('wdTrade').value.trim();
+  const btn = $('wdSubmitBtn');
+
+  if (!steam) { toastText('Укажи Steam-профиль', 'lose'); return; }
+  if (!trade) { toastText('Укажи trade-ссылку', 'lose'); return; }
+
+  setBtnBusy(btn, 'Отправка...');
+  const res = await api("/api/withdrawals/create", {
+    user_id: USER_ID,
+    inventory_id: skin.id,
+    steam_profile: steam,
+    trade_link: trade,
+  });
+  setBtnReady(btn, 'Отправить заявку');
+
+  if (res && res.ok) {
+    $('withdrawOverlay').classList.remove('show');
+    state.withdrawSkin = null;
+    toastText('Заявка отправлена', 'win');
+  } else if (res && res.error === 'already_pending') {
+    toastText('Уже есть активная заявка', 'lose');
+  } else {
+    toastText('Ошибка отправки', 'lose');
+  }
+}
+
+/* ==================== ПРОМОКОД ==================== */
+async function applyPromo() {
+  const code = ($('promoInput').value || "").trim();
+  if (!code) { toastText('Введи код', 'lose'); return; }
+  const btn = $('promoBtn');
+  setBtnBusy(btn, '...');
+  const res = await api("/api/promo/apply", { user_id: USER_ID, code });
+  setBtnReady(btn, 'ОК');
+
+  if (!res) { toastText('Ошибка сервера', 'lose'); return; }
+  if (res.ok) {
+    state.balance = res.balance;
+    updateBalance();
+    toastText(`+${fmt(res.reward)} ₽`, 'win');
+    $('promoInput').value = '';
+    return;
+  }
+  const map = {
+    not_found: 'Промокод не найден',
+    exhausted: 'Промокод исчерпан',
+    already_used: 'Ты уже активировал этот промокод',
+  };
+  toastText(map[res.error] || 'Ошибка', 'lose');
+}
+
+/* ==================== INIT ==================== */
+(async function init() {
+  renderIcons();
+  initSortSelect();
+  updateBalance();
+
+  await Promise.all([loadBalance(), loadInventory(), loadBestDrop()]);
+  updateBalance();
+  renderInventory();
+})();
+</script>
+</body>
+</html>
