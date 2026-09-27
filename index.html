@@ -394,42 +394,42 @@
   }
   .modal-filters input::placeholder { color:var(--text3); }
 
-  /* ==== КАСТОМНЫЙ ДРОПДАУН ==== */
+  /* ==== ДРОПДАУН — обёртка над нативным select ==== */
   .cs-select { position:relative; flex:1; min-width:0; }
-  .cs-select-head {
+  .cs-select select {
+    width:100%;
     padding:10px 30px 10px 12px;
-    border:1px solid var(--border); border-radius:8px;
-    background:var(--bg); color:var(--sand);
-    font-size:12px; font-family:inherit;
-    cursor:pointer; user-select:none;
-    position:relative; white-space:nowrap;
-    overflow:hidden; text-overflow:ellipsis;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:var(--bg);
+    color:var(--sand);
+    font-size:12px;
+    font-family:inherit;
+    outline:none;
+    appearance:none;
+    -webkit-appearance:none;
+    cursor:pointer;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1 L5 5 L9 1' stroke='%238a7754' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>");
+    background-repeat:no-repeat;
+    background-position:right 12px center;
   }
-  .cs-select-head::after {
-    content:""; position:absolute; right:12px; top:50%;
-    width:8px; height:8px;
-    border-right:1.5px solid var(--text3);
-    border-bottom:1.5px solid var(--text3);
-    transform:translateY(-70%) rotate(45deg);
-    transition:transform .2s;
+  .cs-select select:focus { border-color:var(--accent); }
+  .cs-select select option { background:var(--bg2); color:var(--sand); }
+
+  .modal-item {
+    display:flex; align-items:center; gap:14px;
+    padding:14px 16px; border:1px solid var(--border);
+    border-radius:10px; margin-bottom:10px; cursor:pointer;
+    background:var(--bg);
   }
-  .cs-select.open .cs-select-head::after {
-    transform:translateY(-30%) rotate(-135deg);
-  }
-  .cs-select-list {
-    position:absolute; left:0; right:0; top:calc(100% + 4px);
-    background:var(--bg2); border:1px solid var(--border2);
-    border-radius:8px; overflow:hidden;
-    z-index:50; display:none;
-    box-shadow:0 8px 20px rgba(0,0,0,0.5);
-  }
-  .cs-select.open .cs-select-list { display:block; }
-  .cs-select-option {
-    padding:12px 14px; font-size:12px; color:var(--sand);
-    cursor:pointer; transition:background .15s;
-  }
-  .cs-select-option:hover, .cs-select-option:active { background:var(--bg3); }
-  .cs-select-option.selected { background:var(--bg3); color:var(--gold2); }
+  .modal-item:active { border-color:var(--accent); }
+  .modal-item .mi-img { width:60px; height:40px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .modal-item .mi-img svg, .modal-item .mi-img img { width:100%; height:100%; object-fit:contain; }
+  .modal-item .mi-info { flex:1; min-width:0; }
+  .modal-item .mi-name { font-size:12px; color:var(--sand); }
+  .modal-item .mi-wear { font-size:10px; color:var(--text3); margin-top:3px; }
+  .modal-item .mi-price { font-size:12px; color:var(--gold2); flex-shrink:0; }
+  .modal-empty { text-align:center; color:var(--text3); padding:30px; font-size:13px; }
 
   .wd-field {
     width:100%; padding:14px; margin-bottom:10px;
@@ -624,12 +624,11 @@
     <h3 id="modalTitle">Выбор скина</h3>
     <input type="text" id="modalSearch" class="modal-search" placeholder="Поиск..." oninput="filterModalList()">
     <div class="modal-filters">
-      <div class="cs-select" id="sortSelect">
-        <div class="cs-select-head" id="sortSelectHead">Сначала дешёвые</div>
-        <div class="cs-select-list" id="sortSelectList">
-          <div class="cs-select-option selected" data-value="asc">Сначала дешёвые</div>
-          <div class="cs-select-option" data-value="desc">Сначала дорогие</div>
-        </div>
+      <div class="cs-select">
+        <select id="modalSort" onchange="filterModalList()">
+          <option value="asc">Сначала дешёвые</option>
+          <option value="desc">Сначала дорогие</option>
+        </select>
       </div>
       <input type="number" id="modalMinPrice" placeholder="От ₽" oninput="filterModalList()">
       <input type="number" id="modalMaxPrice" placeholder="До ₽" oninput="filterModalList()">
@@ -715,7 +714,6 @@ const state = {
   bestDrop: null,
   upgrade: { fromSkin: null, toSkin: null, chance: 0 },
   withdrawSkin: null,
-  sortOrder: 'asc',
 };
 
 const $ = id => document.getElementById(id);
@@ -1281,6 +1279,7 @@ function pickToTarget() {
   document.querySelector('.modal-filters').style.display = 'flex';
   $('modalMinPrice').value = '';
   $('modalMaxPrice').value = '';
+  $('modalSort').value = 'asc';
 
   filterModalList();
   $('modalOverlay').classList.add('show');
@@ -1290,7 +1289,7 @@ function filterModalList() {
   const q = ($('modalSearch').value || '').toLowerCase().trim();
   const min = parseInt($('modalMinPrice').value) || 0;
   const max = parseInt($('modalMaxPrice').value) || Infinity;
-  const sort = state.sortOrder || 'asc';
+  const sort = $('modalSort') ? $('modalSort').value : 'asc';
 
   let list = modalCandidates.filter(c => {
     const nameOk = !q || c.def.name.toLowerCase().includes(q);
@@ -1331,32 +1330,6 @@ function filterModalList() {
 function closeModal(e) {
   if (e && e.target !== $('modalOverlay')) return;
   $('modalOverlay').classList.remove('show');
-}
-
-/* ==== КАСТОМНЫЙ ДРОПДАУН ==== */
-function initSortSelect() {
-  const wrap = $('sortSelect');
-  const head = $('sortSelectHead');
-  const list = $('sortSelectList');
-  if (!wrap || !head || !list) return;
-
-  head.onclick = (e) => {
-    e.stopPropagation();
-    wrap.classList.toggle('open');
-  };
-  list.querySelectorAll('.cs-select-option').forEach(opt => {
-    opt.onclick = (e) => {
-      e.stopPropagation();
-      const val = opt.dataset.value;
-      state.sortOrder = val;
-      head.textContent = opt.textContent;
-      list.querySelectorAll('.cs-select-option').forEach(o => o.classList.remove('selected'));
-      opt.classList.add('selected');
-      wrap.classList.remove('open');
-      filterModalList();
-    };
-  });
-  document.addEventListener('click', () => wrap.classList.remove('open'));
 }
 
 function updateUpgradeChance() {
@@ -1605,7 +1578,6 @@ async function applyPromo() {
 /* ==================== INIT ==================== */
 (async function init() {
   renderIcons();
-  initSortSelect();
   updateBalance();
 
   await Promise.all([loadBalance(), loadInventory(), loadBestDrop()]);
