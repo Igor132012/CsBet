@@ -74,7 +74,13 @@
   .ico img { width:100%; height:100%; object-fit:contain; display:block; }
 
   /* === МЕНЮ === */
-  #menu { align-items:center; justify-content:center; padding:40px 24px; text-align:center; position:relative; z-index:2; overflow-y:auto; }
+  #menu {
+    padding:40px 24px 60px;
+    text-align:center;
+    position:relative; z-index:2;
+    overflow-y:auto;
+    display:flex; flex-direction:column; align-items:center;
+  }
   .brand {
     font-size:12px; color:var(--text3); letter-spacing:8px; text-transform:uppercase;
     margin-bottom:40px; font-weight:600;
@@ -92,7 +98,6 @@
   }
   .balance-value .ico { font-size:38px; color:var(--gold2); opacity:.9; }
 
-  /* Сетка карточек */
   .modes {
     display:flex; flex-direction:column; gap:16px;
     width:100%; max-width:380px;
@@ -193,9 +198,11 @@
 
   /* === РУЛЕТКА === */
   .roulette-stage {
-    flex:1; display:flex; flex-direction:column;
+    display:flex; flex-direction:column;
     align-items:center; justify-content:center;
     position:relative; overflow:hidden; z-index:2;
+    padding:16px 0;
+    flex-shrink:0;
   }
   .roulette { position:relative; width:100%; height:120px; overflow:hidden; }
   .roulette::before, .roulette::after {
@@ -215,6 +222,7 @@
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
     background:linear-gradient(180deg, var(--bg3), var(--bg2));
     overflow:hidden; padding:6px;
+    position:relative;
   }
   .slot .slot-img {
     width:80px; height:50px; display:flex; align-items:center; justify-content:center;
@@ -228,6 +236,13 @@
     max-width:90px;
   }
   .slot .slot-wear { font-size:7px; opacity:.6; }
+  .slot .slot-st {
+    position:absolute;
+    right:4px; bottom:4px;
+    font-size:8px; font-weight:700;
+    color:var(--r-stattrak);
+    letter-spacing:0.5px;
+  }
 
   .slot.consumer   { border-color:var(--r-consumer); color:var(--r-consumer); }
   .slot.consumer .slot-img { color:var(--r-consumer); }
@@ -254,7 +269,7 @@
   }
 
   .spin-result {
-    text-align:center; margin-top:28px;
+    text-align:center; margin-top:20px;
     opacity:0; transition:opacity .3s;
   }
   .spin-result.show { opacity:1; }
@@ -268,7 +283,41 @@
     display:flex; align-items:center; justify-content:center; gap:8px;
   }
 
-  .spin-controls { padding:0 24px 28px; position:relative; z-index:2; }
+  /* === СПИСОК ДРОПОВ === */
+  .case-drops {
+    max-height: 190px;
+    overflow-y: auto;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    background: rgba(0,0,0,0.2);
+    position: relative; z-index: 2;
+  }
+  .case-drops-title {
+    font-size: 9px; color: var(--text3);
+    letter-spacing: 4px; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .case-drops-list {
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .drop-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg2);
+  }
+  .drop-item .drop-img {
+    width: 60px; height: 38px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .drop-item .drop-img svg,
+  .drop-item .drop-img img { width: 100%; height: 100%; object-fit: contain; }
+  .drop-item .drop-info { flex: 1; min-width: 0; }
+  .drop-item .drop-name { font-size: 11px; color: var(--sand); }
+  .drop-item .drop-chance { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+  .spin-controls { padding:16px 24px 20px; position:relative; z-index:2; }
 
   .main-btn {
     width:100%; background:linear-gradient(180deg, var(--bg3), var(--bg2)); border:1px solid var(--accent);
@@ -389,7 +438,6 @@
   .inv-item .inv-info { flex:1; min-width:0; }
   .inv-item .inv-name { font-size:12px; color:var(--sand); }
   .inv-item .inv-wear { font-size:10px; color:var(--text3); margin-top:3px; }
-  .inv-item .inv-stattrak { font-size:10px; color:var(--r-stattrak); margin-top:3px; }
   .inv-item .inv-price { font-size:12px; color:var(--gold2); flex-shrink:0; }
   .inv-item .sell-btn {
     background:transparent; border:1px solid var(--accent);
@@ -420,19 +468,66 @@
   .profile-info .name { font-size:17px; font-weight:500; color:var(--sand); }
   .profile-info .username { color:var(--text3); font-size:13px; margin-top:4px; }
 
-  .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px; }
   .stat-card {
     border:1px solid var(--border); background:linear-gradient(180deg, var(--bg3), var(--bg2));
     border-radius:12px; padding:20px 14px; text-align:center;
+    margin-bottom:20px;
   }
   .stat-card .stat-label {
     font-size:9px; color:var(--text3); letter-spacing:2px; text-transform:uppercase;
     margin-bottom:8px;
   }
   .stat-card .stat-value {
-    font-size:20px; font-weight:300; color:var(--sand);
+    font-size:24px; font-weight:300; color:var(--sand);
     font-variant-numeric:tabular-nums;
   }
+
+  .section-label {
+    font-size: 9px; color: var(--text3);
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-bottom: 10px; margin-top: 4px;
+  }
+  .best-win {
+    border: 1px solid var(--border2);
+    background: linear-gradient(180deg, var(--bg3), var(--bg2));
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .best-win-empty {
+    color: var(--text3); font-size: 13px; padding: 20px 0;
+  }
+  .best-win-img {
+    width: 100px; height: 70px; margin: 0 auto 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .best-win-img svg,
+  .best-win-img img { width: 100%; height: 100%; object-fit: contain; }
+  .best-win-name { font-size: 14px; color: var(--sand); margin-bottom: 4px; }
+  .best-win-wear { font-size: 11px; color: var(--text3); margin-bottom: 6px; }
+  .best-win-price { font-size: 16px; color: var(--gold2); font-weight: 600; }
+
+  .promo-row { display: flex; gap: 10px; margin-bottom: 20px; }
+  .promo-input {
+    flex: 1; min-width: 0;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px;
+    color: var(--sand); font-size: 14px;
+    outline: none; font-family: inherit;
+    letter-spacing: 1px;
+  }
+  .promo-input::placeholder { color: var(--text3); }
+  .promo-input:focus { border-color: var(--accent); }
+  .promo-btn {
+    background: linear-gradient(180deg, var(--bg3), var(--bg2));
+    border: 1px solid var(--accent);
+    border-radius: 10px; padding: 0 24px;
+    color: var(--sand); font-size: 13px;
+    cursor: pointer; font-family: inherit;
+    letter-spacing: 1.5px; flex-shrink: 0;
+  }
+  .promo-btn:active { background: #4a2a1a; }
 
   /* === МОДАЛКА === */
   .modal-overlay {
@@ -464,7 +559,15 @@
     border-radius:8px; background:var(--bg); color:var(--sand);
     font-size:12px; font-family:inherit; outline:none;
   }
-  .modal-filters select { flex:1; }
+  .modal-filters select {
+    flex: 1;
+    padding: 10px 30px 10px 10px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1 L5 5 L9 1' stroke='%238a7754' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    appearance: none;
+    -webkit-appearance: none;
+  }
   .modal-filters input { width:70px; }
   .modal-filters input::placeholder { color:var(--text3); }
   .modal-item {
@@ -495,13 +598,13 @@
     padding:14px 24px; border-radius:100px;
     font-size:13px; z-index:100;
     border:1px solid var(--accent);
-    transition:transform .3s, opacity .3s;
+    transition:transform .3s, opacity .3s, border-color .3s, color .3s;
     pointer-events:none; white-space:nowrap; opacity:0;
     max-width:90vw; overflow:hidden; text-overflow:ellipsis;
   }
   #toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
-  #toast.win { border-color:var(--green); color:#c8f0a8; }
-  #toast.lose { border-color:var(--danger); color:#f0a8a0; }
+  #toast.show.win { border-color:var(--green); color:#c8f0a8; }
+  #toast.show.lose { border-color:var(--danger); color:#f0a8a0; }
 </style>
 </head>
 <body>
@@ -608,6 +711,12 @@
       <div class="val" id="spinValue"></div>
     </div>
   </div>
+
+  <div class="case-drops" id="caseDrops">
+    <div class="case-drops-title">Возможные дропы</div>
+    <div class="case-drops-list" id="caseDropsList"></div>
+  </div>
+
   <div class="spin-controls">
     <button class="main-btn" id="spinBtn" onclick="mainCaseAction()">Открыть</button>
   </div>
@@ -681,16 +790,23 @@
       </div>
     </div>
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-label">Доступно</div>
-        <div class="stat-value" id="statBalance">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">В скинах</div>
-        <div class="stat-value" id="statSkins">0</div>
-      </div>
+    <div class="stat-card">
+      <div class="stat-label">В скинах</div>
+      <div class="stat-value" id="statSkins">0</div>
     </div>
+
+    <div class="section-label">Лучший выигрыш</div>
+    <div class="best-win" id="bestWin">
+      <div class="best-win-empty">Пока нет выигрышей</div>
+    </div>
+
+    <div class="section-label">Промокод</div>
+    <div class="promo-row">
+      <input type="text" class="promo-input" id="promoInput" placeholder="ВВЕДИ КОД" maxlength="20">
+      <button class="promo-btn" onclick="applyPromo()">ОК</button>
+    </div>
+
+    <button class="main-btn" style="margin-top:20px;" onclick="withdrawOpen()">Вывод</button>
   </div>
 </div>
 
@@ -781,8 +897,24 @@ function updateBalance() {
   $('upgradeBalance').textContent = fmt(state.balance);
   $('inventoryBalance').textContent = fmt(state.balance);
   $('profileBalance').textContent = fmt(state.balance);
-  $('statBalance').textContent = fmt(state.balance);
   $('statSkins').textContent = fmt(state.inventory.reduce((s, sk) => s + sk.price, 0));
+  updateBestWin();
+}
+
+function updateBestWin() {
+  const box = $('bestWin');
+  if (!box) return;
+  if (!state.inventory.length) {
+    box.innerHTML = '<div class="best-win-empty">Пока нет выигрышей</div>';
+    return;
+  }
+  const best = state.inventory.reduce((a, b) => a.price > b.price ? a : b);
+  box.innerHTML = `
+    <div class="best-win-img">${weaponImg(best.weapon)}</div>
+    <div class="best-win-name">${best.name}</div>
+    <div class="best-win-wear">${best.wearName}${best.statTrak ? ' · StatTrak™' : ''}</div>
+    <div class="best-win-price">${fmt(best.price)} ₽</div>
+  `;
 }
 
 function toastText(msg, kind) {
@@ -790,7 +922,10 @@ function toastText(msg, kind) {
   t.textContent = msg;
   t.className = 'show' + (kind ? ' ' + kind : '');
   clearTimeout(t._t);
-  t._t = setTimeout(() => t.className = '', 2200);
+  t._t = setTimeout(() => {
+    t.classList.remove('win', 'lose');
+    t.classList.remove('show');
+  }, 2000);
 }
 
 function showScreen(id) {
@@ -879,7 +1014,7 @@ function createSkinInstance(skinDef) {
   };
 }
 
-/* ==================== РЕДКОСТИ (низкие шансы) ==================== */
+/* ==================== РЕДКОСТИ ==================== */
 const RARITY_WEIGHTS = {
   consumer:   60,
   industrial: 25,
@@ -996,6 +1131,7 @@ function openProfile() {
   } else {
     av.innerHTML = `<span class="ico">${ICONS.user}</span>`;
   }
+  updateBalance();
   showScreen('profile');
 }
 
@@ -1014,14 +1150,13 @@ function startIdleSpin() {
   const track = $('track');
   track.style.transition = 'none';
 
-  // Начинаем с нулевого положения, но если трек уже прокручен — считаем от текущего
   let pos = 0;
   let last = performance.now();
 
   function frame(now) {
     const dt = now - last;
     last = now;
-    pos -= dt * 0.03;  // 30px/сек — медленно
+    pos -= dt * 0.03;
     if (pos < -60 * 110) pos += 60 * 110;
     track.style.transform = `translateX(${pos}px)`;
     idleRaf = requestAnimationFrame(frame);
@@ -1038,6 +1173,7 @@ function openCaseScreen(caseKey) {
   $('spinBtn').classList.remove('disabled');
   $('spinResult').className = 'spin-result';
   fillTrack();
+  renderCaseDrops();
 }
 
 function fillTrack() {
@@ -1049,7 +1185,7 @@ function fillTrack() {
   const pool = getPoolForCurrentCase();
   for (let i = 0; i < 60; i++) {
     const skinDef = pool[Math.floor(Math.random() * pool.length)];
-    track.appendChild(makeSlot(skinDef));
+    track.appendChild(makeSlot(skinDef, false));
   }
   startIdleSpin();
 }
@@ -1062,15 +1198,41 @@ function getPoolForCurrentCase() {
   return ALL_SKINS.filter(s => caseDef.pool.includes(s.id));
 }
 
-function makeSlot(skinDef) {
+function makeSlot(skinDef, statTrak) {
   const el = document.createElement('div');
   el.className = 'slot ' + skinDef.rarity;
   el.innerHTML = `
     <div class="slot-img">${weaponImg(skinDef.weapon)}</div>
     <div class="slot-name">${skinDef.name.split('|')[0].trim()}</div>
     <div class="slot-wear">${skinDef.name.split('|')[1]?.trim() || ''}</div>
+    ${statTrak ? '<div class="slot-st">ST</div>' : ''}
   `;
   return el;
+}
+
+function renderCaseDrops() {
+  const list = $('caseDropsList');
+  if (!list) return;
+  list.innerHTML = '';
+  const pool = getPoolForCurrentCase();
+
+  const totalWeight = pool.reduce((s, def) => s + (RARITY_WEIGHTS[def.rarity] || 1), 0);
+  pool
+    .slice()
+    .sort((a, b) => a.basePrice - b.basePrice)
+    .forEach(def => {
+      const chance = ((RARITY_WEIGHTS[def.rarity] || 1) / totalWeight * 100).toFixed(2);
+      const el = document.createElement('div');
+      el.className = 'drop-item';
+      el.innerHTML = `
+        <div class="drop-img">${weaponImg(def.weapon)}</div>
+        <div class="drop-info">
+          <div class="drop-name">${def.name}</div>
+          <div class="drop-chance">${chance}% · от ${fmt(def.basePrice)} ₽</div>
+        </div>
+      `;
+      list.appendChild(el);
+    });
 }
 
 function mainCaseAction() {
@@ -1093,10 +1255,14 @@ function mainCaseAction() {
   track.innerHTML = '';
   const STOP_INDEX = 50;
   for (let i = 0; i < 60; i++) {
-    let skinDef;
-    if (i === STOP_INDEX) skinDef = winSkinDef;
-    else skinDef = pool[Math.floor(Math.random() * pool.length)];
-    track.appendChild(makeSlot(skinDef));
+    let skinDef, isST = false;
+    if (i === STOP_INDEX) {
+      skinDef = winSkinDef;
+      isST = winSkin.statTrak;
+    } else {
+      skinDef = pool[Math.floor(Math.random() * pool.length)];
+    }
+    track.appendChild(makeSlot(skinDef, isST));
   }
 
   void track.offsetWidth;
@@ -1134,14 +1300,13 @@ function mainCaseAction() {
 /* ==================== АПГРЕЙДЕР ==================== */
 function pickFromInventory() {
   if (!state.inventory.length) {
-    toastText('Инвентарь пуст');
+    toastText('Инвентарь пуст', 'lose');
     return;
   }
   const list = $('modalList');
   list.innerHTML = '';
   $('modalTitle').textContent = 'Выбери свой скин';
 
-  // Скрываем поиск/фильтры для выбора своего скина
   $('modalSearch').style.display = 'none';
   document.querySelector('.modal-filters').style.display = 'none';
 
@@ -1151,8 +1316,8 @@ function pickFromInventory() {
     item.innerHTML = `
       <div class="mi-img">${weaponImg(skin.weapon)}</div>
       <div class="mi-info">
-        <div class="mi-name">${skin.name}</div>
-        <div class="mi-wear">${skin.wearName}${skin.statTrak ? ' · StatTrak™' : ''}</div>
+        <div class="mi-name">${skin.name}${skin.statTrak ? ' · StatTrak™' : ''}</div>
+        <div class="mi-wear">${skin.wearName}</div>
       </div>
       <div class="mi-price">${fmt(skin.price)} ₽</div>
     `;
@@ -1182,17 +1347,12 @@ let modalCandidates = [];
 
 function pickToTarget() {
   const from = state.upgrade.fromSkin;
-  if (!from) { toastText('Сначала выбери свой скин'); return; }
+  if (!from) { toastText('Сначала выбери свой скин', 'lose'); return; }
 
-  // Формируем список ВСЕХ вариаций скинов (basePrice > from.price)
-  // каждая вариация = отдельный экземпляр со своим wear/StatTrak
   modalCandidates = [];
   ALL_SKINS.forEach(def => {
     if (def.basePrice <= from.price) return;
-    // Для каждого скина делаем несколько вариаций — по одному разу на каждое качество
-    // (чтобы в списке были и FT, и FN, и ST-варианты как разные пункты)
     WEARS.forEach(wear => {
-      // Обычная версия
       const instance = {
         id: def.id + '_' + wear.key,
         skinId: def.id,
@@ -1207,7 +1367,6 @@ function pickToTarget() {
       if (instance.price > from.price) {
         modalCandidates.push({ def, instance });
       }
-      // StatTrak версия (если доступна)
       if (def.hasStatTrak) {
         const stPrice = Math.round(def.basePrice * wear.mult * 1.35);
         const stInstance = {
@@ -1228,7 +1387,6 @@ function pickToTarget() {
     });
   });
 
-  // Сортируем от дешёвого к дорогому
   modalCandidates.sort((a, b) => a.instance.price - b.instance.price);
 
   $('modalTitle').textContent = 'Выбери целевой скин';
@@ -1318,7 +1476,7 @@ function updateUpgradeChance() {
 
 function doUpgrade() {
   if (!state.upgrade.fromSkin || !state.upgrade.toSkin) {
-    toastText('Выбери оба скина');
+    toastText('Выбери оба скина', 'lose');
     return;
   }
   if (state.isSpinning) return;
@@ -1362,18 +1520,16 @@ function doUpgrade() {
     btn.classList.remove('disabled');
     btn.textContent = 'Прокачать';
 
-    // Скин ВСЕГДА удаляется из инвентаря (и при успехе, и при провале)
     const idx = state.inventory.findIndex(s => s.id === state.upgrade.fromSkin.id);
     if (idx >= 0) state.inventory.splice(idx, 1);
 
     if (success) {
       state.inventory.push(state.upgrade.toSkin);
-      toastText(`Успешно! Получено: ${state.upgrade.toSkin.name}`, 'win');
+      toastText(`Успешно: ${state.upgrade.toSkin.name}`, 'win');
     } else {
-      toastText('Провал... Скин потерян', 'lose');
+      toastText('Провал', 'lose');
     }
 
-    // Сброс выбора
     state.upgrade.fromSkin = null;
     state.upgrade.toSkin = null;
     $('upFromPreview').innerHTML = '';
@@ -1404,12 +1560,15 @@ function renderInventory() {
     el.innerHTML = `
       <div class="inv-img">${weaponImg(skin.weapon)}</div>
       <div class="inv-info">
-        <div class="inv-name">${skin.name}</div>
-        <div class="inv-wear">${skin.wearName}${skin.statTrak ? ' · StatTrak™' : ''}</div>
+        <div class="inv-name">${skin.name}${skin.statTrak ? ' · StatTrak™' : ''}</div>
+        <div class="inv-wear">${skin.wearName}</div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
         <div class="inv-price">${fmt(skin.price)} ₽</div>
-        <button class="sell-btn" onclick="sellSkin(${idx})">Продать</button>
+        <div style="display:flex;gap:6px;">
+          <button class="sell-btn" onclick="sellSkin(${idx})">Продать</button>
+          <button class="sell-btn" onclick="withdrawSkin(${idx})">Вывод</button>
+        </div>
       </div>
     `;
     list.appendChild(el);
@@ -1419,12 +1578,27 @@ function renderInventory() {
 function sellSkin(idx) {
   const skin = state.inventory[idx];
   if (!skin) return;
-  const price = Math.round(skin.price * 0.9);  // комиссия 10%
+  const price = Math.round(skin.price * 0.9);
   state.balance += price;
   state.inventory.splice(idx, 1);
   toastText(`+${fmt(price)} ₽`, 'win');
   renderInventory();
   updateBalance();
+}
+
+function withdrawSkin(idx) {
+  toastText('Заявка отправлена', 'win');
+}
+
+/* ==================== ПРОМОКОД / ВЫВОД ==================== */
+function applyPromo() {
+  const code = $('promoInput').value.trim();
+  if (!code) { toastText('Введи код', 'lose'); return; }
+  toastText('Промокод скоро будет доступен', 'lose');
+}
+
+function withdrawOpen() {
+  toastText('Вывод скоро будет доступен', 'lose');
 }
 
 /* ==================== INIT ==================== */
