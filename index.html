@@ -63,6 +63,8 @@
   .screen {
     position:fixed; inset:0; display:flex; flex-direction:column;
     z-index:1; transition:opacity .25s; background:transparent;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .screen.hidden { opacity:0; pointer-events:none; }
 
@@ -78,7 +80,6 @@
     padding:40px 24px 60px;
     text-align:center;
     position:relative; z-index:2;
-    overflow-y:auto;
     display:flex; flex-direction:column; align-items:center;
   }
   .brand {
@@ -154,6 +155,7 @@
   .topbar {
     padding:18px 22px; display:flex; justify-content:space-between; align-items:center;
     border-bottom:1px solid var(--border); position:relative; z-index:2;
+    flex-shrink: 0;
   }
   .close-btn {
     background:transparent; border:none; color:var(--text3);
@@ -196,7 +198,11 @@
   .case-item .price .ico { font-size:14px; }
   .case-item.case-sub { border-color:var(--green); }
 
-  /* === РУЛЕТКА === */
+  /* === ОТКРЫТИЕ КЕЙСА === */
+  #caseOpen {
+    overflow: hidden;
+  }
+
   .roulette-stage {
     display:flex; flex-direction:column;
     align-items:center; justify-content:center;
@@ -271,6 +277,7 @@
   .spin-result {
     text-align:center; margin-top:20px;
     opacity:0; transition:opacity .3s;
+    min-height: 40px;
   }
   .spin-result.show { opacity:1; }
   .spin-result .label {
@@ -283,41 +290,97 @@
     display:flex; align-items:center; justify-content:center; gap:8px;
   }
 
-  /* === СПИСОК ДРОПОВ === */
+  /* === СПИСОК ДРОПОВ — СЕТКА КАК НА СКРИНЕ === */
   .case-drops {
-    max-height: 190px;
+    flex: 1;
     overflow-y: auto;
-    padding: 16px 24px;
+    padding: 16px 16px 20px;
     border-top: 1px solid var(--border);
-    background: rgba(0,0,0,0.2);
+    background: rgba(0,0,0,0.25);
     position: relative; z-index: 2;
+    -webkit-overflow-scrolling: touch;
   }
   .case-drops-title {
     font-size: 9px; color: var(--text3);
     letter-spacing: 4px; text-transform: uppercase;
     margin-bottom: 12px;
+    padding-left: 4px;
   }
   .case-drops-list {
-    display: flex; flex-direction: column; gap: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
   }
   .drop-item {
-    display: flex; align-items: center; gap: 12px;
-    padding: 8px 10px;
+    position: relative;
+    padding: 30px 10px 10px;
     border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--bg2);
+    border-radius: 12px;
+    background: linear-gradient(180deg, rgba(66,56,42,0.9), rgba(53,44,34,0.6));
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    min-height: 150px;
+  }
+  .drop-item::after {
+    content: ""; position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 3px;
+    background: var(--drop-color, var(--border2));
+  }
+  .drop-price-badge {
+    position: absolute; top: 10px; left: 10px;
+    background: #000;
+    color: var(--gold2);
+    font-size: 11px; font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.3px;
+    z-index: 2;
+  }
+  .drop-st {
+    position: absolute; top: 10px; right: 10px;
+    background: var(--r-stattrak);
+    color: #000;
+    font-size: 9px; font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+    z-index: 2;
+  }
+  .drop-wear-badge {
+    position: absolute; bottom: 8px; right: 8px;
+    background: rgba(0,0,0,0.6);
+    color: var(--sand);
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+    z-index: 2;
   }
   .drop-item .drop-img {
-    width: 60px; height: 38px; flex-shrink: 0;
+    width: 100%; height: 70px;
     display: flex; align-items: center; justify-content: center;
+    margin-bottom: 8px;
   }
   .drop-item .drop-img svg,
   .drop-item .drop-img img { width: 100%; height: 100%; object-fit: contain; }
-  .drop-item .drop-info { flex: 1; min-width: 0; }
-  .drop-item .drop-name { font-size: 11px; color: var(--sand); }
-  .drop-item .drop-chance { font-size: 10px; color: var(--text3); margin-top: 2px; }
+  .drop-item .drop-name {
+    font-size: 11px; color: var(--sand);
+    line-height: 1.25;
+    text-align: left;
+    width: 100%;
+    margin-top: auto;
+    padding-right: 26px;
+  }
 
-  .spin-controls { padding:16px 24px 20px; position:relative; z-index:2; }
+  .spin-controls {
+    padding: 16px 24px 20px;
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
 
   .main-btn {
     width:100%; background:linear-gradient(180deg, var(--bg3), var(--bg2)); border:1px solid var(--accent);
@@ -436,14 +499,19 @@
   .inv-item .inv-img svg,
   .inv-item .inv-img img { width:100%; height:100%; object-fit:contain; }
   .inv-item .inv-info { flex:1; min-width:0; }
-  .inv-item .inv-name { font-size:12px; color:var(--sand); }
+  .inv-item .inv-price {
+    font-size:14px; color:var(--gold2);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .inv-item .inv-name { font-size:13px; color:var(--sand); font-weight: 500; }
   .inv-item .inv-wear { font-size:10px; color:var(--text3); margin-top:3px; }
-  .inv-item .inv-price { font-size:12px; color:var(--gold2); flex-shrink:0; }
   .inv-item .sell-btn {
     background:transparent; border:1px solid var(--accent);
     border-radius:6px; color:var(--sand);
-    font-size:10px; padding:4px 10px;
+    font-size:10px; padding:6px 12px;
     font-family:inherit; cursor:pointer;
+    white-space: nowrap;
   }
   .inv-item .sell-btn:active { background:#4a2a1a; }
   .inv-empty { text-align:center; color:var(--text3); padding:60px 20px; font-size:13px; }
@@ -591,20 +659,38 @@
     text-align:center; color:var(--text3); padding:30px; font-size:13px;
   }
 
+  /* === УВЕДОМЛЕНИЯ — ЯРКИЕ === */
   #toast {
     position:fixed; top:60px; left:50%;
     transform:translateX(-50%) translateY(-30px);
-    background:var(--bg2); color:var(--sand);
-    padding:14px 24px; border-radius:100px;
-    font-size:13px; z-index:100;
-    border:1px solid var(--accent);
-    transition:transform .3s, opacity .3s, border-color .3s, color .3s;
+    background: #1a1410;
+    color: #fff;
+    padding:14px 26px;
+    border-radius:100px;
+    font-size:14px;
+    font-weight: 600;
+    z-index:100;
+    border:2px solid var(--accent);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px rgba(212,107,74,0.3);
+    transition:transform .3s, opacity .3s, border-color .3s, color .3s, box-shadow .3s;
     pointer-events:none; white-space:nowrap; opacity:0;
     max-width:90vw; overflow:hidden; text-overflow:ellipsis;
+    letter-spacing: 0.3px;
   }
-  #toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
-  #toast.show.win { border-color:var(--green); color:#c8f0a8; }
-  #toast.show.lose { border-color:var(--danger); color:#f0a8a0; }
+  #toast.show {
+    transform:translateX(-50%) translateY(0);
+    opacity:1;
+  }
+  #toast.show.win {
+    border-color: #6fbf4a;
+    color: #d4ffb0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 24px rgba(111,191,74,0.5);
+  }
+  #toast.show.lose {
+    border-color: #c44a3a;
+    color: #ffb8a8;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 24px rgba(196,74,58,0.5);
+  }
 </style>
 </head>
 <body>
@@ -701,6 +787,7 @@
     <button class="close-btn" onclick="closeCase()"><span class="ico" data-icon="close"></span></button>
     <div class="topbar-balance"><span class="ico" data-icon="ruble"></span><span id="openBalance">0</span></div>
   </div>
+
   <div class="roulette-stage">
     <div class="roulette">
       <div class="track" id="track"></div>
@@ -1026,6 +1113,17 @@ const RARITY_WEIGHTS = {
   contraband: 0.005,
 };
 
+const RARITY_COLORS = {
+  consumer:   'var(--r-consumer)',
+  industrial: 'var(--r-industrial)',
+  milspec:    'var(--r-milspec)',
+  restricted: 'var(--r-restricted)',
+  classified: 'var(--r-classified)',
+  covert:     'var(--r-covert)',
+  rare:       'var(--r-rare)',
+  contraband: 'var(--r-contraband)',
+};
+
 function pickSkinFromPool(pool) {
   const available = {};
   pool.forEach(s => { available[s.rarity] = (available[s.rarity] || 0) + 1; });
@@ -1135,7 +1233,7 @@ function openProfile() {
   showScreen('profile');
 }
 
-/* ==================== КЕЙСЫ: idle-вращение ==================== */
+/* ==================== КЕЙСЫ: idle ==================== */
 let idleRaf = null;
 
 function stopIdleSpin() {
@@ -1210,6 +1308,7 @@ function makeSlot(skinDef, statTrak) {
   return el;
 }
 
+/* ==================== СПИСОК ДРОПОВ ==================== */
 function renderCaseDrops() {
   const list = $('caseDropsList');
   if (!list) return;
@@ -1217,22 +1316,41 @@ function renderCaseDrops() {
   const pool = getPoolForCurrentCase();
 
   const totalWeight = pool.reduce((s, def) => s + (RARITY_WEIGHTS[def.rarity] || 1), 0);
-  pool
-    .slice()
-    .sort((a, b) => a.basePrice - b.basePrice)
-    .forEach(def => {
-      const chance = ((RARITY_WEIGHTS[def.rarity] || 1) / totalWeight * 100).toFixed(2);
-      const el = document.createElement('div');
-      el.className = 'drop-item';
-      el.innerHTML = `
-        <div class="drop-img">${weaponImg(def.weapon)}</div>
-        <div class="drop-info">
-          <div class="drop-name">${def.name}</div>
-          <div class="drop-chance">${chance}% · от ${fmt(def.basePrice)} ₽</div>
-        </div>
-      `;
-      list.appendChild(el);
+
+  // Для каждого скина из пула делаем несколько карточек — по одной на каждый wear
+  // плюс StatTrak-версии
+  const drops = [];
+  pool.forEach(def => {
+    WEARS.forEach(wear => {
+      const price = Math.round(def.basePrice * wear.mult);
+      const chance = (RARITY_WEIGHTS[def.rarity] || 1) / totalWeight * 100;
+      drops.push({ def, wear, price, chance, statTrak: false });
+      if (def.hasStatTrak) {
+        drops.push({
+          def, wear,
+          price: Math.round(price * 1.35),
+          chance: chance * 0.1,
+          statTrak: true
+        });
+      }
     });
+  });
+
+  drops.sort((a, b) => a.price - b.price);
+
+  drops.forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'drop-item';
+    el.style.setProperty('--drop-color', RARITY_COLORS[d.def.rarity] || 'var(--border2)');
+    el.innerHTML = `
+      <div class="drop-price-badge">${fmt(d.price)} ₽</div>
+      ${d.statTrak ? '<div class="drop-st">ST</div>' : ''}
+      <div class="drop-wear-badge">${d.wear.key}</div>
+      <div class="drop-img">${weaponImg(d.def.weapon)}</div>
+      <div class="drop-name">${d.def.name.split('|')[0].trim()}${d.statTrak ? ' · ST' : ''}</div>
+    `;
+    list.appendChild(el);
+  });
 }
 
 function mainCaseAction() {
@@ -1368,7 +1486,6 @@ function pickToTarget() {
         modalCandidates.push({ def, instance });
       }
       if (def.hasStatTrak) {
-        const stPrice = Math.round(def.basePrice * wear.mult * 1.35);
         const stInstance = {
           id: def.id + '_' + wear.key + '_st',
           skinId: def.id,
@@ -1378,7 +1495,7 @@ function pickToTarget() {
           wear: wear.key,
           wearName: wear.name,
           statTrak: true,
-          price: stPrice,
+          price: Math.round(def.basePrice * wear.mult * 1.35),
         };
         if (stInstance.price > from.price) {
           modalCandidates.push({ def, instance: stInstance });
@@ -1560,15 +1677,13 @@ function renderInventory() {
     el.innerHTML = `
       <div class="inv-img">${weaponImg(skin.weapon)}</div>
       <div class="inv-info">
+        <div class="inv-price">${fmt(skin.price)} ₽</div>
         <div class="inv-name">${skin.name}${skin.statTrak ? ' · StatTrak™' : ''}</div>
         <div class="inv-wear">${skin.wearName}</div>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
-        <div class="inv-price">${fmt(skin.price)} ₽</div>
-        <div style="display:flex;gap:6px;">
-          <button class="sell-btn" onclick="sellSkin(${idx})">Продать</button>
-          <button class="sell-btn" onclick="withdrawSkin(${idx})">Вывод</button>
-        </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <button class="sell-btn" onclick="sellSkin(${idx})">Продать</button>
+        <button class="sell-btn" onclick="withdrawSkin(${idx})">Вывод</button>
       </div>
     `;
     list.appendChild(el);
