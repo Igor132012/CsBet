@@ -743,49 +743,72 @@ async function loadBestDrop() {
   }
 }
 
-/* ==================== КАТАЛОГ ==================== */
+/* ==================== КАТАЛОГ (ЦЕНЫ CS2, курс 84.34 ₽/$) ==================== */
 const ALL_SKINS = [
-  { id:'ak_redline',    name:'AK-47 | Красная линия',    weapon:'rifle',  rarity:'classified', basePrice:4200,  hasStatTrak:true },
-  { id:'ak_vulcan',     name:'AK-47 | Вулкан',           weapon:'rifle',  rarity:'covert',     basePrice:9800,  hasStatTrak:true },
-  { id:'ak_asiimov',    name:'AK-47 | Азимов',           weapon:'rifle',  rarity:'covert',     basePrice:3200,  hasStatTrak:true },
-  { id:'ak_nightwish',  name:'AK-47 | Пожелание на ночь',weapon:'rifle',  rarity:'covert',     basePrice:4600,  hasStatTrak:true },
-  { id:'ak_fire_serp',  name:'AK-47 | Огненный змей',    weapon:'rifle',  rarity:'covert',     basePrice:28000, hasStatTrak:true },
-  { id:'m4a4_howl',     name:'M4A4 | Вой',               weapon:'rifle',  rarity:'contraband', basePrice:380000, hasStatTrak:false },
-  { id:'m4a4_asiimov',  name:'M4A4 | Азимов',            weapon:'rifle',  rarity:'covert',     basePrice:5100,  hasStatTrak:true },
-  { id:'m4a1s_print',   name:'M4A1-S | Поток информации', weapon:'rifle',  rarity:'covert',     basePrice:2600,  hasStatTrak:true },
-  { id:'m4a4_temukau',  name:'M4A4 | Темукау',           weapon:'rifle',  rarity:'covert',     basePrice:1900,  hasStatTrak:true },
-  { id:'m4a1s_solitude',name:'M4A1-S | Одиночество',     weapon:'rifle',  rarity:'classified', basePrice:1100,  hasStatTrak:true },
-  { id:'m4a4_desolate', name:'M4A4 | Пустынное пространство', weapon:'rifle', rarity:'milspec',  basePrice:180,   hasStatTrak:true },
-  { id:'ak_slate',      name:'AK-47 | Шифер',            weapon:'rifle',  rarity:'milspec',    basePrice:95,    hasStatTrak:true },
-  { id:'galil_ar',      name:'Galil AR | Пустынный воин',weapon:'rifle',  rarity:'industrial', basePrice:45,    hasStatTrak:true },
+  // === AK-47 ===
+  { id:'ak_redline',    name:'AK-47 | Красная линия',    weapon:'rifle',  rarity:'classified', basePrice: 840,  hasStatTrak:true },
+  { id:'ak_vulcan',     name:'AK-47 | Вулкан',           weapon:'rifle',  rarity:'covert',     basePrice: 8300, hasStatTrak:true },
+  { id:'ak_asiimov',    name:'AK-47 | Азимов',           weapon:'rifle',  rarity:'covert',     basePrice: 2900, hasStatTrak:true },
+  { id:'ak_nightwish',  name:'AK-47 | Пожелание на ночь',weapon:'rifle',  rarity:'covert',     basePrice: 4500, hasStatTrak:true },
+  { id:'ak_fire_serp',  name:'AK-47 | Огненный змей',    weapon:'rifle',  rarity:'covert',     basePrice: 40000, hasStatTrak:true },
+  { id:'ak_bloodsport', name:'AK-47 | Кровавый спорт',   weapon:'rifle',  rarity:'covert',     basePrice: 9000, hasStatTrak:true },
+  { id:'ak_fuel',       name:'AK-47 | Топливный инжектор',weapon:'rifle', rarity:'covert',     basePrice: 7200, hasStatTrak:true },
+  { id:'ak_empress',    name:'AK-47 | Императрица',      weapon:'rifle',  rarity:'covert',     basePrice: 7300, hasStatTrak:true },
+  { id:'ak_oligarch',   name:'AK-47 | Олигарх',          weapon:'rifle',  rarity:'covert',     basePrice: 2000, hasStatTrak:true },
+  { id:'ak_inheritance',name:'AK-47 | Наследство',       weapon:'rifle',  rarity:'covert',     basePrice: 2200, hasStatTrak:true },
 
-  { id:'awp_dragon',    name:'AWP | Драконий огонь',     weapon:'sniper', rarity:'covert',     basePrice:420000, hasStatTrak:true },
-  { id:'awp_asiimov',   name:'AWP | Азимов',             weapon:'sniper', rarity:'covert',     basePrice:6800,  hasStatTrak:true },
-  { id:'awp_medusa',    name:'AWP | Медуза',             weapon:'sniper', rarity:'covert',     basePrice:26000, hasStatTrak:true },
-  { id:'awp_wildfire',  name:'AWP | Дикий огонь',        weapon:'sniper', rarity:'covert',     basePrice:8900,  hasStatTrak:true },
-  { id:'awp_neo',       name:'AWP | Нео-нуар',           weapon:'sniper', rarity:'covert',     basePrice:4600,  hasStatTrak:true },
-  { id:'awp_lightning', name:'AWP | Удар молнии',        weapon:'sniper', rarity:'classified', basePrice:2400,  hasStatTrak:true },
-  { id:'awp_snake',     name:'AWP | Змеиная кожа',       weapon:'sniper', rarity:'restricted', basePrice:340,   hasStatTrak:true },
-  { id:'ssg_blood',     name:'SSG 08 | Кровавая паутина',weapon:'sniper', rarity:'restricted', basePrice:220,   hasStatTrak:true },
+  // === M4A4 / M4A1-S ===
+  { id:'m4a4_howl',     name:'M4A4 | Вой',               weapon:'rifle',  rarity:'contraband', basePrice: 295000, hasStatTrak:false },
+  { id:'m4a4_asiimov',  name:'M4A4 | Азимов',            weapon:'rifle',  rarity:'covert',     basePrice: 4200, hasStatTrak:true },
+  { id:'m4a4_temukau',  name:'M4A4 | Темукау',           weapon:'rifle',  rarity:'covert',     basePrice: 1800, hasStatTrak:true },
+  { id:'m4a4_emperor',  name:'M4A4 | Император',         weapon:'rifle',  rarity:'covert',     basePrice: 4200, hasStatTrak:true },
+  { id:'m4a4_the_emperor', name:'M4A4 | The Emperor',    weapon:'rifle',  rarity:'covert',     basePrice: 4200, hasStatTrak:true },
+  { id:'m4a1s_print',   name:'M4A1-S | Поток информации', weapon:'rifle',  rarity:'covert',     basePrice: 11000, hasStatTrak:true },
+  { id:'m4a1s_fade',    name:'M4A1-S | Градиент',        weapon:'rifle',  rarity:'covert',     basePrice: 15500, hasStatTrak:true },
+  { id:'m4a1s_solitude',name:'M4A1-S | Одиночество',     weapon:'rifle',  rarity:'classified', basePrice: 1600, hasStatTrak:true },
+  { id:'m4a1s_player2', name:'M4A1-S | Player Two',      weapon:'rifle',  rarity:'covert',     basePrice: 4200, hasStatTrak:true },
+  { id:'m4a1s_hotrod',  name:'M4A1-S | Хот-род',         weapon:'rifle',  rarity:'covert',     basePrice: 101000, hasStatTrak:true },
 
-  { id:'deagle_print',  name:'Desert Eagle | Поток информации', weapon:'pistol', rarity:'covert', basePrice:3500, hasStatTrak:true },
-  { id:'deagle_blaze',  name:'Desert Eagle | Пламя',     weapon:'pistol', rarity:'restricted', basePrice:1800, hasStatTrak:true },
-  { id:'deagle_codex',  name:'Desert Eagle | Кодекс',    weapon:'pistol', rarity:'classified', basePrice:490,  hasStatTrak:true },
-  { id:'usp_print',     name:'USP-S | Поток информации', weapon:'pistol', rarity:'covert',     basePrice:2300, hasStatTrak:true },
-  { id:'usp_kill',      name:'USP-S | Подтверждённое убийство', weapon:'pistol', rarity:'covert', basePrice:4200, hasStatTrak:true },
-  { id:'glock_fade',    name:'Glock-18 | Градиент',      weapon:'pistol', rarity:'restricted', basePrice:720,  hasStatTrak:true },
-  { id:'glock_water',   name:'Glock-18 | Элементаль',    weapon:'pistol', rarity:'restricted', basePrice:540,  hasStatTrak:true },
-  { id:'p250_asiimov',  name:'P250 | Азимов',            weapon:'pistol', rarity:'classified', basePrice:1200, hasStatTrak:true },
-  { id:'fiveseven_monkey', name:'Five-SeveN | Бешеный клоун', weapon:'pistol', rarity:'classified', basePrice:390, hasStatTrak:true },
+  // === AWP ===
+  { id:'awp_dragon',    name:'AWP | Драконий огонь',     weapon:'sniper', rarity:'covert',     basePrice: 371000, hasStatTrak:true },
+  { id:'awp_asiimov',   name:'AWP | Азимов',             weapon:'sniper', rarity:'covert',     basePrice: 5900, hasStatTrak:true },
+  { id:'awp_medusa',    name:'AWP | Медуза',             weapon:'sniper', rarity:'covert',     basePrice: 121000, hasStatTrak:true },
+  { id:'awp_wildfire',  name:'AWP | Дикий огонь',        weapon:'sniper', rarity:'covert',     basePrice: 8500, hasStatTrak:true },
+  { id:'awp_neo',       name:'AWP | Нео-нуар',           weapon:'sniper', rarity:'covert',     basePrice: 4200, hasStatTrak:true },
+  { id:'awp_lightning', name:'AWP | Удар молнии',        weapon:'sniper', rarity:'classified', basePrice: 34000, hasStatTrak:true },
+  { id:'awp_queens',    name:'AWP | Гамбит королевы',    weapon:'sniper', rarity:'covert',     basePrice: 2900, hasStatTrak:true },
+  { id:'awp_snake',     name:'AWP | Змеиная кожа',       weapon:'sniper', rarity:'restricted', basePrice: 240,  hasStatTrak:true },
+  { id:'ssg_blood',     name:'SSG 08 | Кровавая паутина',weapon:'sniper', rarity:'restricted', basePrice: 180,  hasStatTrak:true },
 
-  { id:'karambit_fade', name:'Karambit | Градиент',      weapon:'knife',  rarity:'rare',       basePrice:185000, hasStatTrak:true },
-  { id:'karambit_doppler', name:'Karambit | Доплер',     weapon:'knife',  rarity:'rare',       basePrice:92000,  hasStatTrak:true },
-  { id:'karambit_slaughter', name:'Karambit | Бойня',    weapon:'knife',  rarity:'rare',       basePrice:78000,  hasStatTrak:true },
-  { id:'butterfly_doppler', name:'Butterfly | Доплер',   weapon:'knife',  rarity:'rare',       basePrice:145000, hasStatTrak:true },
-  { id:'butterfly_fade', name:'Butterfly | Градиент',    weapon:'knife',  rarity:'rare',       basePrice:198000, hasStatTrak:true },
-  { id:'m9_bayonet',    name:'M9 Bayonet | Доплер',      weapon:'knife',  rarity:'rare',       basePrice:88000,  hasStatTrak:true },
-  { id:'bowie_slaughter', name:'Bowie | Бойня',          weapon:'knife',  rarity:'rare',       basePrice:34000,  hasStatTrak:true },
-  { id:'flip_doppler',  name:'Flip | Доплер',            weapon:'knife',  rarity:'rare',       basePrice:56000,  hasStatTrak:true },
+  // === Desert Eagle ===
+  { id:'deagle_print',  name:'Desert Eagle | Поток информации', weapon:'pistol', rarity:'covert', basePrice: 2450, hasStatTrak:true },
+  { id:'deagle_blaze',  name:'Desert Eagle | Пламя',     weapon:'pistol', rarity:'restricted', basePrice: 7800, hasStatTrak:true },
+  { id:'deagle_codex',  name:'Desert Eagle | Кодекс',    weapon:'pistol', rarity:'classified', basePrice: 450,  hasStatTrak:true },
+  { id:'deagle_fire',   name:'Desert Eagle | Огнедышащий', weapon:'pistol', rarity:'restricted', basePrice: 220, hasStatTrak:true },
+
+  // === USP-S / Glock / P250 ===
+  { id:'usp_print',     name:'USP-S | Поток информации', weapon:'pistol', rarity:'covert',     basePrice: 2450, hasStatTrak:true },
+  { id:'usp_kill',      name:'USP-S | Подтверждённое убийство', weapon:'pistol', rarity:'covert', basePrice: 4200, hasStatTrak:true },
+  { id:'usp_cyrex',     name:'USP-S | Cyrex',            weapon:'pistol', rarity:'restricted', basePrice: 550,  hasStatTrak:true },
+  { id:'usp_neo',       name:'USP-S | Нео-нуар',         weapon:'pistol', rarity:'covert',     basePrice: 1200, hasStatTrak:true },
+  { id:'glock_fade',    name:'Glock-18 | Градиент',      weapon:'pistol', rarity:'restricted', basePrice: 19000, hasStatTrak:true },
+  { id:'glock_water',   name:'Glock-18 | Элементаль',    weapon:'pistol', rarity:'restricted', basePrice: 600,  hasStatTrak:true },
+  { id:'glock_nuclear', name:'Glock-18 | Ядерный сад',   weapon:'pistol', rarity:'restricted', basePrice: 220,  hasStatTrak:true },
+  { id:'p250_asiimov',  name:'P250 | Азимов',            weapon:'pistol', rarity:'classified', basePrice: 1300, hasStatTrak:true },
+  { id:'fiveseven_monkey', name:'Five-SeveN | Бешеный клоун', weapon:'pistol', rarity:'classified', basePrice: 350, hasStatTrak:true },
+
+  // === Ножи ===
+  { id:'karambit_fade', name:'Karambit | Градиент',      weapon:'knife',  rarity:'rare',       basePrice: 145000, hasStatTrak:true },
+  { id:'karambit_doppler', name:'Karambit | Доплер',     weapon:'knife',  rarity:'rare',       basePrice: 88000,  hasStatTrak:true },
+  { id:'karambit_slaughter', name:'Karambit | Бойня',    weapon:'knife',  rarity:'rare',       basePrice: 68000,  hasStatTrak:true },
+  { id:'karambit_case', name:'Karambit | Поверхностная закалка', weapon:'knife', rarity:'rare', basePrice: 52000, hasStatTrak:true },
+  { id:'butterfly_doppler', name:'Butterfly | Доплер',   weapon:'knife',  rarity:'rare',       basePrice: 125000, hasStatTrak:true },
+  { id:'butterfly_fade', name:'Butterfly | Градиент',    weapon:'knife',  rarity:'rare',       basePrice: 165000, hasStatTrak:true },
+  { id:'butterfly_slaughter', name:'Butterfly | Бойня',  weapon:'knife',  rarity:'rare',       basePrice: 80000,  hasStatTrak:true },
+  { id:'m9_doppler',    name:'M9 Bayonet | Доплер',      weapon:'knife',  rarity:'rare',       basePrice: 82000,  hasStatTrak:true },
+  { id:'m9_fade',       name:'M9 Bayonet | Градиент',    weapon:'knife',  rarity:'rare',       basePrice: 75000,  hasStatTrak:true },
+  { id:'bowie_slaughter', name:'Bowie | Бойня',          weapon:'knife',  rarity:'rare',       basePrice: 34000,  hasStatTrak:true },
+  { id:'flip_doppler',  name:'Flip | Доплер',            weapon:'knife',  rarity:'rare',       basePrice: 56000,  hasStatTrak:true },
 ];
 
 /* ==================== ИЗНОС ==================== */
@@ -883,27 +906,37 @@ const CASES = {
   case10: {
     name: 'Пыльный контейнер',
     price: 10,
-    pool: ['galil_ar', 'ak_slate', 'm4a4_desolate', 'ssg_blood', 'awp_snake'],
+    pool: ['glock_nuclear', 'awp_snake', 'ssg_blood', 'usp_cyrex', 'deagle_fire', 'fiveseven_monkey'],
   },
   case50: {
     name: 'Выжженный контейнер',
     price: 50,
-    pool: ['galil_ar', 'ak_slate', 'm4a4_desolate', 'awp_snake', 'ssg_blood', 'p250_asiimov', 'glock_water'],
+    pool: ['glock_nuclear', 'awp_snake', 'ssg_blood', 'usp_cyrex', 'deagle_fire', 'fiveseven_monkey', 'deagle_codex', 'glock_water'],
   },
   case100: {
     name: 'Золотой контейнер',
     price: 100,
-    pool: ['ak_slate', 'm4a4_desolate', 'p250_asiimov', 'awp_neo', 'awp_lightning', 'glock_fade', 'deagle_codex', 'usp_print'],
+    pool: ['glock_nuclear', 'awp_snake', 'ssg_blood', 'usp_cyrex', 'fiveseven_monkey', 'deagle_codex', 'glock_water', 'p250_asiimov', 'm4a1s_solitude', 'usp_neo', 'awp_queens'],
   },
   case500: {
     name: 'Кейс пустыни',
     price: 500,
-    pool: ['m4a4_desolate', 'deagle_codex', 'ak_redline', 'ak_asiimov', 'm4a4_asiimov', 'm4a1s_solitude', 'deagle_blaze', 'usp_print'],
+    pool: ['usp_cyrex', 'glock_water', 'p250_asiimov', 'm4a1s_solitude', 'usp_neo', 'ak_redline', 'ak_asiimov', 'm4a4_asiimov', 'awp_neo', 'awp_queens', 'deagle_blaze'],
   },
   case1000: {
     name: 'Легендарный контейнер',
     price: 1000,
-    pool: ['m4a1s_solitude', 'ak_redline', 'ak_vulcan', 'ak_nightwish', 'awp_asiimov', 'awp_medusa', 'awp_wildfire', 'm4a1s_print'],
+    pool: ['ak_redline', 'ak_asiimov', 'ak_vulcan', 'ak_nightwish', 'ak_bloodsport', 'ak_fuel', 'ak_empress', 'm4a4_asiimov', 'm4a4_temukau', 'm4a1s_print', 'awp_asiimov', 'awp_wildfire', 'deagle_print', 'usp_print'],
+  },
+  case5000: {
+    name: 'Элитный контейнер',
+    price: 5000,
+    pool: ['ak_bloodsport', 'ak_fuel', 'ak_empress', 'ak_fire_serp', 'm4a4_the_emperor', 'm4a1s_print', 'm4a1s_player2', 'awp_asiimov', 'awp_wildfire', 'awp_medusa', 'deagle_print', 'usp_kill'],
+  },
+  case20000: {
+    name: 'Контейнер пустыни',
+    price: 20000,
+    pool: ['awp_medusa', 'awp_dragon', 'm4a4_howl', 'ak_fire_serp', 'm4a1s_hotrod', 'm4a1s_fade', 'karambit_case', 'karambit_doppler', 'karambit_slaughter', 'butterfly_slaughter', 'm9_doppler', 'm9_fade', 'bowie_slaughter', 'flip_doppler'],
   },
 };
 
@@ -1094,11 +1127,9 @@ async function mainCaseAction() {
   const isFree = state.currentCase === 'subcase';
   const casePrice = caseDef ? caseDef.price : 0;
 
-  // Блокируем кнопку сразу
   setBtnBusy(btn, 'Крутим...');
   state.isSpinning = true;
 
-  // Списываем баланс
   if (!isFree && caseDef) {
     if (state.balance < caseDef.price) {
       setBtnBusy(btn, 'Не хватает средств');
@@ -1151,8 +1182,6 @@ async function mainCaseAction() {
   track.style.transition = `transform ${duration}ms cubic-bezier(0.12, 0.85, 0.18, 1)`;
   track.style.transform = `translateX(${targetX}px)`;
 
-  // Записываем на сервер СРАЗУ после старта анимации, чтобы к моменту
-  // её окончания данные уже были в БД
   const addPromise = api("/api/inventory/add", {
     user_id: USER_ID,
     skinId: winSkin.skinId,
@@ -1170,7 +1199,6 @@ async function mainCaseAction() {
     state.isSpinning = false;
 
     if (!addRes || !addRes.id) {
-      // Не смогли записать — не показываем дроп как выигранный
       $('spinValue').textContent = '—';
       $('spinResult').className = 'spin-result show';
       toastText('Ошибка сохранения', 'lose');
@@ -1181,7 +1209,6 @@ async function mainCaseAction() {
     winSkin.id = addRes.id;
     state.inventory.unshift(winSkin);
 
-    // Обновляем лучший дроп локально + грузим с сервера на всякий случай
     if (!state.bestDrop || winSkin.price > state.bestDrop.price) {
       state.bestDrop = { ...winSkin };
       updateBestWin();
@@ -1394,7 +1421,6 @@ async function doUpgrade() {
   const fromSkin = state.upgrade.fromSkin;
   const toSkin   = state.upgrade.toSkin;
 
-  // Параллельно анимации — удаляем исходник, добавляем целевой (если успех)
   const removePromise = fromSkin.id
     ? api("/api/inventory/remove", { user_id: USER_ID, id: fromSkin.id })
     : Promise.resolve({ ok: true });
@@ -1418,7 +1444,6 @@ async function doUpgrade() {
     const addRes = await addPromise;
     state.isSpinning = false;
 
-    // локально
     const idx = state.inventory.findIndex(s => s.id === fromSkin.id);
     if (idx >= 0) state.inventory.splice(idx, 1);
 
