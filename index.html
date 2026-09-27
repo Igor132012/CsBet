@@ -643,6 +643,7 @@
     <div class="wd-hint">
       Укажи ссылку на свой Steam-профиль и trade-ссылку.
       Админ вручную отправит скин на указанный аккаунт после проверки заявки.
+      Скин убирается из инвентаря сразу, но вернётся, если заявку отклонят.
     </div>
     <input type="text" class="wd-field" id="wdSteam" placeholder="Ссылка на Steam-профиль">
     <input type="text" class="wd-field" id="wdTrade" placeholder="Trade-ссылка">
@@ -712,6 +713,7 @@ const state = {
   isSpinning: false,
   bestDrop: null,
   upgrade: { fromSkin: null, toSkin: null, chance: 0 },
+  upgradeStats: { win_count: 0, win_sum: 0, lose_sum: 0 },
   withdrawSkin: null,
 };
 
@@ -783,6 +785,36 @@ async function loadBestDrop() {
     state.bestDrop = res.best;
     updateBestWin();
   }
+}
+
+/* ==================== ШТРАФ АПГРЕЙДА (СЕРВЕР) ==================== */
+async function loadUpgradeStats() {
+  const res = await api("/api/upgrade_stats", { user_id: USER_ID });
+  if (res && typeof res.win_count === "number") {
+    state.upgradeStats = res;
+    updateUpgradeChance();
+  }
+}
+
+async function updateUpgradeStats(result, fromPrice, toPrice) {
+  const res = await api("/api/upgrade_stats/update", {
+    user_id: USER_ID,
+    result,
+    from_price: fromPrice,
+    to_price: toPrice,
+  });
+  if (res && typeof res.win_count === "number") {
+    state.upgradeStats = res;
+    updateUpgradeChance();
+  }
+}
+
+/* Считаем штраф: сколько процентов вычесть из реального шанса */
+function calcPenalty() {
+  const wc = state.upgradeStats.win_count || 0;
+  if (wc <= 0) return 0;
+  if (wc <= 10) return wc * 1;
+  return 10 + (wc - 10) * 2;
 }
 
 /* ==================== КАТАЛОГ ==================== */
@@ -869,7 +901,6 @@ function createSkinInstance(skinDef, fixedWear) {
   };
 }
 
-/* Чуть повышены веса топов — стало легче ловить редкости */
 const RARITY_WEIGHTS = {
   consumer: 1000, industrial: 300, milspec: 45, restricted: 7,
   classified: 1.5, covert: 0.35, rare: 0.04, contraband: 0.003,
@@ -901,7 +932,6 @@ function pickByRarity(pool) {
   return pool[0];
 }
 
-/* 30% окупаемых / 70% неокупаемых относительно цены кейса */
 function pickSkinFromPool(pool, casePrice) {
   const unprofitable = pool.filter(s => s.basePrice < casePrice);
   const profitable   = pool.filter(s => s.basePrice >= casePrice);
@@ -912,7 +942,13 @@ function pickSkinFromPool(pool, casePrice) {
   return pickByRarity(group) || pool[0];
 }
 
-/* Диапазоны basePrice для каждого кейса */
+/* Диапазоны basePrice по кейсам:
+   10   : 5–100
+   50   : 25–300
+   100  : 50–600
+   500  : 250–3000
+   1000 : 500–7000
+*/
 const CASE_RANGES = {
   case10:   { min: 5,   max: 100 },
   case50:   { min: 25,  max: 300 },
@@ -1028,8 +1064,6 @@ function openCaseScreen(caseKey) {
   }
 }
 
-/* Пул — скины в диапазоне basePrice текущего кейса.
-   Для бесплатного — до 20 ₽. */
 function getPoolForCurrentCase() {
   if (state.currentCase === 'subcase') {
     return ALL_SKINS.filter(s => s.basePrice <= 20);
@@ -1340,6 +1374,7 @@ function closeModal(e) {
   $('modalOverlay').classList.remove('show');
 }
 
+/* Обновление отображаемого и реального шанса */
 function updateUpgradeChance() {
   const from = state.upgrade.fromSkin;
   const to = state.upgrade.toSkin;
@@ -1357,7 +1392,12 @@ function updateUpgradeChance() {
   displayChance = Math.max(displayChance, 1);
   displayChance = Math.round(displayChance);
 
-  state.upgrade.chance = displayChance * 0.9;
+  const penalty = calcPenalty();
+  let real = displayChance * 0.9 - penalty;
+  if (real < 1) real = 1;
+
+  state.upgrade.chance = real;
+  state.upgrade.displayChance = displayChance;
 
   $('upChance').textContent = displayChance + '%';
   $('upgradePercent').innerHTML = displayChance + '<span> %</span>';
@@ -1375,7 +1415,7 @@ async function doUpgrade() {
 
   const arrow = $('upgradeArrow');
   const success = Math.random() * 100 < state.upgrade.chance;
-  const displayChance = Math.round(state.upgrade.chance / 0.9);
+  const displayChance = state.upgrade.displayChance || 1;
 
   let finalAngle;
   const extraSpins = 3;
@@ -1436,8 +1476,10 @@ async function doUpgrade() {
       }
       loadBestDrop();
       toastText(`Успешно: ${toSkin.name}`, 'win');
+      updateUpgradeStats("win", fromSkin.price, toSkin.price);
     } else {
       toastText('Провал', 'lose');
+      updateUpgradeStats("lose", fromSkin.price, 0);
     }
 
     state.upgrade.fromSkin = null;
@@ -1547,6 +1589,12 @@ async function submitWithdraw() {
   setBtnReady(btn, 'Отправить заявку');
 
   if (res && res.ok) {
+    // Убираем скин из локального инвентаря — он уже удалён на сервере
+    const idx = state.inventory.findIndex(s => s.id === skin.id);
+    if (idx >= 0) state.inventory.splice(idx, 1);
+    renderInventory();
+    updateBalance();
+
     $('withdrawOverlay').classList.remove('show');
     state.withdrawSkin = null;
     toastText('Заявка отправлена', 'win');
@@ -1587,9 +1635,15 @@ async function applyPromo() {
   renderIcons();
   updateBalance();
 
-  await Promise.all([loadBalance(), loadInventory(), loadBestDrop()]);
+  await Promise.all([
+    loadBalance(),
+    loadInventory(),
+    loadBestDrop(),
+    loadUpgradeStats(),
+  ]);
   updateBalance();
   renderInventory();
+  updateUpgradeChance();
 })();
 </script>
 </body>
