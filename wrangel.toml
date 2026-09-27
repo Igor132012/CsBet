@@ -1,1 +1,13 @@
+name = "cs2bet"
+main = "worker.js"
+compatibility_date = "2026-09-25"
+workers_dev = true
+preview_urls = false
 
+[observability]
+enabled = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "cs2bet-db"
+database_id = "f531f8ae-3d87-403c-9710-ed4b69db30aa"
