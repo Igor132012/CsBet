@@ -150,6 +150,10 @@
   .mode-card-big .mode-card-icon {
     width:110px; height:80px; align-self:center;
   }
+  /* Сдвиг иконки апгрейда — ниже и правее */
+  #upgradeIcon {
+    transform: translate(8px, 10px);
+  }
   .mode-card-icon svg,
   .mode-card-icon img { width:100%; height:100%; object-fit:contain; }
 
@@ -192,7 +196,6 @@
   }
   .case-item:active { border-color:var(--accent); }
   .case-item .info .name { font-size:15px; letter-spacing:1px; font-weight:600; color:var(--sand); }
-  .case-item .info .range { color:var(--text3); font-size:11px; margin-top:5px; }
   .case-item .price {
     font-size:15px; color:var(--gold2); font-variant-numeric:tabular-nums;
     display:flex; align-items:center; gap:5px; flex-shrink:0;
@@ -725,7 +728,6 @@
     <button class="mode-card mode-card-big" onclick="openMode('cases')">
       <div class="mode-card-content">
         <div class="mode-card-title">Кейсы</div>
-        <div class="mode-card-desc">Открой контейнер</div>
       </div>
       <div class="mode-card-icon">
         <img src="case.png" alt="">
@@ -736,9 +738,8 @@
       <button class="mode-card" onclick="openMode('upgrade')">
         <div class="mode-card-content">
           <div class="mode-card-title">Апгрейд</div>
-          <div class="mode-card-desc">Обменяй скины</div>
         </div>
-        <div class="mode-card-icon">
+        <div class="mode-card-icon" id="upgradeIcon">
           <img src="upgrade.png" alt="">
         </div>
       </button>
@@ -746,7 +747,6 @@
       <button class="mode-card" onclick="openMode('inventory')">
         <div class="mode-card-content">
           <div class="mode-card-title">Инвентарь</div>
-          <div class="mode-card-desc">Мои скины</div>
         </div>
         <div class="mode-card-icon">
           <img src="inventory.png" alt="">
@@ -758,7 +758,6 @@
       <button class="mode-card" onclick="openProfile()" style="grid-column:1 / -1;min-height:90px;flex-direction:row;align-items:center;gap:14px;">
         <div class="mode-card-content">
           <div class="mode-card-title">Профиль</div>
-          <div class="mode-card-desc">Мой аккаунт</div>
         </div>
         <div class="mode-card-icon" style="width:60px;height:60px;align-self:center;">
           <img src="profile.png" alt="">
@@ -796,7 +795,7 @@
   </div>
 
   <div class="case-drops" id="caseDrops">
-    <div class="case-drops-title">Возможные дропы</div>
+    <div class="case-drops-title">Возможный дроп</div>
     <div class="case-drops-list" id="caseDropsList"></div>
   </div>
 
@@ -972,15 +971,16 @@ const $ = id => document.getElementById(id);
 /* ==================== UI ==================== */
 function fmt(n) { return Math.floor(n).toLocaleString('ru-RU'); }
 function rubIco() { return `<span class="ico" data-icon="ruble">${ICONS.ruble}</span>`; }
+function priceStr(n) { return `${fmt(n)} ₽`; }
 
 function updateBalance() {
-  $('menuBalance').innerHTML = `${rubIco()}<span class="num">${fmt(state.balance)}</span>`;
-  $('casesBalance').textContent = fmt(state.balance);
-  $('openBalance').textContent = fmt(state.balance);
-  $('upgradeBalance').textContent = fmt(state.balance);
-  $('inventoryBalance').textContent = fmt(state.balance);
-  $('profileBalance').textContent = fmt(state.balance);
-  $('statSkins').textContent = fmt(state.inventory.reduce((s, sk) => s + sk.price, 0));
+  $('menuBalance').innerHTML = `<span class="num">${fmt(state.balance)} ₽</span>`;
+  $('casesBalance').textContent = fmt(state.balance) + ' ₽';
+  $('openBalance').textContent = fmt(state.balance) + ' ₽';
+  $('upgradeBalance').textContent = fmt(state.balance) + ' ₽';
+  $('inventoryBalance').textContent = fmt(state.balance) + ' ₽';
+  $('profileBalance').textContent = fmt(state.balance) + ' ₽';
+  $('statSkins').textContent = fmt(state.inventory.reduce((s, sk) => s + sk.price, 0)) + ' ₽';
   updateBestWin();
 }
 
@@ -996,7 +996,7 @@ function updateBestWin() {
     <div class="best-win-img">${weaponImg(best.weapon)}</div>
     <div class="best-win-name">${best.name}</div>
     <div class="best-win-wear">${best.wearName}${best.statTrak ? ' · StatTrak™' : ''}</div>
-    <div class="best-win-price">${fmt(best.price)} ₽</div>
+    <div class="best-win-price">${priceStr(best.price)}</div>
   `;
 }
 
@@ -1159,31 +1159,26 @@ function pickSkinFromPool(pool) {
 const CASES = {
   case10: {
     name: 'Пыльный контейнер',
-    range: 'Песочные скины',
     price: 10,
     pool: ['galil_ar', 'ak_slate', 'm4a4_desolate', 'ssg_blood', 'awp_snake'],
   },
   case50: {
     name: 'Выжженный контейнер',
-    range: 'Пустынные скины',
     price: 50,
     pool: ['ak_slate', 'm4a4_desolate', 'awp_snake', 'ssg_blood', 'p250_asiimov', 'glock_water'],
   },
   case100: {
     name: 'Золотой контейнер',
-    range: 'Редкие скины',
     price: 100,
     pool: ['awp_neo', 'awp_lightning', 'glock_fade', 'deagle_codex', 'p250_asiimov', 'usp_print'],
   },
   case500: {
     name: 'Кейс пустыни',
-    range: 'Классические скины',
     price: 500,
     pool: ['ak_redline', 'ak_asiimov', 'm4a4_asiimov', 'm4a1s_solitude', 'deagle_blaze', 'usp_print'],
   },
   case1000: {
     name: 'Легендарный контейнер',
-    range: 'Covert скины',
     price: 1000,
     pool: ['ak_vulcan', 'ak_nightwish', 'awp_asiimov', 'awp_medusa', 'awp_wildfire', 'm4a1s_print'],
   },
@@ -1197,9 +1192,8 @@ function renderCasesList() {
     <button class="case-item case-sub" onclick="openCaseScreen('subcase')">
       <div class="info">
         <div class="name">Бесплатный кейс</div>
-        <div class="range">Пыльные скины · раз в 24ч</div>
       </div>
-      <div class="price"><span class="ico" data-icon="gift"></span>Free</div>
+      <div class="price">Free</div>
     </button>
   `;
 
@@ -1209,9 +1203,8 @@ function renderCasesList() {
       <button class="case-item" onclick="openCaseScreen('${key}')">
         <div class="info">
           <div class="name">${c.name}</div>
-          <div class="range">${c.range} · от ${c.price} ₽</div>
         </div>
-        <div class="price">${rubIco()}${c.price}</div>
+        <div class="price">${c.price} ₽</div>
       </button>
     `;
   }
@@ -1353,6 +1346,7 @@ function renderCaseDrops() {
   drops.sort((a, b) => a.price - b.price);
 
   drops.forEach(d => {
+    // ВСЯ инфа: "AK-47 | Красная линия" → ["AK-47", "Красная линия"]
     const parts = d.def.name.split('|');
     const weaponName = parts[0].trim();
     const skinName = parts[1] ? parts[1].trim() : '';
@@ -1438,14 +1432,13 @@ function mainCaseAction() {
     btn.disabled = false;
     btn.classList.remove('disabled');
     btn.textContent = 'Открыть';
-    $('spinValue').innerHTML = `${rubIco()} ${winSkin.price}`;
+    $('spinValue').textContent = `${winSkin.price} ₽`;
     $('spinResult').className = 'spin-result show';
 
     state.inventory.push(winSkin);
     toastText(`Получено: ${winSkin.name}`, 'win');
     updateBalance();
 
-    // Если денег на повторный кейс не хватает — блокируем кнопку
     if (!isFree && caseDef && !canAfford(caseDef.price)) {
       btn.disabled = true;
       btn.classList.add('disabled');
@@ -1476,14 +1469,14 @@ function pickFromInventory() {
         <div class="mi-name">${skin.name}${skin.statTrak ? ' · StatTrak™' : ''}</div>
         <div class="mi-wear">${skin.wearName}</div>
       </div>
-      <div class="mi-price">${fmt(skin.price)} ₽</div>
+      <div class="mi-price">${priceStr(skin.price)}</div>
     `;
     item.onclick = () => {
       state.upgrade.fromSkin = skin;
       $('upFromPreview').innerHTML = weaponImg(skin.weapon);
       $('upFromName').textContent = skin.name;
       $('upFromWear').textContent = skin.wearName + (skin.statTrak ? ' · ST' : '');
-      $('upFromPrice').textContent = skin.price + ' ₽';
+      $('upFromPrice').textContent = priceStr(skin.price);
       if (state.upgrade.toSkin && state.upgrade.toSkin.price <= skin.price) {
         state.upgrade.toSkin = null;
         $('upToPreview').innerHTML = '';
@@ -1588,14 +1581,14 @@ function filterModalList() {
         <div class="mi-name">${c.def.name}${c.instance.statTrak ? ' · StatTrak™' : ''}</div>
         <div class="mi-wear">${c.instance.wearName}</div>
       </div>
-      <div class="mi-price">${fmt(c.instance.price)} ₽</div>
+      <div class="mi-price">${priceStr(c.instance.price)}</div>
     `;
     item.onclick = () => {
       state.upgrade.toSkin = c.instance;
       $('upToPreview').innerHTML = weaponImg(c.instance.weapon);
       $('upToName').textContent = c.instance.name;
       $('upToWear').textContent = c.instance.wearName + (c.instance.statTrak ? ' · ST' : '');
-      $('upToPrice').textContent = c.instance.price + ' ₽';
+      $('upToPrice').textContent = priceStr(c.instance.price);
       updateUpgradeChance();
       closeModal();
     };
@@ -1716,7 +1709,7 @@ function renderInventory() {
     el.innerHTML = `
       <div class="inv-img">${weaponImg(skin.weapon)}</div>
       <div class="inv-info">
-        <div class="inv-price">${fmt(skin.price)} ₽</div>
+        <div class="inv-price">${priceStr(skin.price)}</div>
         <div class="inv-name">${skin.name}${skin.statTrak ? ' · StatTrak™' : ''}</div>
         <div class="inv-wear">${skin.wearName}</div>
       </div>
