@@ -144,6 +144,58 @@ export default {
         });
       }
 
+      // ============ UPGRADE STATS ============
+      if (path === "/api/upgrade_stats" && request.method === "POST") {
+        const { user_id } = await request.json();
+        if (!user_id) return json({ error: "bad payload" }, 400);
+        let row = await env.DB.prepare("SELECT * FROM upgrade_stats WHERE user_id=?").bind(String(user_id)).first();
+        if (!row) {
+          await env.DB.prepare("INSERT INTO upgrade_stats (user_id,win_count,win_sum,lose_sum) VALUES (?,0,0,0)").bind(String(user_id)).run();
+          row = { win_count: 0, win_sum: 0, lose_sum: 0 };
+        }
+        return json({
+          win_count: Number(row.win_count) || 0,
+          win_sum: Number(row.win_sum) || 0,
+          lose_sum: Number(row.lose_sum) || 0,
+        });
+      }
+
+      if (path === "/api/upgrade_stats/update" && request.method === "POST") {
+        const { user_id, result, from_price, to_price } = await request.json();
+        if (!user_id || !result) return json({ error: "bad payload" }, 400);
+
+        let row = await env.DB.prepare("SELECT * FROM upgrade_stats WHERE user_id=?").bind(String(user_id)).first();
+        if (!row) {
+          await env.DB.prepare("INSERT INTO upgrade_stats (user_id,win_count,win_sum,lose_sum) VALUES (?,0,0,0)").bind(String(user_id)).run();
+          row = { win_count: 0, win_sum: 0, lose_sum: 0 };
+        }
+
+        let winCount = Number(row.win_count) || 0;
+        let winSum = Number(row.win_sum) || 0;
+        let loseSum = Number(row.lose_sum) || 0;
+
+        if (result === "win") {
+          const diff = Math.max(0, Number(to_price) - Number(from_price));
+          winCount += 1;
+          winSum += diff;
+        } else if (result === "lose") {
+          loseSum += Number(from_price) || 0;
+        }
+
+        // Сброс, если проиграл больше, чем выиграл
+        if (loseSum > winSum) {
+          winCount = 0;
+          winSum = 0;
+          loseSum = 0;
+        }
+
+        await env.DB.prepare(
+          "UPDATE upgrade_stats SET win_count=?, win_sum=?, lose_sum=? WHERE user_id=?"
+        ).bind(winCount, winSum, loseSum, String(user_id)).run();
+
+        return json({ win_count: winCount, win_sum: winSum, lose_sum: loseSum });
+      }
+
       // ============ PROMOS ============
       if (path === "/api/promos" && request.method === "POST") {
         const { admin_token, code, stars, uses } = await request.json();
@@ -197,7 +249,6 @@ export default {
         const pending = await env.DB.prepare("SELECT id FROM withdrawals WHERE inventory_id=? AND status='pending'").bind(Number(inventory_id)).first();
         if (pending) return json({ error: "already_pending" }, 400);
 
-        // Создаём заявку с сохранением всех данных скина (чтобы вернуть при reject)
         const r = await env.DB.prepare(
           `INSERT INTO withdrawals
            (user_id, inventory_id, skin_name, skin_weapon, skin_rarity, skin_wear, skin_wear_name,
@@ -211,7 +262,7 @@ export default {
           String(steam_profile), String(trade_link)
         ).run();
 
-        // ВАЖНО: удаляем скин из инвентаря сразу
+        // Сразу удаляем из инвентаря
         await env.DB.prepare("DELETE FROM inventory WHERE id=? AND user_id=?").bind(Number(inventory_id), String(user_id)).run();
 
         return json({ ok: true, id: r.meta.last_row_id });
@@ -240,16 +291,13 @@ export default {
         if (wd.status !== "pending") return json({ error: "already_processed" }, 400);
 
         if (action === "approve") {
-          // Скин уже удалён из inventory при создании заявки. Просто помечаем approved.
           await env.DB.prepare("UPDATE withdrawals SET status='approved' WHERE id=?").bind(Number(id)).run();
         } else if (action === "reject") {
-          // Возвращаем скин в инвентарь из сохранённых данных
           await env.DB.prepare(
             `INSERT INTO inventory (user_id, skin_id, name, weapon, rarity, wear, wear_name, stat_trak, price)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
           ).bind(
-            String(wd.user_id),
-            "", // skin_id у нас в withdrawals не сохраняется, поэтому пустая строка — не критично
+            String(wd.user_id), "",
             String(wd.skin_name || ""),
             String(wd.skin_weapon || "rifle"),
             String(wd.skin_rarity || "consumer"),
@@ -258,7 +306,6 @@ export default {
             wd.skin_stat_trak ? 1 : 0,
             Number(wd.price) || 0
           ).run();
-
           await env.DB.prepare("UPDATE withdrawals SET status='rejected' WHERE id=?").bind(Number(id)).run();
         } else {
           return json({ error: "bad action" }, 400);
