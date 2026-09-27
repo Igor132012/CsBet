@@ -394,7 +394,6 @@
   }
   .modal-filters input::placeholder { color:var(--text3); }
 
-  /* ==== ДРОПДАУН — обёртка над нативным select ==== */
   .cs-select { position:relative; flex:1; min-width:0; }
   .cs-select select {
     width:100%;
@@ -566,7 +565,7 @@
         </svg>
       </div>
       <div class="upgrade-circle" id="upgradeCircle" style="--p: 0%;">
-        <div class="upgrade-percent" id="upgradePercent">? %</div>
+        <div class="upgrade-percent" id="upgradePercent">0 %</div>
       </div>
     </div>
     <div class="upgrade-chance">Шанс успеха: <span id="upChance">0%</span></div>
@@ -870,9 +869,10 @@ function createSkinInstance(skinDef, fixedWear) {
   };
 }
 
+/* Чуть повышены веса топов — стало легче ловить редкости */
 const RARITY_WEIGHTS = {
-  consumer: 1000, industrial: 300, milspec: 40, restricted: 5,
-  classified: 1, covert: 0.2, rare: 0.02, contraband: 0.002,
+  consumer: 1000, industrial: 300, milspec: 45, restricted: 7,
+  classified: 1.5, covert: 0.35, rare: 0.04, contraband: 0.003,
 };
 
 const RARITY_COLORS = {
@@ -901,27 +901,32 @@ function pickByRarity(pool) {
   return pool[0];
 }
 
+/* 30% окупаемых / 70% неокупаемых относительно цены кейса */
 function pickSkinFromPool(pool, casePrice) {
   const unprofitable = pool.filter(s => s.basePrice < casePrice);
   const profitable   = pool.filter(s => s.basePrice >= casePrice);
   let group;
   if (profitable.length === 0) group = unprofitable;
   else if (unprofitable.length === 0) group = profitable;
-  else group = Math.random() < 0.2 ? profitable : unprofitable;
+  else group = Math.random() < 0.30 ? profitable : unprofitable;
   return pickByRarity(group) || pool[0];
 }
 
+/* Диапазоны basePrice для каждого кейса */
+const CASE_RANGES = {
+  case10:   { min: 5,   max: 100 },
+  case50:   { min: 25,  max: 300 },
+  case100:  { min: 50,  max: 600 },
+  case500:  { min: 250, max: 3000 },
+  case1000: { min: 500, max: 7000 },
+};
+
 const CASES = {
-  case10: { name: 'Пыльный контейнер', price: 10,
-    pool: ['p250_sand','glock_sand','fiveseven_forest','ssg_blue','mp9_dust','galil_dust','mac10_dust','usp_forest','ak_safari'] },
-  case50: { name: 'Выжженный контейнер', price: 50,
-    pool: ['glock_nuclear','deagle_fire','fiveseven_monkey','ssg_blood','awp_snake'] },
-  case100: { name: 'Золотой контейнер', price: 100,
-    pool: ['glock_nuclear','deagle_fire','fiveseven_monkey','ssg_blood','awp_snake','usp_cyrex','glock_water','deagle_codex'] },
-  case500: { name: 'Кейс пустыни', price: 500,
-    pool: ['usp_cyrex','glock_water','deagle_codex','awp_queens','m4a1s_solitude','ak_slate','usp_neo','p250_asiimov','ak_redline'] },
-  case1000: { name: 'Легендарный контейнер', price: 1000,
-    pool: ['ak_redline','m4a4_desolate','ak_asiimov','m4a1s_print','ak_empress','m4a4_asiimov','ak_nightwish','m4a1s_fade','awp_asiimov'] },
+  case10:   { name: 'Пыльный контейнер',     price: 10 },
+  case50:   { name: 'Выжженный контейнер',   price: 50 },
+  case100:  { name: 'Золотой контейнер',     price: 100 },
+  case500:  { name: 'Кейс пустыни',          price: 500 },
+  case1000: { name: 'Легендарный контейнер', price: 1000 },
 };
 
 function renderCasesList() {
@@ -1023,6 +1028,17 @@ function openCaseScreen(caseKey) {
   }
 }
 
+/* Пул — скины в диапазоне basePrice текущего кейса.
+   Для бесплатного — до 20 ₽. */
+function getPoolForCurrentCase() {
+  if (state.currentCase === 'subcase') {
+    return ALL_SKINS.filter(s => s.basePrice <= 20);
+  }
+  const r = CASE_RANGES[state.currentCase];
+  if (!r) return ALL_SKINS;
+  return ALL_SKINS.filter(s => s.basePrice >= r.min && s.basePrice <= r.max);
+}
+
 function fillTrack() {
   stopIdleSpin();
   const track = $('track');
@@ -1035,14 +1051,6 @@ function fillTrack() {
     track.appendChild(makeSlot(skinDef, false));
   }
   startIdleSpin();
-}
-
-function getPoolForCurrentCase() {
-  if (state.currentCase === 'subcase') {
-    return ALL_SKINS.filter(s => s.basePrice <= 20);
-  }
-  const caseDef = CASES[state.currentCase];
-  return ALL_SKINS.filter(s => caseDef.pool.includes(s.id));
 }
 
 function makeSlot(skinDef, statTrak) {
@@ -1339,7 +1347,7 @@ function updateUpgradeChance() {
   if (!from || !to) {
     state.upgrade.chance = 0;
     $('upChance').textContent = '0%';
-    $('upgradePercent').textContent = '? %';
+    $('upgradePercent').innerHTML = '0<span> %</span>';
     $('upgradeCircle').style.setProperty('--p', '0%');
     return;
   }
@@ -1349,7 +1357,6 @@ function updateUpgradeChance() {
   displayChance = Math.max(displayChance, 1);
   displayChance = Math.round(displayChance);
 
-  // Реальный шанс на 10% ниже показанного: 50% → 45%
   state.upgrade.chance = displayChance * 0.9;
 
   $('upChance').textContent = displayChance + '%';
