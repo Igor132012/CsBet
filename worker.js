@@ -12,7 +12,6 @@ const ADMIN_TOKEN = "cs2_secret_change_me"; // ← поменяй на свой 
 export default {
   async fetch(request, env) {
     if (request.method === "OPTIONS") return new Response(null, { headers: CORS });
-
     const path = new URL(request.url).pathname;
 
     try {
@@ -32,7 +31,7 @@ export default {
 
       if (path === "/api/balance/change" && request.method === "POST") {
         const { user_id, amount } = await request.json();
-        if (!user_id || typeof amount !== "number") return json({ error: "user_id and amount required" }, 400);
+        if (!user_id || typeof amount !== "number") return json({ error: "bad payload" }, 400);
         let row = await env.DB.prepare("SELECT balance FROM balances WHERE user_id=?").bind(String(user_id)).first();
         if (!row) {
           await env.DB.prepare("INSERT INTO balances (user_id,balance) VALUES (?,0)").bind(String(user_id)).run();
@@ -72,7 +71,7 @@ export default {
       if (path === "/api/inventory/add" && request.method === "POST") {
         const b = await request.json();
         const { user_id, skinId, name, weapon, rarity, wear, wearName, statTrak, price } = b;
-        if (!user_id || !name) return json({ error: "user_id and name required" }, 400);
+        if (!user_id || !name) return json({ error: "bad payload" }, 400);
 
         const r = await env.DB.prepare(
           `INSERT INTO inventory (user_id, skin_id, name, weapon, rarity, wear, wear_name, stat_trak, price)
@@ -108,14 +107,14 @@ export default {
 
       if (path === "/api/inventory/remove" && request.method === "POST") {
         const { user_id, id } = await request.json();
-        if (!user_id || !id) return json({ error: "user_id and id required" }, 400);
+        if (!user_id || !id) return json({ error: "bad payload" }, 400);
         await env.DB.prepare("DELETE FROM inventory WHERE id=? AND user_id=?").bind(Number(id), String(user_id)).run();
         return json({ ok: true });
       }
 
       if (path === "/api/inventory/sell" && request.method === "POST") {
         const { user_id, id } = await request.json();
-        if (!user_id || !id) return json({ error: "user_id and id required" }, 400);
+        if (!user_id || !id) return json({ error: "bad payload" }, 400);
         const item = await env.DB.prepare("SELECT * FROM inventory WHERE id=? AND user_id=?").bind(Number(id), String(user_id)).first();
         if (!item) return json({ error: "not found" }, 404);
         await env.DB.prepare("DELETE FROM inventory WHERE id=? AND user_id=?").bind(Number(id), String(user_id)).run();
@@ -133,7 +132,7 @@ export default {
       // ============ BEST DROP ============
       if (path === "/api/best_drop" && request.method === "POST") {
         const { user_id } = await request.json();
-        if (!user_id) return json({ error: "user_id required" }, 400);
+        if (!user_id) return json({ error: "bad payload" }, 400);
         const row = await env.DB.prepare("SELECT * FROM best_drop WHERE user_id=?").bind(String(user_id)).first();
         if (!row) return json({ best: null });
         return json({
@@ -146,7 +145,6 @@ export default {
       }
 
       // ============ PROMOS ============
-      // Создание промокода (только из бота с админ-токеном)
       if (path === "/api/promos" && request.method === "POST") {
         const { admin_token, code, stars, uses } = await request.json();
         if (admin_token !== ADMIN_TOKEN) return json({ error: "forbidden" }, 403);
@@ -161,10 +159,9 @@ export default {
         return json({ ok: true, code: c });
       }
 
-      // Применение промокода (с фронта)
       if (path === "/api/promo/apply" && request.method === "POST") {
         const { user_id, code } = await request.json();
-        if (!user_id || !code) return json({ error: "user_id and code required" }, 400);
+        if (!user_id || !code) return json({ error: "bad payload" }, 400);
         const c = String(code).trim().toUpperCase();
 
         const promo = await env.DB.prepare("SELECT * FROM promos WHERE code=?").bind(c).first();
@@ -189,19 +186,18 @@ export default {
       }
 
       // ============ WITHDRAWALS ============
-      // Создание заявки (с фронта)
       if (path === "/api/withdrawals/create" && request.method === "POST") {
-        const b = await request.json();
-        const { user_id, inventory_id, steam_profile, trade_link } = b;
-        if (!user_id || !inventory_id) return json({ error: "user_id and inventory_id required" }, 400);
-        if (!steam_profile || !trade_link) return json({ error: "steam data required" }, 400);
+        const { user_id, inventory_id, steam_profile, trade_link } = await request.json();
+        if (!user_id || !inventory_id) return json({ error: "bad payload" }, 400);
+        if (!steam_profile || !trade_link) return json({ error: "steam_data_required" }, 400);
 
         const item = await env.DB.prepare("SELECT * FROM inventory WHERE id=? AND user_id=?").bind(Number(inventory_id), String(user_id)).first();
-        if (!item) return json({ error: "item not found" }, 404);
+        if (!item) return json({ error: "item_not_found" }, 404);
 
         const pending = await env.DB.prepare("SELECT id FROM withdrawals WHERE inventory_id=? AND status='pending'").bind(Number(inventory_id)).first();
         if (pending) return json({ error: "already_pending" }, 400);
 
+        // Создаём заявку с сохранением всех данных скина (чтобы вернуть при reject)
         const r = await env.DB.prepare(
           `INSERT INTO withdrawals
            (user_id, inventory_id, skin_name, skin_weapon, skin_rarity, skin_wear, skin_wear_name,
@@ -215,14 +211,14 @@ export default {
           String(steam_profile), String(trade_link)
         ).run();
 
+        // ВАЖНО: удаляем скин из инвентаря сразу
+        await env.DB.prepare("DELETE FROM inventory WHERE id=? AND user_id=?").bind(Number(inventory_id), String(user_id)).run();
+
         return json({ ok: true, id: r.meta.last_row_id });
       }
 
-      // Список заявок (для админа из бота)
       if (path === "/api/withdrawals" && request.method === "GET") {
-        const { results } = await env.DB.prepare(
-          "SELECT * FROM withdrawals WHERE status='pending' ORDER BY id ASC"
-        ).all();
+        const { results } = await env.DB.prepare("SELECT * FROM withdrawals WHERE status='pending' ORDER BY id ASC").all();
         const rows = (results || []).map(r => ({
           id: r.id, user_id: r.user_id, inventory_id: r.inventory_id,
           skin_name: r.skin_name, skin_weapon: r.skin_weapon, skin_rarity: r.skin_rarity,
@@ -234,20 +230,35 @@ export default {
         return json(rows);
       }
 
-      // Одобрить/отклонить
       if (path === "/api/withdrawals/action" && request.method === "POST") {
         const { admin_token, id, action } = await request.json();
         if (admin_token !== ADMIN_TOKEN) return json({ error: "forbidden" }, 403);
-        if (!id || !action) return json({ error: "id and action required" }, 400);
+        if (!id || !action) return json({ error: "bad payload" }, 400);
 
         const wd = await env.DB.prepare("SELECT * FROM withdrawals WHERE id=?").bind(Number(id)).first();
-        if (!wd) return json({ error: "not found" }, 404);
+        if (!wd) return json({ error: "not_found" }, 404);
         if (wd.status !== "pending") return json({ error: "already_processed" }, 400);
 
         if (action === "approve") {
-          await env.DB.prepare("DELETE FROM inventory WHERE id=?").bind(Number(wd.inventory_id)).run();
+          // Скин уже удалён из inventory при создании заявки. Просто помечаем approved.
           await env.DB.prepare("UPDATE withdrawals SET status='approved' WHERE id=?").bind(Number(id)).run();
         } else if (action === "reject") {
+          // Возвращаем скин в инвентарь из сохранённых данных
+          await env.DB.prepare(
+            `INSERT INTO inventory (user_id, skin_id, name, weapon, rarity, wear, wear_name, stat_trak, price)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          ).bind(
+            String(wd.user_id),
+            "", // skin_id у нас в withdrawals не сохраняется, поэтому пустая строка — не критично
+            String(wd.skin_name || ""),
+            String(wd.skin_weapon || "rifle"),
+            String(wd.skin_rarity || "consumer"),
+            String(wd.skin_wear || "FN"),
+            String(wd.skin_wear_name || "Factory New"),
+            wd.skin_stat_trak ? 1 : 0,
+            Number(wd.price) || 0
+          ).run();
+
           await env.DB.prepare("UPDATE withdrawals SET status='rejected' WHERE id=?").bind(Number(id)).run();
         } else {
           return json({ error: "bad action" }, 400);
