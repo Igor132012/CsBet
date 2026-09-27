@@ -121,16 +121,23 @@
     background:linear-gradient(180deg, var(--bg3), var(--bg2));
     overflow:hidden; padding:6px; position:relative;
   }
-  .slot .slot-img { width:80px; height:50px; display:flex; align-items:center; justify-content:center; }
+  .slot .slot-img { width:80px; height:50px; display:flex; align-items:center; justify-content:center; margin-top:8px; }
   .slot .slot-img svg, .slot .slot-img img { width:100%; height:100%; object-fit:contain; }
   .slot .slot-name {
     font-size:8px; text-align:center; line-height:1.1;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:90px;
   }
-  .slot .slot-wear { font-size:7px; opacity:.6; }
+  .slot .slot-wear {
+    position:absolute; top:4px; right:4px;
+    font-size:8px; font-weight:700;
+    color:var(--sand); letter-spacing:0.3px;
+    z-index:2;
+  }
   .slot .slot-st {
-    position:absolute; right:4px; bottom:4px;
-    font-size:8px; font-weight:700; color:var(--r-stattrak); letter-spacing:0.5px;
+    position:absolute; top:16px; right:4px;
+    font-size:8px; font-weight:700;
+    color:var(--r-stattrak); letter-spacing:0.5px;
+    z-index:2;
   }
 
   .slot.consumer   { border-color:var(--r-consumer); color:var(--r-consumer); }
@@ -916,7 +923,6 @@ function pickByRarity(list) {
   return list[0];
 }
 
-/* Диапазоны финальной цены скина в кейсе */
 const CASE_RANGES = {
   case10:   { min: 5,   max: 100 },
   case50:   { min: 25,  max: 300 },
@@ -933,7 +939,6 @@ const CASES = {
   case1000: { name: 'Легендарный контейнер', price: 1000 },
 };
 
-/* Собираем все возможные инстансы скинов, чья итоговая цена попадает в диапазон */
 function buildInstancesForRange(min, max) {
   const out = [];
   ALL_SKINS.forEach(def => {
@@ -953,7 +958,6 @@ function buildInstancesForRange(min, max) {
   return out;
 }
 
-/* Пул инстансов для текущего кейса */
 function getInstancesForCurrentCase() {
   if (state.currentCase === 'subcase') {
     return buildInstancesForRange(1, 20);
@@ -963,7 +967,6 @@ function getInstancesForCurrentCase() {
   return buildInstancesForRange(r.min, r.max);
 }
 
-/* Пул уникальных скинов (для ленты) */
 function getPoolForCurrentCase() {
   const instances = getInstancesForCurrentCase();
   const seen = new Set();
@@ -1079,22 +1082,23 @@ function fillTrack() {
   track.innerHTML = '';
   track.style.transition = 'none';
   track.style.transform = 'translateX(0)';
-  const pool = getPoolForCurrentCase();
+  const instances = getInstancesForCurrentCase();
   for (let i = 0; i < 60; i++) {
-    const skinDef = pool[Math.floor(Math.random() * pool.length)];
-    track.appendChild(makeSlot(skinDef, false));
+    const ins = instances[Math.floor(Math.random() * instances.length)];
+    track.appendChild(makeSlot(ins.def, ins.statTrak, ins.wear.key));
   }
   startIdleSpin();
 }
 
-function makeSlot(skinDef, statTrak) {
+/* Слот ленты: качество в правом верхнем углу, ST под ним (если есть) */
+function makeSlot(skinDef, statTrak, wearKey) {
   const el = document.createElement('div');
   el.className = 'slot ' + skinDef.rarity;
   el.innerHTML = `
+    <div class="slot-wear">${wearKey || 'FN'}</div>
+    ${statTrak ? '<div class="slot-st">ST</div>' : ''}
     <div class="slot-img">${weaponImg(skinDef.weapon)}</div>
     <div class="slot-name">${skinDef.name.split('|')[0].trim()}</div>
-    <div class="slot-wear">${skinDef.name.split('|')[1]?.trim() || ''}</div>
-    ${statTrak ? '<div class="slot-st">ST</div>' : ''}
   `;
   return el;
 }
@@ -1163,7 +1167,6 @@ async function mainCaseAction() {
 
   const track = $('track');
 
-  // Выбираем ИНСТАНС (скин + wear + ST), чья финальная цена попадает в диапазон кейса
   const instances = getInstancesForCurrentCase();
   const winInstance = pickByRarity(instances);
   const winSkinDef = winInstance.def;
@@ -1181,15 +1184,16 @@ async function mainCaseAction() {
     price: winInstance.price,
   };
 
-  const pool = getPoolForCurrentCase();
-
   track.innerHTML = '';
   const STOP_INDEX = 50;
   for (let i = 0; i < 60; i++) {
-    let skinDef, isST = false;
-    if (i === STOP_INDEX) { skinDef = winSkinDef; isST = winStatTrak; }
-    else { skinDef = pool[Math.floor(Math.random() * pool.length)]; }
-    track.appendChild(makeSlot(skinDef, isST));
+    let ins;
+    if (i === STOP_INDEX) {
+      ins = { def: winSkinDef, statTrak: winStatTrak, wear: winWear };
+    } else {
+      ins = instances[Math.floor(Math.random() * instances.length)];
+    }
+    track.appendChild(makeSlot(ins.def, ins.statTrak, ins.wear.key));
   }
 
   void track.offsetWidth;
@@ -1499,7 +1503,7 @@ async function doUpgrade() {
     $('upToPrice').textContent = '0 ₽';
     updateUpgradeChance();
     updateBalance();
-    setBtnReady(btn, 'Прокачать');
+    setBtnReady(btn, 'Проказать');
   }, 2900);
 }
 
