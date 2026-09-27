@@ -62,7 +62,6 @@
   .ico svg { width:100%; height:100%; display:block; }
   .ico img { width:100%; height:100%; object-fit:contain; display:block; }
 
-  /* === МЕНЮ === */
   #menu {
     padding:32px 20px 48px;
     text-align:center;
@@ -84,10 +83,7 @@
     color:var(--gold2); font-variant-numeric:tabular-nums;
   }
 
-  .modes {
-    display:flex; flex-direction:column; gap:12px;
-    width:100%; max-width:360px;
-  }
+  .modes { display:flex; flex-direction:column; gap:12px; width:100%; max-width:360px; }
   .mode-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   .mode-card {
     border:1px solid var(--border2);
@@ -101,13 +97,9 @@
     position:relative; overflow:hidden;
     min-height:130px;
   }
-  .mode-card-big {
-    min-height:160px;
-    flex-direction:row; align-items:center; gap:14px;
-  }
+  .mode-card-big { min-height:160px; flex-direction:row; align-items:center; gap:14px; }
   .mode-card:active {
-    border-color:var(--accent);
-    transform:scale(0.98);
+    border-color:var(--accent); transform:scale(0.98);
     box-shadow:0 0 24px rgba(212,107,74,0.25);
   }
   .mode-card::before {
@@ -117,22 +109,15 @@
   }
   .mode-card-content { position:relative; z-index:1; flex:1; }
   .mode-card-big .mode-card-content { flex:0 0 auto; }
-  .mode-card-title {
-    font-size:20px; font-weight:700; color:var(--sand);
-    letter-spacing:1px;
-  }
+  .mode-card-title { font-size:20px; font-weight:700; color:var(--sand); letter-spacing:1px; }
   .mode-card-icon {
     width:64px; height:52px; color:var(--gold2); opacity:0.95;
     position:relative; z-index:1; align-self:flex-end;
     display:flex; align-items:center; justify-content:center;
   }
-  .mode-card-big .mode-card-icon {
-    width:110px; height:80px; align-self:center;
-  }
-  .mode-card-icon svg,
-  .mode-card-icon img { width:100%; height:100%; object-fit:contain; }
+  .mode-card-big .mode-card-icon { width:110px; height:80px; align-self:center; }
+  .mode-card-icon svg, .mode-card-icon img { width:100%; height:100%; object-fit:contain; }
 
-  /* === ТОПБАР === */
   .topbar {
     padding:18px 22px; display:flex; justify-content:space-between; align-items:center;
     border-bottom:1px solid var(--border); position:relative; z-index:2;
@@ -145,10 +130,7 @@
   }
   .close-btn:active { color:var(--accent); }
   .close-btn .ico { font-size:20px; }
-  .topbar-balance {
-    color:var(--gold2); font-size:15px; font-variant-numeric:tabular-nums;
-    font-weight:300;
-  }
+  .topbar-balance { color:var(--gold2); font-size:15px; font-variant-numeric:tabular-nums; font-weight:300; }
 
   /* === КЕЙСЫ === */
   .cases-list {
@@ -170,21 +152,15 @@
   }
   .case-item:active { border-color:var(--accent); }
   .case-item .info .name { font-size:15px; letter-spacing:1px; font-weight:600; color:var(--sand); }
-  .case-item .price {
-    font-size:15px; color:var(--gold2); font-variant-numeric:tabular-nums;
-    flex-shrink:0;
-  }
+  .case-item .price { font-size:15px; color:var(--gold2); font-variant-numeric:tabular-nums; flex-shrink:0; }
   .case-item.case-sub { border-color:var(--green); }
 
   /* === ОТКРЫТИЕ КЕЙСА === */
   #caseOpen { overflow: hidden; }
-
   .roulette-stage {
-    display:flex; flex-direction:column;
-    align-items:center; justify-content:center;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
     position:relative; overflow:hidden; z-index:2;
-    padding:16px 0;
-    flex-shrink:0;
+    padding:16px 0; flex-shrink:0;
   }
   .roulette { position:relative; width:100%; height:120px; overflow:hidden; }
   .roulette::before, .roulette::after {
@@ -203,24 +179,18 @@
     border:1px solid var(--border); border-radius:8px;
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
     background:linear-gradient(180deg, var(--bg3), var(--bg2));
-    overflow:hidden; padding:6px;
-    position:relative;
+    overflow:hidden; padding:6px; position:relative;
   }
-  .slot .slot-img {
-    width:80px; height:50px; display:flex; align-items:center; justify-content:center;
-  }
-  .slot .slot-img svg,
-  .slot .slot-img img { width:100%; height:100%; object-fit:contain; }
+  .slot .slot-img { width:80px; height:50px; display:flex; align-items:center; justify-content:center; }
+  .slot .slot-img svg, .slot .slot-img img { width:100%; height:100%; object-fit:contain; }
   .slot .slot-name {
-    font-size:8px; text-align:center;
-    line-height:1.1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    max-width:90px;
+    font-size:8px; text-align:center; line-height:1.1;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:90px;
   }
   .slot .slot-wear { font-size:7px; opacity:.6; }
   .slot .slot-st {
     position:absolute; right:4px; bottom:4px;
-    font-size:8px; font-weight:700;
-    color:var(--r-stattrak); letter-spacing:0.5px;
+    font-size:8px; font-weight:700; color:var(--r-stattrak); letter-spacing:0.5px;
   }
 
   .slot.consumer   { border-color:var(--r-consumer); color:var(--r-consumer); }
@@ -243,29 +213,17 @@
   .pointer {
     position:absolute; top:50%; left:50%;
     transform:translate(-50%,-50%);
-    width:2px; height:130px; background:var(--accent); z-index:5;
-    border-radius:1px;
+    width:2px; height:130px; background:var(--accent); z-index:5; border-radius:1px;
   }
 
-  .spin-result {
-    text-align:center; margin-top:20px;
-    opacity:0; transition:opacity .3s;
-    min-height: 40px;
-  }
+  .spin-result { text-align:center; margin-top:20px; opacity:0; transition:opacity .3s; min-height: 40px; }
   .spin-result.show { opacity:1; }
-  .spin-result .label {
-    font-size:9px; color:var(--text3); letter-spacing:4px; text-transform:uppercase;
-    margin-bottom:10px;
-  }
-  .spin-result .val {
-    font-size:36px; font-weight:200;
-    color:var(--gold2); font-variant-numeric:tabular-nums;
-  }
+  .spin-result .label { font-size:9px; color:var(--text3); letter-spacing:4px; text-transform:uppercase; margin-bottom:10px; }
+  .spin-result .val { font-size:36px; font-weight:200; color:var(--gold2); font-variant-numeric:tabular-nums; }
 
   /* === СПИСОК ДРОПОВ === */
   .case-drops {
-    flex: 1;
-    overflow-y: auto;
+    flex: 1; overflow-y: auto;
     padding: 16px 14px 20px;
     border-top: 1px solid var(--border);
     background: rgba(0,0,0,0.25);
@@ -275,22 +233,16 @@
   .case-drops-title {
     font-size: 9px; color: var(--text3);
     letter-spacing: 4px; text-transform: uppercase;
-    margin-bottom: 12px;
-    padding-left: 4px;
+    margin-bottom: 12px; padding-left: 4px;
   }
-  .case-drops-list {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
+  .case-drops-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .drop-item {
     position: relative;
     padding: 8px;
     border: 1px solid var(--border);
     border-radius: 10px;
     background: linear-gradient(160deg, rgba(66,56,42,0.85), rgba(40,32,22,0.9));
-    display: flex;
-    flex-direction: column;
+    display: flex; flex-direction: column;
     overflow: hidden;
     min-height: 180px;
   }
@@ -302,38 +254,28 @@
   }
   .drop-price-badge {
     position: absolute; top: 8px; left: 8px;
-    color: var(--gold2);
-    font-size: 11px; font-weight: 700;
-    z-index: 3;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    color: var(--gold2); font-size: 11px; font-weight: 700;
+    z-index: 3; text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+  }
+  /* WEAR выше, ST ниже — как просил */
+  .drop-wear-badge {
+    position: absolute; top: 8px; right: 8px;
+    color: var(--sand); font-size: 10px; font-weight: 600;
+    z-index: 3; text-shadow: 0 1px 3px rgba(0,0,0,0.9);
   }
   .drop-st {
-    position: absolute; top: 8px; right: 8px;
-    color: var(--r-stattrak);
-    font-size: 10px; font-weight: 700;
-    z-index: 3;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.9);
-  }
-  .drop-wear-badge {
     position: absolute; top: 24px; right: 8px;
-    color: var(--sand);
-    font-size: 10px; font-weight: 600;
-    z-index: 3;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    color: var(--r-stattrak); font-size: 10px; font-weight: 700;
+    z-index: 3; text-shadow: 0 1px 3px rgba(0,0,0,0.9);
   }
   .drop-item .drop-img {
     flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     padding: 24px 4px 8px;
     min-height: 90px;
   }
-  .drop-item .drop-img svg,
-  .drop-item .drop-img img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
+  .drop-item .drop-img svg, .drop-item .drop-img img {
+    max-width: 100%; max-height: 100%; object-fit: contain;
     filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
   }
   .drop-name-block {
@@ -341,33 +283,20 @@
     padding: 6px 2px 4px;
     border-top: 1px solid rgba(122,104,80,0.3);
     z-index: 3;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+    display: flex; flex-direction: column; gap: 2px;
   }
   .drop-weapon {
-    font-size: 10px;
-    color: var(--text3);
-    line-height: 1.15;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-weight: 500;
+    font-size: 10px; color: var(--text3); line-height: 1.15;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500;
   }
   .drop-skin {
-    font-size: 11px;
-    color: var(--sand);
-    line-height: 1.15;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-weight: 700;
+    font-size: 11px; color: var(--sand); line-height: 1.15;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 700;
   }
 
   .spin-controls {
     padding: 16px 24px 20px;
-    position: relative; z-index: 2;
-    flex-shrink: 0;
+    position: relative; z-index: 2; flex-shrink: 0;
     border-top: 1px solid var(--border);
     background: var(--bg);
   }
@@ -379,9 +308,7 @@
     cursor:pointer; transition:background .2s, border-color .2s;
     font-family:inherit; text-transform:uppercase;
   }
-  .main-btn:active:not(.disabled):not(:disabled) {
-    background:linear-gradient(180deg, #4a2a1a, #2a1a10);
-  }
+  .main-btn:active:not(.disabled):not(:disabled) { background:linear-gradient(180deg, #4a2a1a, #2a1a10); }
   .main-btn:disabled, .main-btn.disabled {
     color:var(--text3) !important;
     border-color:var(--border) !important;
@@ -391,11 +318,7 @@
   }
 
   /* === АПГРЕЙДЕР === */
-  .upgrade-stage {
-    flex:1; display:flex; flex-direction:column;
-    padding:24px; gap:20px; position:relative; z-index:2;
-    overflow-y:auto;
-  }
+  .upgrade-stage { flex:1; display:flex; flex-direction:column; padding:24px; gap:20px; position:relative; z-index:2; overflow-y:auto; }
   .upgrade-pair { display:flex; flex-direction:column; gap:14px; }
   .upgrade-side {
     border:1px solid var(--border2); border-radius:12px;
@@ -404,49 +327,27 @@
     display:flex; align-items:center; gap:14px;
   }
   .upgrade-side:active { border-color:var(--accent); }
-  .upgrade-side .thumb {
-    width:80px; height:50px; flex-shrink:0;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .upgrade-side .thumb svg,
-  .upgrade-side .thumb img { width:100%; height:100%; object-fit:contain; }
+  .upgrade-side .thumb { width:80px; height:50px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .upgrade-side .thumb svg, .upgrade-side .thumb img { width:100%; height:100%; object-fit:contain; }
   .upgrade-side .info { flex:1; min-width:0; }
-  .upgrade-side .info .label {
-    font-size:9px; color:var(--text3); letter-spacing:2px; text-transform:uppercase;
-    margin-bottom:4px;
-  }
-  .upgrade-side .info .name {
-    font-size:13px; color:var(--sand);
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-  }
+  .upgrade-side .info .label { font-size:9px; color:var(--text3); letter-spacing:2px; text-transform:uppercase; margin-bottom:4px; }
+  .upgrade-side .info .name { font-size:13px; color:var(--sand); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .upgrade-side .info .wear { font-size:10px; color:var(--text3); margin-top:3px; }
-  .upgrade-side .price {
-    font-size:13px; color:var(--gold2); font-variant-numeric:tabular-nums;
-    flex-shrink:0;
-  }
+  .upgrade-side .price { font-size:13px; color:var(--gold2); font-variant-numeric:tabular-nums; flex-shrink:0; }
 
-  .upgrade-circle-wrap {
-    position:relative; width:160px; height:160px;
-    display:flex; align-items:center; justify-content:center;
-    margin:16px auto;
-  }
+  .upgrade-circle-wrap { position:relative; width:160px; height:160px; display:flex; align-items:center; justify-content:center; margin:16px auto; }
   .upgrade-circle {
     width:150px; height:150px; border-radius:50%;
     border:5px solid var(--border);
     background:conic-gradient(var(--gold2) var(--p, 0%), var(--border) 0%);
     display:flex; align-items:center; justify-content:center;
-    position:relative;
-    transition:background .3s;
+    position:relative; transition:background .3s;
   }
   .upgrade-circle::before {
     content:""; position:absolute; inset:8px; border-radius:50%;
     background:var(--bg2); z-index:1;
   }
-  .upgrade-percent {
-    position:relative; z-index:2;
-    font-size:34px; font-weight:200; color:var(--gold2);
-    font-variant-numeric:tabular-nums;
-  }
+  .upgrade-percent { position:relative; z-index:2; font-size:34px; font-weight:200; color:var(--gold2); font-variant-numeric:tabular-nums; }
   .upgrade-percent span { font-size:20px; margin-left: 2px; }
 
   .upgrade-arrow-indicator {
@@ -459,10 +360,7 @@
   }
   .upgrade-arrow-indicator svg { width:22px; height:26px; }
 
-  .upgrade-chance {
-    text-align:center; font-size:12px; color:var(--text3);
-    letter-spacing:2px; margin:12px 0;
-  }
+  .upgrade-chance { text-align:center; font-size:12px; color:var(--text3); letter-spacing:2px; margin:12px 0; }
   .upgrade-chance span { color:var(--accent); font-weight:600; }
   .upgrade-controls { margin-top:auto; padding-top:12px; }
 
@@ -473,16 +371,10 @@
     padding:16px 18px; border:1px solid var(--border);
     border-radius:12px; margin-bottom:12px; background:var(--bg2);
   }
-  .inv-item .inv-img {
-    width:70px; height:44px; flex-shrink:0;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .inv-item .inv-img svg,
-  .inv-item .inv-img img { width:100%; height:100%; object-fit:contain; }
+  .inv-item .inv-img { width:70px; height:44px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .inv-item .inv-img svg, .inv-item .inv-img img { width:100%; height:100%; object-fit:contain; }
   .inv-item .inv-info { flex:1; min-width:0; }
-  .inv-item .inv-price {
-    font-size:14px; color:var(--gold2); font-weight: 700; margin-bottom: 4px;
-  }
+  .inv-item .inv-price { font-size:14px; color:var(--gold2); font-weight: 700; margin-bottom: 4px; }
   .inv-item .inv-name { font-size:13px; color:var(--sand); font-weight: 500; }
   .inv-item .inv-wear { font-size:10px; color:var(--text3); margin-top:3px; }
   .inv-item .sell-btn {
@@ -517,29 +409,16 @@
     border:1px solid var(--border); background:linear-gradient(180deg, var(--bg3), var(--bg2));
     border-radius:12px; padding:20px 14px; text-align:center; margin-bottom:20px;
   }
-  .stat-card .stat-label {
-    font-size:9px; color:var(--text3); letter-spacing:2px; text-transform:uppercase;
-    margin-bottom:8px;
-  }
-  .stat-card .stat-value {
-    font-size:24px; font-weight:300; color:var(--sand);
-    font-variant-numeric:tabular-nums;
-  }
-  .section-label {
-    font-size: 9px; color: var(--text3);
-    letter-spacing: 3px; text-transform: uppercase;
-    margin-bottom: 10px; margin-top: 4px;
-  }
+  .stat-card .stat-label { font-size:9px; color:var(--text3); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
+  .stat-card .stat-value { font-size:24px; font-weight:300; color:var(--sand); font-variant-numeric:tabular-nums; }
+  .section-label { font-size: 9px; color: var(--text3); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; margin-top: 4px; }
   .best-win {
     border: 1px solid var(--border2);
     background: linear-gradient(180deg, var(--bg3), var(--bg2));
     border-radius: 12px; padding: 18px; margin-bottom: 20px; text-align: center;
   }
   .best-win-empty { color: var(--text3); font-size: 13px; padding: 20px 0; }
-  .best-win-img {
-    width: 100px; height: 70px; margin: 0 auto 10px;
-    display: flex; align-items: center; justify-content: center;
-  }
+  .best-win-img { width: 100px; height: 70px; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; }
   .best-win-img svg, .best-win-img img { width: 100%; height: 100%; object-fit: contain; }
   .best-win-name { font-size: 14px; color: var(--sand); margin-bottom: 4px; }
   .best-win-wear { font-size: 11px; color: var(--text3); margin-bottom: 6px; }
@@ -551,8 +430,7 @@
     background: var(--bg); border: 1px solid var(--border);
     border-radius: 10px; padding: 16px;
     color: var(--sand); font-size: 14px;
-    outline: none; font-family: inherit;
-    letter-spacing: 1px;
+    outline: none; font-family: inherit; letter-spacing: 1px;
   }
   .promo-input::placeholder { color: var(--text3); }
   .promo-input:focus { border-color: var(--accent); }
@@ -567,20 +445,14 @@
   .promo-btn:active { background: #4a2a1a; }
 
   /* === МОДАЛКА === */
-  .modal-overlay {
-    position:fixed; inset:0; background:rgba(0,0,0,0.85);
-    z-index:200; display:none; align-items:flex-end;
-  }
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:200; display:none; align-items:flex-end; }
   .modal-overlay.show { display:flex; }
   .modal-sheet {
     width:100%; max-height:80vh; overflow-y:auto;
     background:var(--bg2); border-top:1px solid var(--border2);
     border-radius:20px 20px 0 0; padding:24px;
   }
-  .modal-sheet h3 {
-    font-size:14px; color:var(--sand); letter-spacing:2px;
-    text-transform:uppercase; margin-bottom:18px; text-align:center;
-  }
+  .modal-sheet h3 { font-size:14px; color:var(--sand); letter-spacing:2px; text-transform:uppercase; margin-bottom:18px; text-align:center; }
   .modal-search {
     width:100%; padding:12px; border:1px solid var(--border);
     border-radius:8px; background:var(--bg); color:var(--sand);
@@ -594,11 +466,9 @@
     font-size:12px; font-family:inherit; outline:none;
   }
   .modal-filters select {
-    flex: 1;
-    padding: 10px 30px 10px 10px;
+    flex: 1; padding: 10px 30px 10px 10px;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1 L5 5 L9 1' stroke='%238a7754' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
+    background-repeat: no-repeat; background-position: right 12px center;
     appearance: none; -webkit-appearance: none;
   }
   .modal-filters input { width:70px; }
@@ -610,10 +480,7 @@
     background:var(--bg);
   }
   .modal-item:active { border-color:var(--accent); }
-  .modal-item .mi-img {
-    width:60px; height:40px; flex-shrink:0;
-    display:flex; align-items:center; justify-content:center;
-  }
+  .modal-item .mi-img { width:60px; height:40px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
   .modal-item .mi-img svg, .modal-item .mi-img img { width:100%; height:100%; object-fit:contain; }
   .modal-item .mi-info { flex:1; min-width:0; }
   .modal-item .mi-name { font-size:12px; color:var(--sand); }
@@ -635,14 +502,8 @@
     max-width:90vw; overflow:hidden; text-overflow:ellipsis;
   }
   #toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
-  #toast.show.win {
-    border-color: #6fbf4a; color: #d4ffb0;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 24px rgba(111,191,74,0.5);
-  }
-  #toast.show.lose {
-    border-color: #c44a3a; color: #ffb8a8;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 24px rgba(196,74,58,0.5);
-  }
+  #toast.show.win { border-color: #6fbf4a; color: #d4ffb0; box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 24px rgba(111,191,74,0.5); }
+  #toast.show.lose { border-color: #c44a3a; color: #ffb8a8; box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 24px rgba(196,74,58,0.5); }
 </style>
 </head>
 <body>
@@ -652,7 +513,6 @@
 <!-- МЕНЮ -->
 <div class="screen" id="menu">
   <div class="brand">C<span>S</span>2 · DUST 2</div>
-
   <div class="balance-block">
     <div class="balance-label">Баланс</div>
     <div class="balance-value" id="menuBalance"><span class="num">0 ₽</span></div>
@@ -660,33 +520,22 @@
 
   <div class="modes">
     <button class="mode-card mode-card-big" onclick="openMode('cases')">
-      <div class="mode-card-content">
-        <div class="mode-card-title">Кейсы</div>
-      </div>
+      <div class="mode-card-content"><div class="mode-card-title">Кейсы</div></div>
       <div class="mode-card-icon"><img src="case.png" alt=""></div>
     </button>
-
     <div class="mode-row">
       <button class="mode-card" onclick="openMode('upgrade')">
-        <div class="mode-card-content">
-          <div class="mode-card-title">Апгрейд</div>
-        </div>
+        <div class="mode-card-content"><div class="mode-card-title">Апгрейд</div></div>
         <div class="mode-card-icon"><img src="upgrade.png" alt=""></div>
       </button>
-
       <button class="mode-card" onclick="openMode('inventory')">
-        <div class="mode-card-content">
-          <div class="mode-card-title">Инвентарь</div>
-        </div>
+        <div class="mode-card-content"><div class="mode-card-title">Инвентарь</div></div>
         <div class="mode-card-icon"><img src="inventory.png" alt=""></div>
       </button>
     </div>
-
     <div class="mode-row">
       <button class="mode-card" onclick="openProfile()" style="grid-column:1 / -1;min-height:90px;flex-direction:row;align-items:center;gap:14px;">
-        <div class="mode-card-content">
-          <div class="mode-card-title">Профиль</div>
-        </div>
+        <div class="mode-card-content"><div class="mode-card-title">Профиль</div></div>
         <div class="mode-card-icon" style="width:60px;height:60px;align-self:center;"><img src="profile.png" alt=""></div>
       </button>
     </div>
@@ -880,7 +729,6 @@ const state = {
 
 const $ = id => document.getElementById(id);
 
-/* ==================== ФОН ==================== */
 (function makeSand(){
   const box = $('bg');
   for (let i = 0; i < 25; i++) {
@@ -909,19 +757,14 @@ function updateBalance() {
 }
 
 function registerDrop(skin) {
-  if (!state.bestDrop || skin.price > state.bestDrop.price) {
-    state.bestDrop = skin;
-  }
+  if (!state.bestDrop || skin.price > state.bestDrop.price) state.bestDrop = skin;
 }
 
 function updateBestWin() {
   const box = $('bestWin');
   if (!box) return;
   const best = state.bestDrop;
-  if (!best) {
-    box.innerHTML = '<div class="best-win-empty">Пока нет выигрышей</div>';
-    return;
-  }
+  if (!best) { box.innerHTML = '<div class="best-win-empty">Пока нет выигрышей</div>'; return; }
   box.innerHTML = `
     <div class="best-win-img">${weaponImg(best.weapon)}</div>
     <div class="best-win-name">${best.name}</div>
@@ -935,10 +778,7 @@ function toastText(msg, kind) {
   t.textContent = msg;
   t.className = 'show' + (kind ? ' ' + kind : '');
   clearTimeout(t._t);
-  t._t = setTimeout(() => {
-    t.classList.remove('win', 'lose');
-    t.classList.remove('show');
-  }, 2000);
+  t._t = setTimeout(() => { t.classList.remove('win', 'lose'); t.classList.remove('show'); }, 2000);
 }
 
 function showScreen(id) {
@@ -954,10 +794,7 @@ function spend(amount) {
   updateBalance();
   return true;
 }
-function earn(amount) {
-  state.balance += amount;
-  updateBalance();
-}
+function earn(amount) { state.balance += amount; updateBalance(); }
 
 /* ==================== КАТАЛОГ ==================== */
 const ALL_SKINS = [
@@ -1040,16 +877,16 @@ function createSkinInstance(skinDef) {
   };
 }
 
-/* ==================== РЕДКОСТИ ==================== */
+/* ==================== РЕДКОСТИ (внутри группы) ==================== */
 const RARITY_WEIGHTS = {
   consumer:   1000,
   industrial: 300,
   milspec:    40,
-  restricted: 0.6,
-  classified: 0.02,
-  covert:     0.0015,
-  rare:       0.0002,
-  contraband: 0.00001,
+  restricted: 5,
+  classified: 1,
+  covert:     0.2,
+  rare:       0.02,
+  contraband: 0.002,
 };
 
 const RARITY_COLORS = {
@@ -1063,16 +900,15 @@ const RARITY_COLORS = {
   contraband: 'var(--r-contraband)',
 };
 
-function pickSkinFromPool(pool) {
+/* Внутри группы — по редкостям */
+function pickByRarity(pool) {
+  if (!pool.length) return null;
   const available = {};
   pool.forEach(s => { available[s.rarity] = (available[s.rarity] || 0) + 1; });
   let total = 0;
   const weighted = {};
   for (const r in RARITY_WEIGHTS) {
-    if (available[r]) {
-      weighted[r] = RARITY_WEIGHTS[r];
-      total += RARITY_WEIGHTS[r];
-    }
+    if (available[r]) { weighted[r] = RARITY_WEIGHTS[r]; total += RARITY_WEIGHTS[r]; }
   }
   let roll = Math.random() * total;
   for (const r in weighted) {
@@ -1085,6 +921,19 @@ function pickSkinFromPool(pool) {
   return pool[0];
 }
 
+/* ==================== ВЫБОР СКИНА ИЗ ПУЛА: 80% дешёвые, 20% окупаемые ==================== */
+function pickSkinFromPool(pool, casePrice) {
+  const unprofitable = pool.filter(s => s.basePrice < casePrice);
+  const profitable   = pool.filter(s => s.basePrice >= casePrice);
+
+  let group;
+  if (profitable.length === 0) group = unprofitable;
+  else if (unprofitable.length === 0) group = profitable;
+  else group = Math.random() < 0.2 ? profitable : unprofitable;
+
+  return pickByRarity(group);
+}
+
 /* ==================== КЕЙСЫ ==================== */
 const CASES = {
   case10: {
@@ -1095,45 +944,39 @@ const CASES = {
   case50: {
     name: 'Выжженный контейнер',
     price: 50,
-    pool: ['ak_slate', 'm4a4_desolate', 'awp_snake', 'ssg_blood', 'p250_asiimov', 'glock_water'],
+    pool: ['galil_ar', 'ak_slate', 'm4a4_desolate', 'awp_snake', 'ssg_blood', 'p250_asiimov', 'glock_water'],
   },
   case100: {
     name: 'Золотой контейнер',
     price: 100,
-    pool: ['awp_neo', 'awp_lightning', 'glock_fade', 'deagle_codex', 'p250_asiimov', 'usp_print'],
+    pool: ['ak_slate', 'm4a4_desolate', 'p250_asiimov', 'awp_neo', 'awp_lightning', 'glock_fade', 'deagle_codex', 'usp_print'],
   },
   case500: {
     name: 'Кейс пустыни',
     price: 500,
-    pool: ['ak_redline', 'ak_asiimov', 'm4a4_asiimov', 'm4a1s_solitude', 'deagle_blaze', 'usp_print'],
+    pool: ['m4a4_desolate', 'deagle_codex', 'ak_redline', 'ak_asiimov', 'm4a4_asiimov', 'm4a1s_solitude', 'deagle_blaze', 'usp_print'],
   },
   case1000: {
     name: 'Легендарный контейнер',
     price: 1000,
-    pool: ['ak_vulcan', 'ak_nightwish', 'awp_asiimov', 'awp_medusa', 'awp_wildfire', 'm4a1s_print'],
+    pool: ['m4a1s_solitude', 'ak_redline', 'ak_vulcan', 'ak_nightwish', 'awp_asiimov', 'awp_medusa', 'awp_wildfire', 'm4a1s_print'],
   },
 };
 
 function renderCasesList() {
   const list = $('casesList');
   list.innerHTML = '';
-
   list.innerHTML += `
     <button class="case-item case-sub" onclick="openCaseScreen('subcase')">
-      <div class="info">
-        <div class="name">Бесплатный кейс</div>
-      </div>
+      <div class="info"><div class="name">Бесплатный кейс</div></div>
       <div class="price">Free</div>
     </button>
   `;
-
   for (const key in CASES) {
     const c = CASES[key];
     list.innerHTML += `
       <button class="case-item" onclick="openCaseScreen('${key}')">
-        <div class="info">
-          <div class="name">${c.name}</div>
-        </div>
+        <div class="info"><div class="name">${c.name}</div></div>
         <div class="price">${c.price} ₽</div>
       </button>
     `;
@@ -1144,11 +987,7 @@ function renderCasesList() {
 /* ==================== НАВИГАЦИЯ ==================== */
 function openMode(mode) {
   if (mode === 'cases') { showScreen('cases'); renderCasesList(); }
-  else if (mode === 'upgrade') {
-    showScreen('upgrade');
-    resetUpgradeArrow();
-    updateUpgradeChance();
-  }
+  else if (mode === 'upgrade') { showScreen('upgrade'); resetUpgradeArrow(); updateUpgradeChance(); }
   else if (mode === 'inventory') { showScreen('inventory'); renderInventory(); }
   updateBalance();
 }
@@ -1179,22 +1018,14 @@ function resetUpgradeArrow() {
 
 /* ==================== КЕЙСЫ: idle ==================== */
 let idleRaf = null;
-
-function stopIdleSpin() {
-  if (idleRaf) {
-    cancelAnimationFrame(idleRaf);
-    idleRaf = null;
-  }
-}
+function stopIdleSpin() { if (idleRaf) { cancelAnimationFrame(idleRaf); idleRaf = null; } }
 
 function startIdleSpin() {
   stopIdleSpin();
   const track = $('track');
   track.style.transition = 'none';
-
   let pos = 0;
   let last = performance.now();
-
   function frame(now) {
     const dt = now - last;
     last = now;
@@ -1291,10 +1122,11 @@ function renderCaseDrops() {
     const el = document.createElement('div');
     el.className = 'drop-item';
     el.style.setProperty('--drop-color', RARITY_COLORS[d.def.rarity] || 'var(--border2)');
+    // WEAR сначала, ST ниже
     el.innerHTML = `
       <div class="drop-price-badge">${fmt(d.price)} ₽</div>
-      ${d.statTrak ? '<div class="drop-st">ST</div>' : ''}
       <div class="drop-wear-badge">${d.wear.key}</div>
+      ${d.statTrak ? '<div class="drop-st">ST</div>' : ''}
       <div class="drop-img">${weaponImg(d.def.weapon)}</div>
       <div class="drop-name-block">
         <div class="drop-weapon">${weaponName}</div>
@@ -1310,18 +1142,15 @@ function mainCaseAction() {
 
   const caseDef = CASES[state.currentCase];
   const isFree = state.currentCase === 'subcase';
+  const casePrice = caseDef ? caseDef.price : 0;
 
   if (!isFree && caseDef) {
-    if (!canAfford(caseDef.price)) {
-      toastText('Недостаточно средств', 'lose');
-      return;
-    }
+    if (!canAfford(caseDef.price)) { toastText('Недостаточно средств', 'lose'); return; }
     if (!spend(caseDef.price)) return;
     toastText(`−${fmt(caseDef.price)} ₽`, 'lose');
   }
 
   state.isSpinning = true;
-
   const btn = $('spinBtn');
   btn.disabled = true;
   btn.classList.add('disabled');
@@ -1332,19 +1161,15 @@ function mainCaseAction() {
 
   const track = $('track');
   const pool = getPoolForCurrentCase();
-  const winSkinDef = pickSkinFromPool(pool);
+  const winSkinDef = pickSkinFromPool(pool, casePrice);
   const winSkin = createSkinInstance(winSkinDef);
 
   track.innerHTML = '';
   const STOP_INDEX = 50;
   for (let i = 0; i < 60; i++) {
     let skinDef, isST = false;
-    if (i === STOP_INDEX) {
-      skinDef = winSkinDef;
-      isST = winSkin.statTrak;
-    } else {
-      skinDef = pool[Math.floor(Math.random() * pool.length)];
-    }
+    if (i === STOP_INDEX) { skinDef = winSkinDef; isST = winSkin.statTrak; }
+    else { skinDef = pool[Math.floor(Math.random() * pool.length)]; }
     track.appendChild(makeSlot(skinDef, isST));
   }
 
@@ -1389,14 +1214,10 @@ function mainCaseAction() {
 
 /* ==================== АПГРЕЙДЕР ==================== */
 function pickFromInventory() {
-  if (!state.inventory.length) {
-    toastText('Инвентарь пуст', 'lose');
-    return;
-  }
+  if (!state.inventory.length) { toastText('Инвентарь пуст', 'lose'); return; }
   const list = $('modalList');
   list.innerHTML = '';
   $('modalTitle').textContent = 'Выбери свой скин';
-
   $('modalSearch').style.display = 'none';
   document.querySelector('.modal-filters').style.display = 'none';
 
@@ -1429,7 +1250,6 @@ function pickFromInventory() {
     };
     list.appendChild(item);
   });
-
   $('modalOverlay').classList.add('show');
 }
 
@@ -1445,33 +1265,19 @@ function pickToTarget() {
     WEARS.forEach(wear => {
       const instance = {
         id: def.id + '_' + wear.key,
-        skinId: def.id,
-        name: def.name,
-        weapon: def.weapon,
-        rarity: def.rarity,
-        wear: wear.key,
-        wearName: wear.name,
-        statTrak: false,
+        skinId: def.id, name: def.name, weapon: def.weapon, rarity: def.rarity,
+        wear: wear.key, wearName: wear.name, statTrak: false,
         price: Math.round(def.basePrice * wear.mult),
       };
-      if (instance.price > from.price) {
-        modalCandidates.push({ def, instance });
-      }
+      if (instance.price > from.price) modalCandidates.push({ def, instance });
       if (def.hasStatTrak) {
         const stInstance = {
           id: def.id + '_' + wear.key + '_st',
-          skinId: def.id,
-          name: def.name,
-          weapon: def.weapon,
-          rarity: def.rarity,
-          wear: wear.key,
-          wearName: wear.name,
-          statTrak: true,
+          skinId: def.id, name: def.name, weapon: def.weapon, rarity: def.rarity,
+          wear: wear.key, wearName: wear.name, statTrak: true,
           price: Math.round(def.basePrice * wear.mult * 1.35),
         };
-        if (stInstance.price > from.price) {
-          modalCandidates.push({ def, instance: stInstance });
-        }
+        if (stInstance.price > from.price) modalCandidates.push({ def, instance: stInstance });
       }
     });
   });
@@ -1506,11 +1312,7 @@ function filterModalList() {
 
   const box = $('modalList');
   box.innerHTML = '';
-
-  if (!list.length) {
-    box.innerHTML = '<div class="modal-empty">Ничего не найдено</div>';
-    return;
-  }
+  if (!list.length) { box.innerHTML = '<div class="modal-empty">Ничего не найдено</div>'; return; }
 
   list.slice(0, 100).forEach(c => {
     const item = document.createElement('div');
@@ -1541,6 +1343,7 @@ function closeModal(e) {
   $('modalOverlay').classList.remove('show');
 }
 
+/* ==================== ШАНС АПГРЕЙДА: показываем 50%, реально 40% ==================== */
 function updateUpgradeChance() {
   const from = state.upgrade.fromSkin;
   const to = state.upgrade.toSkin;
@@ -1553,22 +1356,22 @@ function updateUpgradeChance() {
     return;
   }
 
-  let chance = (from.price / to.price) * 100;
-  chance = Math.pow(chance / 100, 3) * 100;
-  chance = Math.min(chance, 35);
-  chance = Math.max(chance, 0.1);
-  state.upgrade.chance = Math.round(chance * 10) / 10;
+  // Что показываем пользователю — честная пропорция
+  let displayChance = (from.price / to.price) * 100;
+  displayChance = Math.min(displayChance, 90);
+  displayChance = Math.max(displayChance, 1);
+  displayChance = Math.round(displayChance);
 
-  $('upChance').textContent = state.upgrade.chance + '%';
-  $('upgradePercent').innerHTML = state.upgrade.chance + '<span> %</span>';
-  $('upgradeCircle').style.setProperty('--p', state.upgrade.chance + '%');
+  // Реальный шанс — на 20% ниже
+  state.upgrade.chance = displayChance * 0.8;
+
+  $('upChance').textContent = displayChance + '%';
+  $('upgradePercent').innerHTML = displayChance + '<span> %</span>';
+  $('upgradeCircle').style.setProperty('--p', displayChance + '%');
 }
 
 function doUpgrade() {
-  if (!state.upgrade.fromSkin || !state.upgrade.toSkin) {
-    toastText('Выбери оба скина', 'lose');
-    return;
-  }
+  if (!state.upgrade.fromSkin || !state.upgrade.toSkin) { toastText('Выбери оба скина', 'lose'); return; }
   if (state.isSpinning) return;
   state.isSpinning = true;
 
@@ -1579,16 +1382,16 @@ function doUpgrade() {
 
   const arrow = $('upgradeArrow');
   const success = Math.random() * 100 < state.upgrade.chance;
-  const chance = state.upgrade.chance;
+  const displayChance = Math.round(state.upgrade.chance / 0.8);
 
   let finalAngle;
   const extraSpins = 3;
 
   if (success) {
-    const zoneEnd = (chance / 100) * 360;
+    const zoneEnd = (displayChance / 100) * 360;
     finalAngle = 360 * extraSpins + Math.random() * zoneEnd * 0.9;
   } else {
-    const zoneEnd = (chance / 100) * 360;
+    const zoneEnd = (displayChance / 100) * 360;
     const mode = Math.random() < 0.5 ? 'over' : 'under';
     if (mode === 'over') {
       finalAngle = 360 * extraSpins + zoneEnd + 5 + Math.random() * 40;
@@ -1667,7 +1470,6 @@ function renderInventory() {
 function sellSkin(idx) {
   const skin = state.inventory[idx];
   if (!skin) return;
-  // Без комиссии — продаётся за полную стоимость
   const price = skin.price;
   earn(price);
   state.inventory.splice(idx, 1);
@@ -1676,9 +1478,7 @@ function sellSkin(idx) {
   updateBalance();
 }
 
-function withdrawSkin(idx) {
-  toastText('Заявка отправлена', 'win');
-}
+function withdrawSkin(idx) { toastText('Заявка отправлена', 'win'); }
 
 /* ==================== ПРОМОКОД / ВЫВОД ==================== */
 function applyPromo() {
@@ -1687,9 +1487,7 @@ function applyPromo() {
   toastText('Промокод скоро будет доступен', 'lose');
 }
 
-function withdrawOpen() {
-  toastText('Вывод скоро будет доступен', 'lose');
-}
+function withdrawOpen() { toastText('Вывод скоро будет доступен', 'lose'); }
 
 /* ==================== INIT ==================== */
 renderIcons();
