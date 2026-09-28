@@ -806,11 +806,27 @@ async function updateUpgradeStats(result, fromPrice, toPrice) {
   }
 }
 
+/* Счётчик подряд-удач всё ещё используется, но его влияние ослаблено (×0.3) */
 function calcPenalty() {
   const wc = state.upgradeStats.win_count || 0;
   if (wc <= 0) return 0;
   if (wc <= 10) return wc * 1;
   return 10 + (wc - 10) * 2;
+}
+
+/* Чистая прибыль с апгрейдера = выиграно − проиграно (в рублях) */
+function getUpgradeProfit() {
+  const w = Number(state.upgradeStats.win_sum) || 0;
+  const l = Number(state.upgradeStats.lose_sum) || 0;
+  return w - l;
+}
+
+/* Коэффициент невидимки: чем больше profit, тем ниже реальный шанс */
+function getBaseRatio() {
+  const profit = getUpgradeProfit();
+  if (profit <= 0) return 0.95;      // юзер в минусе → игра почти честная
+  const k = Math.min(0.35, profit / 2000);  // 0..0.35
+  return 0.95 - k;                    // 0.95 → 0.6 при profit ≥ 2000
 }
 
 /* ==================== CASE STATS ==================== */
@@ -1002,7 +1018,6 @@ function getPoolForCurrentCase() {
   return pool;
 }
 
-/* ==================== КАЗИНО-ЛОГИКА ДРОПА ==================== */
 function getCasinoParams() {
   const total = state.caseStats.total_opens || 0;
   const since = state.caseStats.opens_since_win || 0;
@@ -1100,15 +1115,21 @@ function resetUpgradeArrow() {
 let idleRaf = null;
 function stopIdleSpin() { if (idleRaf) { cancelAnimationFrame(idleRaf); idleRaf = null; } }
 
+let idleLastTs = 0;
 function startIdleSpin() {
   stopIdleSpin();
   const track = $('track');
+  if (!track) return;
   track.style.transition = 'none';
+
   let pos = 0;
-  let last = performance.now();
+  idleLastTs = performance.now();
+
   function frame(now) {
-    const dt = now - last;
-    last = now;
+    let dt = now - idleLastTs;
+    if (dt > 200) dt = 16;
+    idleLastTs = now;
+
     pos -= dt * 0.03;
     if (pos < -60 * 110) pos += 60 * 110;
     track.style.transform = `translateX(${pos}px)`;
@@ -1209,6 +1230,7 @@ async function mainCaseAction() {
   const btn = $('spinBtn');
   if (btn.disabled) return;
 
+  window._spinStartedAt = Date.now();
   const caseDef = CASES[state.currentCase];
   const isFree = state.currentCase === 'subcase';
   const casePrice = caseDef ? caseDef.price : 0;
@@ -1220,6 +1242,7 @@ async function mainCaseAction() {
     if (state.balance < caseDef.price) {
       setBtnBusy(btn, 'Не хватает средств');
       state.isSpinning = false;
+      window._spinStartedAt = 0;
       toastText('Недостаточно средств', 'lose');
       return;
     }
@@ -1227,6 +1250,7 @@ async function mainCaseAction() {
     if (!ok) {
       setBtnReady(btn, 'Открыть');
       state.isSpinning = false;
+      window._spinStartedAt = 0;
       toastText('Ошибка сервера', 'lose');
       return;
     }
@@ -1293,6 +1317,7 @@ async function mainCaseAction() {
   });
 
   setTimeout(async () => {
+    window._spinStartedAt = 0;
     const addRes = await addPromise;
     state.isSpinning = false;
 
@@ -1315,15 +1340,10 @@ async function mainCaseAction() {
 
     $('spinValue').textContent = `${winSkin.price} ₽`;
     $('spinResult').className = 'spin-result show';
-
-    const isWin = caseDef ? winSkin.price >= caseDef.price : false;
-    if (isWin) {
-      toastText(`Получено: ${winSkin.name}`, 'win');
-    } else {
-      toastText(`Получено: ${winSkin.name}`, 'win');
-    }
+    toastText(`Получено: ${winSkin.name}`, 'win');
 
     updateBalance();
+    const isWin = caseDef ? winSkin.price >= caseDef.price : false;
     updateCaseStats(isWin);
 
     if (!isFree && caseDef && state.balance < caseDef.price) {
@@ -1481,9 +1501,21 @@ function updateUpgradeChance() {
   displayChance = Math.max(displayChance, 1);
   displayChance = Math.round(displayChance);
 
-  const penalty = calcPenalty();
-  let real = displayChance * 0.9 - penalty;
-  if (real < 1) real = 1;
+  // Гибкий расчёт:
+  // — если юзер в плюсе, базовая невидимка тем жёстче, чем больше его profit
+  // — штраф за серию удач ослаблен (×0.3)
+  const baseRatio = getBaseRatio();
+  const penalty = calcPenalty() * 0.3;
+  let real = displayChance * baseRatio - penalty;
+
+  // Если юзер в минусе по апгрейду — даём бонус к шансу, чтобы он «отыгрался»
+  const profit = getUpgradeProfit();
+  if (profit < 0) {
+    const bonus = Math.min(15, Math.abs(profit) / 200);
+    real += bonus;
+  }
+
+  real = Math.max(1, Math.min(92, Math.round(real)));
 
   state.upgrade.chance = real;
   state.upgrade.displayChance = displayChance;
@@ -1499,6 +1531,7 @@ async function doUpgrade() {
   const btn = $('upgradeBtn');
   if (btn.disabled) return;
 
+  window._spinStartedAt = Date.now();
   state.isSpinning = true;
   setBtnBusy(btn, 'Крутим...');
 
@@ -1552,6 +1585,7 @@ async function doUpgrade() {
     : Promise.resolve(null);
 
   setTimeout(async () => {
+    window._spinStartedAt = 0;
     await removePromise;
     const addRes = await addPromise;
     state.isSpinning = false;
@@ -1572,7 +1606,7 @@ async function doUpgrade() {
         updateBestWin();
       }
       loadBestDrop();
-      toastText(`Успешно: ${toSkin.name}`, 'win');
+      toastText('Успех', 'win');
       updateUpgradeStats("win", fromSkin.price, toSkin.price);
     } else {
       toastText('Провал', 'lose');
@@ -1725,6 +1759,75 @@ async function applyPromo() {
   };
   toastText(map[res.error] || 'Ошибка', 'lose');
 }
+
+/* ==================== FIX: восстановление после сворачивания ==================== */
+function recoverApp() {
+  state.isSpinning = false;
+  window._spinStartedAt = 0;
+
+  const spinBtn = $('spinBtn');
+  if (spinBtn) {
+    spinBtn.disabled = false;
+    spinBtn.classList.remove('disabled');
+    const caseDef = CASES[state.currentCase];
+    if (caseDef && state.balance < caseDef.price) {
+      setBtnBusy(spinBtn, 'Не хватает средств');
+    } else {
+      setBtnReady(spinBtn, 'Открыть');
+    }
+  }
+
+  const upgradeBtn = $('upgradeBtn');
+  if (upgradeBtn) {
+    upgradeBtn.disabled = false;
+    upgradeBtn.classList.remove('disabled');
+    upgradeBtn.textContent = 'Прокачать';
+  }
+
+  const promoBtn = $('promoBtn');
+  if (promoBtn) {
+    promoBtn.disabled = false;
+    promoBtn.classList.remove('disabled');
+    promoBtn.textContent = 'ОК';
+  }
+
+  const wdBtn = $('wdSubmitBtn');
+  if (wdBtn) {
+    wdBtn.disabled = false;
+    wdBtn.classList.remove('disabled');
+    wdBtn.textContent = 'Отправить заявку';
+  }
+
+  const caseOpen = $('caseOpen');
+  if (caseOpen && !caseOpen.classList.contains('hidden')) {
+    fillTrack();
+  }
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    setTimeout(recoverApp, 300);
+  }
+});
+
+if (tg && tg.onEvent) {
+  tg.onEvent('viewportChanged', () => setTimeout(recoverApp, 300));
+  tg.onEvent('activated', () => setTimeout(recoverApp, 300));
+}
+
+/* Watchdog: если isSpinning висит больше 20 секунд — сбрасываем */
+setInterval(() => {
+  if (state.isSpinning) {
+    if (!window._spinStartedAt) {
+      window._spinStartedAt = Date.now();
+    } else if (Date.now() - window._spinStartedAt > 20000) {
+      console.warn("Spin watchdog: forcibly resetting isSpinning");
+      recoverApp();
+    }
+  } else {
+    window._spinStartedAt = 0;
+  }
+}, 2000);
 
 /* ==================== INIT ==================== */
 (async function init() {
