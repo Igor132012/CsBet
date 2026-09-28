@@ -1002,14 +1002,7 @@ function getPoolForCurrentCase() {
   return pool;
 }
 
-/* ==================== КАЗИНО-ЛОГИКА ДРОПА ====================
-   Фазы:
-   1) Первые 5 открытий — удача (winChance ~0.55)
-   2) Далее — слив (winChance ~0.04)
-   3) "Почти-победа": каждые 8-12 открытий без выигрыша даём 1 почти-победный дроп
-      (цена = 88-98% от цены кейса — "почти окупилось")
-   winChance — вероятность что итоговая цена скина >= цена кейса.
-   ============================================================ */
+/* ==================== КАЗИНО-ЛОГИКА ДРОПА ==================== */
 function getCasinoParams() {
   const total = state.caseStats.total_opens || 0;
   const since = state.caseStats.opens_since_win || 0;
@@ -1017,50 +1010,39 @@ function getCasinoParams() {
   if (total < 5) {
     return { winChance: 0.55, almostChance: 0.10, mode: "luck" };
   }
-  // Слив. Иногда "почти-победа" чтобы удержать.
   let winChance = 0.04;
   let almostChance = 0.12;
-
-  // Чем дольше без выигрыша — тем выше шанс "почти". Кап на 8-12 ходах.
   if (since >= 8 && since % 4 === 0) {
     almostChance = 0.30;
   }
-
   return { winChance, almostChance, mode: "drain" };
 }
 
 function pickCasinoInstance(instances, casePrice) {
   const { winChance, almostChance } = getCasinoParams();
 
-  // Разделяем на три группы
   const unprofitable = instances.filter(i => i.price < casePrice * 0.85);
   const almost = instances.filter(i => i.price >= casePrice * 0.85 && i.price < casePrice);
   const profitable = instances.filter(i => i.price >= casePrice);
 
   const r = Math.random();
 
-  // 1. "Почти-победа" — цена в 85-99% от цены кейса
   if (almost.length > 0 && r < almostChance) {
-    return { ins: almost[Math.floor(Math.random() * almost.length)], isWin: false, almost: true };
+    return { ins: almost[Math.floor(Math.random() * almost.length)], isWin: false };
   }
 
-  // 2. "Окупаемый" — цена >= цены кейса
   if (profitable.length > 0 && Math.random() < winChance) {
-    // Внутри окупаемых — предпочитаем те, что чуть-чуть дороже (эффект "повезло")
-    // Но иногда даём и очень дорогой, чтобы был всплеск радости
     const sorted = profitable.slice().sort((a, b) => a.price - b.price);
     const idx = Math.random() < 0.85
-      ? Math.floor(Math.random() * Math.min(3, sorted.length)) // обычно самые дешёвые из "окупаемых"
-      : Math.floor(Math.random() * sorted.length); // иногда любой
-    return { ins: sorted[idx], isWin: true, almost: false };
+      ? Math.floor(Math.random() * Math.min(3, sorted.length))
+      : Math.floor(Math.random() * sorted.length);
+    return { ins: sorted[idx], isWin: true };
   }
 
-  // 3. Обычный (неокупаемый) дроп
   if (unprofitable.length > 0) {
-    return { ins: unprofitable[Math.floor(Math.random() * unprofitable.length)], isWin: false, almost: false };
+    return { ins: unprofitable[Math.floor(Math.random() * unprofitable.length)], isWin: false };
   }
-  // Фоллбэк
-  return { ins: instances[Math.floor(Math.random() * instances.length)], isWin: false, almost: false };
+  return { ins: instances[Math.floor(Math.random() * instances.length)], isWin: false };
 }
 
 function renderCasesList() {
@@ -1274,7 +1256,6 @@ async function mainCaseAction() {
     price: winInstance.price,
   };
 
-  // Находим выигрышный слот в ленте
   track.innerHTML = '';
   const STOP_INDEX = 50;
   for (let i = 0; i < 60; i++) {
@@ -1338,8 +1319,6 @@ async function mainCaseAction() {
     const isWin = caseDef ? winSkin.price >= caseDef.price : false;
     if (isWin) {
       toastText(`Получено: ${winSkin.name}`, 'win');
-    } else if (picked.almost) {
-      toastText(`Почти получилось: ${winSkin.price} ₽`, 'lose');
     } else {
       toastText(`Получено: ${winSkin.name}`, 'win');
     }
@@ -1527,33 +1506,27 @@ async function doUpgrade() {
   const success = Math.random() * 100 < state.upgrade.chance;
   const displayChance = state.upgrade.displayChance || 1;
 
-  // "Почти-победа": 25% от всех неудач = недолёт/перелёт в 1-5° от границы зоны
-  const almostFail = !success && Math.random() < 0.25;
-
   let finalAngle;
   const extraSpins = 3;
   const zoneEnd = (displayChance / 100) * 360;
 
   if (success) {
-    // Обычный успех внутри зоны
-    finalAngle = 360 * extraSpins + Math.random() * zoneEnd * 0.9;
-  } else if (almostFail) {
-    // "Почти" — остановка в 1-5° от границы зоны
-    const edge = 1 + Math.random() * 4;
-    if (Math.random() < 0.5) {
-      // недолёт
-      finalAngle = 360 * extraSpins + (zoneEnd - edge);
-    } else {
-      // перелёт
-      finalAngle = 360 * extraSpins + (zoneEnd + edge);
-    }
+    const margin = Math.max(4, zoneEnd * 0.08);
+    const maxIn = Math.max(0, zoneEnd - margin);
+    finalAngle = 360 * extraSpins + Math.random() * maxIn;
   } else {
-    // Обычный провал — далеко от зоны
+    const almost = Math.random() < 0.25;
+    let gap;
+    if (almost) {
+      gap = 5 + Math.random() * 3;
+    } else {
+      gap = 15 + Math.random() * 30;
+    }
     const mode = Math.random() < 0.5 ? 'over' : 'under';
     if (mode === 'over') {
-      finalAngle = 360 * extraSpins + zoneEnd + 25 + Math.random() * 60;
+      finalAngle = 360 * extraSpins + zoneEnd + gap;
     } else {
-      finalAngle = 360 * (extraSpins - 1) + 360 - (15 + Math.random() * 40);
+      finalAngle = 360 * (extraSpins - 1) + 360 - gap;
     }
   }
 
@@ -1601,9 +1574,6 @@ async function doUpgrade() {
       loadBestDrop();
       toastText(`Успешно: ${toSkin.name}`, 'win');
       updateUpgradeStats("win", fromSkin.price, toSkin.price);
-    } else if (almostFail) {
-      toastText('Чуть-чуть не хватило!', 'lose');
-      updateUpgradeStats("lose", fromSkin.price, 0);
     } else {
       toastText('Провал', 'lose');
       updateUpgradeStats("lose", fromSkin.price, 0);
